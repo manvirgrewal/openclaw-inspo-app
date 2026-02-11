@@ -187,19 +187,31 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
 
       {/* Author */}
       {idea.author && (
-        <p className="mb-2 text-xs text-zinc-500">
-          by{" "}
-          <span
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              window.location.href = `/user/${idea.author!.username}`;
-            }}
-            className="text-zinc-400 hover:text-zinc-200 hover:underline cursor-pointer"
-          >
-            @{idea.author.username}
+        <div className="mb-2 flex items-center gap-1.5 text-xs text-zinc-500">
+          {idea.author.avatar_url ? (
+            <img
+              src={idea.author.avatar_url}
+              alt={idea.author.username}
+              className="h-5 w-5 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-700 text-[10px] font-medium text-zinc-300">
+              {(idea.author.display_name || idea.author.username).charAt(0).toUpperCase()}
+            </div>
+          )}
+          <span>by{" "}
+            <span
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                window.location.href = `/user/${idea.author!.username}`;
+              }}
+              className="text-zinc-400 hover:text-zinc-200 hover:underline cursor-pointer"
+            >
+              @{idea.author.username}
+            </span>
           </span>
-        </p>
+        </div>
       )}
 
       {/* Description */}
