@@ -79,6 +79,29 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
       created_at: "2026-02-07T18:00:00Z", parent_id: null,
     },
   ],
+  // Stack seed comments
+  "s1": [
+    {
+      id: "c9", idea_id: "s1",
+      author: { username: "mike_builds", display_name: "Mike Rivera", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=mike_builds&backgroundColor=ffd5dc" },
+      body: "This is the perfect starter pack. Wish I had this when I first set up my agent.",
+      created_at: "2026-02-08T13:00:00Z", parent_id: null,
+    },
+    {
+      id: "c10", idea_id: "s1",
+      author: { username: "devtools", display_name: "Dev Tools", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=devtools&backgroundColor=c0e8ff" },
+      body: "The ordering makes sense — morning briefing first, then layer on the dev tools. Well curated.",
+      created_at: "2026-02-08T15:00:00Z", parent_id: null,
+    },
+  ],
+  "s3": [
+    {
+      id: "c11", idea_id: "s3",
+      author: { username: "jess_automates", display_name: "Jess Park", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=jess_automates&backgroundColor=d1f4d9" },
+      body: "Used this stack for my newsletter. The content pipeline prompt alone saved me hours every week.",
+      created_at: "2026-02-07T09:00:00Z", parent_id: null,
+    },
+  ],
 };
 
 function readComments(): Record<string, Comment[]> {

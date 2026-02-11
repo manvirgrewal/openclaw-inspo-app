@@ -57,6 +57,30 @@ const SEED_BUILDS: Record<string, BuiltEntry[]> = {
       created_at: "2026-02-09T14:00:00Z",
     },
   ],
+  // Stack seed builds
+  "s1": [
+    {
+      id: "b4", idea_id: "s1",
+      user: { username: "jess_automates", display_name: "Jess Park", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=jess_automates&backgroundColor=d1f4d9" },
+      story: "Ran through this whole stack in one afternoon. The morning briefing alone was worth it, but combined with the commit summarizer it's a game changer for my daily flow.",
+      time_saved_weekly: "4 hours",
+      before_workflow: "Scattered morning routine, manual git log reviews",
+      after_workflow: "Automated briefing + commit summaries before standup",
+      impact_rating: 5,
+      created_at: "2026-02-08T16:00:00Z",
+    },
+  ],
+  "s3": [
+    {
+      id: "b5", idea_id: "s3",
+      user: { username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
+      story: "This stack turned my side project into something that actually ships. The content pipeline is *chef's kiss*.",
+      time_saved_weekly: "3 hours",
+      before_workflow: null, after_workflow: null,
+      impact_rating: 4,
+      created_at: "2026-02-07T10:00:00Z",
+    },
+  ],
 };
 
 function readBuilds(): Record<string, BuiltEntry[]> {
