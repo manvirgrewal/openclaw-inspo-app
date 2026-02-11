@@ -418,7 +418,7 @@ export default function CreateStackPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search your saved ideas..."
-                  autoFocus
+                  autoFocus={false}
                   className="flex-1 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
                 />
                 <button onClick={() => setShowSearch(false)} className="text-zinc-500 hover:text-zinc-300">
