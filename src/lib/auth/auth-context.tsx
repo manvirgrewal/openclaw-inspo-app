@@ -15,6 +15,7 @@ interface AuthContextValue {
   isLoading: boolean;
   signIn: () => void;
   signOut: () => void;
+  refreshUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextValue>({
   isLoading: true,
   signIn: () => {},
   signOut: () => {},
+  refreshUser: () => {},
 });
 
 const DEMO_USER: User = {
@@ -63,8 +65,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try { localStorage.removeItem(AUTH_KEY); } catch {}
   }, []);
 
+  const refreshUser = useCallback(() => {
+    try {
+      const profile = JSON.parse(localStorage.getItem("inspo-user-profile") || "{}");
+      setUser((prev) => prev ? {
+        ...prev,
+        display_name: profile.display_name || DEMO_USER.display_name,
+        avatar_url: profile.avatar_url || DEMO_USER.avatar_url,
+      } : prev);
+    } catch {}
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, signIn, signOut, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
