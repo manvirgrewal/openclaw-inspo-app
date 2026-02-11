@@ -207,7 +207,7 @@ export default function CreateStackPage() {
     if (!title.trim() || title.trim().length < 3) newErrors.title = "Title must be at least 3 characters";
     if (!description.trim()) newErrors.description = "Description is required";
     if (!category) newErrors.category = "Pick a category";
-    if (items.length < 2) newErrors.items = "Add at least 2 ideas to your stack";
+    if (items.length < 2) newErrors.items = "Add at least 2 prompts to your stack";
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -269,7 +269,7 @@ export default function CreateStackPage() {
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
         <Layers size={32} className="mb-3 text-zinc-600" />
         <h1 className="mb-2 text-lg font-semibold text-zinc-200">Sign in to create stacks</h1>
-        <p className="mb-6 text-sm text-zinc-500">Bundle ideas together into powerful workflows.</p>
+        <p className="mb-6 text-sm text-zinc-500">Chain prompts together into powerful workflows.</p>
         <Link href="/" className="text-sm text-zinc-400 underline hover:text-zinc-200">Back to feed</Link>
       </div>
     );
@@ -291,61 +291,10 @@ export default function CreateStackPage() {
       <h1 className="mb-6 text-xl font-bold">Create a Stack</h1>
 
       <div className="space-y-5">
-        {/* Title */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-300">Title *</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => { setTitle(e.target.value); setErrors((p) => ({ ...p, title: "" })); }}
-            maxLength={MAX_TITLE}
-            placeholder="The Morning Autopilot"
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-          />
-          {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
-          <p className="mt-1 text-xs text-zinc-600">{title.length}/{MAX_TITLE}</p>
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-300">Description *</label>
-          <textarea
-            value={description}
-            onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: "" })); }}
-            maxLength={MAX_DESC}
-            rows={3}
-            placeholder="What does this stack help you do? Why do these ideas work together?"
-            className="w-full resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
-          />
-          {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
-          <p className="mt-1 text-xs text-zinc-600">{description.length}/{MAX_DESC}</p>
-        </div>
-
-        {/* Category */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-zinc-300">Category *</label>
-          <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => { setCategory(cat.id); setErrors((p) => ({ ...p, category: "" })); }}
-                className={cn(
-                  "rounded-full border px-3 py-1.5 text-xs transition-colors",
-                  category === cat.id ? cat.color : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
-                )}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-          {errors.category && <p className="mt-1 text-xs text-red-400">{errors.category}</p>}
-        </div>
-
-        {/* Ideas in Stack */}
+        {/* Prompts — first */}
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-sm font-medium text-zinc-300">Ideas ({items.length}) *</label>
+            <label className="text-sm font-medium text-zinc-300">Prompts ({items.length}) *</label>
             <button
               onClick={() => setShowSearch(true)}
               className="flex items-center gap-1 rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
@@ -359,11 +308,11 @@ export default function CreateStackPage() {
           {items.length === 0 ? (
             <div className="rounded-lg border border-dashed border-zinc-700 py-10 text-center">
               <Bookmark size={24} className="mx-auto mb-2 text-zinc-600" />
-              <p className="text-sm text-zinc-500">No ideas added yet</p>
+              <p className="text-sm text-zinc-500">No prompts added yet</p>
               <p className="text-xs text-zinc-600">
                 {savedIdeas.length === 0
-                  ? "Save some ideas from the feed first, then add them to your stack"
-                  : `You have ${savedIdeas.length} saved idea${savedIdeas.length === 1 ? "" : "s"} to choose from`}
+                  ? "Save some prompts from the feed first, then chain them into a stack"
+                  : `You have ${savedIdeas.length} saved prompt${savedIdeas.length === 1 ? "" : "s"} to choose from`}
               </p>
             </div>
           ) : (
@@ -392,6 +341,57 @@ export default function CreateStackPage() {
           )}
         </div>
 
+        {/* Title */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-zinc-300">Title *</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => { setTitle(e.target.value); setErrors((p) => ({ ...p, title: "" })); }}
+            maxLength={MAX_TITLE}
+            placeholder="The Morning Autopilot"
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+          />
+          {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
+          <p className="mt-1 text-xs text-zinc-600">{title.length}/{MAX_TITLE}</p>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="mb-1 block text-sm font-medium text-zinc-300">Description *</label>
+          <textarea
+            value={description}
+            onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: "" })); }}
+            maxLength={MAX_DESC}
+            rows={3}
+            placeholder="What does this stack do? How do these prompts chain together?"
+            className="w-full resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+          />
+          {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
+          <p className="mt-1 text-xs text-zinc-600">{description.length}/{MAX_DESC}</p>
+        </div>
+
+        {/* Category */}
+        <div>
+          <label className="mb-2 block text-sm font-medium text-zinc-300">Category *</label>
+          <div className="flex flex-wrap gap-2">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => { setCategory(cat.id); setErrors((p) => ({ ...p, category: "" })); }}
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs transition-colors",
+                  category === cat.id ? cat.color : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
+                )}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+          {errors.category && <p className="mt-1 text-xs text-red-400">{errors.category}</p>}
+        </div>
+
         {/* Submit */}
         <button
           onClick={handleSubmit}
@@ -417,7 +417,7 @@ export default function CreateStackPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search your saved ideas..."
+                  placeholder="Search your saved prompts..."
                   autoFocus={false}
                   className="flex-1 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
                 />
@@ -427,7 +427,7 @@ export default function CreateStackPage() {
               </div>
               <p className="mt-2 text-[10px] text-zinc-600">
                 <Bookmark size={10} className="mr-1 inline" />
-                Only your saved ideas appear here. Save ideas from the feed to add them to stacks.
+                Only your saved prompts appear here. Save prompts from the feed to add them to stacks.
               </p>
             </div>
             <div className="overflow-y-auto p-2" style={{ maxHeight: "calc(80dvh - 80px)" }}>
@@ -435,8 +435,8 @@ export default function CreateStackPage() {
                 <div className="py-8 text-center">
                   <p className="text-sm text-zinc-600">
                     {savedIdeas.length === 0
-                      ? "No saved ideas yet"
-                      : "No matching saved ideas"}
+                      ? "No saved prompts yet"
+                      : "No matching saved prompts"}
                   </p>
                   {savedIdeas.length === 0 && (
                     <Link
@@ -444,7 +444,7 @@ export default function CreateStackPage() {
                       onClick={() => setShowSearch(false)}
                       className="mt-2 inline-block text-xs text-emerald-400 hover:underline"
                     >
-                      Browse ideas to save →
+                      Browse prompts to save →
                     </Link>
                   )}
                 </div>
