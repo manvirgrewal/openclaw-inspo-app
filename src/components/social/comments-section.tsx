@@ -210,11 +210,10 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
     all[ideaId] = [...(all[ideaId] || []), comment];
     writeComments(all);
     // Update state
-    setComments((prev) => {
-      const next = [...prev, comment];
-      onCommentCountChange?.(next.length);
-      return next;
-    });
+    const newCount = all[ideaId].length;
+    setComments((prev) => [...prev, comment]);
+    // Defer parent state update to avoid setState-during-render
+    queueMicrotask(() => onCommentCountChange?.(newCount));
     toast("Comment posted!");
   }, [ideaId, user, toast]);
 
