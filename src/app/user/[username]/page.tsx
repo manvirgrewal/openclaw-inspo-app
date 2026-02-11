@@ -28,7 +28,7 @@ const SEED_PROFILES: Record<string, Profile> = {
     onboarding_role: "Developer",
     interests: ["productivity", "development"],
     ideas_built_count: 12,
-    ideas_contributed_count: 3,
+    ideas_contributed_count: 2, // ideas 1, 3
     follower_count: 142,
     following_count: 38,
     pinned_ideas: [],
@@ -53,7 +53,7 @@ const SEED_PROFILES: Record<string, Profile> = {
     onboarding_role: "Entrepreneur",
     interests: ["finance", "productivity"],
     ideas_built_count: 8,
-    ideas_contributed_count: 2,
+    ideas_contributed_count: 2, // ideas 2, 5
     follower_count: 89,
     following_count: 45,
     pinned_ideas: [],
@@ -78,7 +78,7 @@ const SEED_PROFILES: Record<string, Profile> = {
     onboarding_role: "Marketer",
     interests: ["productivity", "communication"],
     ideas_built_count: 6,
-    ideas_contributed_count: 1,
+    ideas_contributed_count: 1, // idea 4
     follower_count: 67,
     following_count: 52,
     pinned_ideas: [],

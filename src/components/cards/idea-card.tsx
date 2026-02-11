@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Copy, Bookmark, MessageSquare, MoreHorizontal, Check } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -22,6 +22,16 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
   const { toast } = useToast();
   const saved = isSaved(idea.id);
   const [localCountDelta, setLocalCountDelta] = useState(() => isSaved(idea.id) ? 1 : 0);
+
+  // Live comment count: seed comment_count + user comments from localStorage
+  const [liveCommentCount, setLiveCommentCount] = useState(idea.comment_count);
+  useEffect(() => {
+    try {
+      const userComments = JSON.parse(localStorage.getItem("inspo-comments") || "{}");
+      const userCount = (userComments[idea.id] || []).length;
+      setLiveCommentCount(idea.comment_count + userCount);
+    } catch {}
+  }, [idea.id, idea.comment_count]);
 
   const category = CATEGORY_MAP[idea.category];
   const complexity = COMPLEXITY_OPTIONS.find((c) => c.id === idea.complexity);
@@ -185,7 +195,7 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
         {/* Comments */}
         <span className="flex items-center gap-1 text-xs text-zinc-500">
           <MessageSquare size={14} />
-          <span>{idea.comment_count}</span>
+          <span>{liveCommentCount}</span>
         </span>
 
         {/* More menu */}

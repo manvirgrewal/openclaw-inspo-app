@@ -37,14 +37,17 @@ export default function IdeaDetailPage({
 }) {
   const { slug } = use(params);
 
-  // Check seed ideas + user-submitted ideas from localStorage
-  let idea: Idea | undefined = SEED_IDEAS.find((i) => i.slug === slug);
-  if (!idea && typeof window !== "undefined") {
+  // Check seed ideas first
+  const seedIdea = SEED_IDEAS.find((i) => i.slug === slug);
+  const [userIdea, setUserIdea] = useState<Idea | undefined>(undefined);
+  useEffect(() => {
+    if (seedIdea) return; // no need to check localStorage
     try {
-      const userIdeas: Idea[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
-      idea = userIdeas.find((i) => i.slug === slug);
+      const stored: Idea[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      setUserIdea(stored.find((i) => i.slug === slug));
     } catch {}
-  }
+  }, [slug, seedIdea]);
+  const idea = seedIdea ?? userIdea;
 
   const [copied, setCopied] = useState(false);
   const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();

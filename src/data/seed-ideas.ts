@@ -9,7 +9,7 @@ export const SEED_IDEAS: Idea[] = [
     body: null,
     prompt: "Every morning at 8am, check my calendar for today's events, get the current weather for my location, and summarize my top 5 unread emails. Deliver this as a concise 3-line briefing.",
     category: "productivity", complexity: "quick", skills: ["calendar", "email", "weather"], tags: ["morning", "routine", "briefing"],
-    status: "published", save_count: 142, comment_count: 8, built_count: 23, view_count: 1200,
+    status: "published", save_count: 142, comment_count: 3, built_count: 23, view_count: 1200,
     remix_of: null, created_at: "2026-02-10T08:00:00Z", updated_at: "2026-02-10T08:00:00Z", published_at: "2026-02-10T08:00:00Z",
   },
   {
@@ -20,7 +20,7 @@ export const SEED_IDEAS: Idea[] = [
     body: null,
     prompt: "When I forward an email with a receipt or invoice, extract the vendor name, total amount, date, and categorize it (food, transport, subscriptions, etc). Append a row to my expenses spreadsheet with this data.",
     category: "finance", complexity: "moderate", skills: ["email", "sheets"], tags: ["expenses", "tracking", "automation"],
-    status: "published", save_count: 89, comment_count: 12, built_count: 15, view_count: 890,
+    status: "published", save_count: 89, comment_count: 1, built_count: 15, view_count: 890,
     remix_of: null, created_at: "2026-02-09T14:00:00Z", updated_at: "2026-02-09T14:00:00Z", published_at: "2026-02-09T14:00:00Z",
   },
   {
@@ -31,7 +31,7 @@ export const SEED_IDEAS: Idea[] = [
     body: null,
     prompt: "Every evening at 6pm, check my recent git commits across all active repos. Generate a bullet-point summary of what I accomplished today, grouped by project. Keep it concise enough for a standup update.",
     category: "development", complexity: "quick", skills: ["github"], tags: ["git", "standup", "developer"],
-    status: "published", save_count: 201, comment_count: 15, built_count: 34, view_count: 1800,
+    status: "published", save_count: 201, comment_count: 2, built_count: 34, view_count: 1800,
     remix_of: null, created_at: "2026-02-08T10:00:00Z", updated_at: "2026-02-08T10:00:00Z", published_at: "2026-02-08T10:00:00Z",
   },
   {
@@ -42,7 +42,7 @@ export const SEED_IDEAS: Idea[] = [
     body: null,
     prompt: "Monitor my calendar. 30 minutes before each meeting, look up the attendees, find any previous meeting notes or shared documents related to this topic, and send me a brief prep summary with key talking points.",
     category: "productivity", complexity: "moderate", skills: ["calendar", "drive", "contacts"], tags: ["meetings", "preparation", "context"],
-    status: "published", save_count: 167, comment_count: 6, built_count: 19, view_count: 1100,
+    status: "published", save_count: 167, comment_count: 1, built_count: 19, view_count: 1100,
     remix_of: null, created_at: "2026-02-07T16:00:00Z", updated_at: "2026-02-07T16:00:00Z", published_at: "2026-02-07T16:00:00Z",
   },
   {
@@ -53,7 +53,7 @@ export const SEED_IDEAS: Idea[] = [
     body: null,
     prompt: "Every Sunday evening, review my bookmarked articles, saved links, and browsing interests. Curate a digest of the 5 most interesting and relevant things I should read this week, with a one-line summary for each.",
     category: "learning", complexity: "moderate", skills: ["web-search", "bookmarks"], tags: ["learning", "weekly", "curation"],
-    status: "published", save_count: 95, comment_count: 4, built_count: 11, view_count: 720,
+    status: "published", save_count: 95, comment_count: 1, built_count: 11, view_count: 720,
     remix_of: null, created_at: "2026-02-06T12:00:00Z", updated_at: "2026-02-06T12:00:00Z", published_at: "2026-02-06T12:00:00Z",
   },
 ];
