@@ -277,24 +277,7 @@ export default function IdeaDetailPage({
         </div>
       )}
 
-      {/* Tags */}
-      {idea.tags.length > 0 && (
-        <div className="mb-6">
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
-            Tags
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {idea.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full border border-zinc-800 px-2.5 py-0.5 text-xs text-zinc-500"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Tags — hidden for now, category badge is sufficient */}
 
       {/* Action bar */}
       <div className="flex items-center gap-3 border-t border-zinc-800 pt-4">
