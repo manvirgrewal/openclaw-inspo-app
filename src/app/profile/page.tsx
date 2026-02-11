@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Share2, Settings } from "lucide-react";
@@ -21,6 +21,7 @@ export default function ProfilePage() {
   const { user, isAuthenticated } = useAuth();
   const { savedIds } = useGuestSaves();
   const router = useRouter();
+  const [userIdeas, setUserIdeas] = useState<import("@/modules/ideas/ideas.types").Idea[]>([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -28,11 +29,19 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, router]);
 
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      setUserIdeas(stored);
+    } catch {}
+  }, []);
+
   if (!user) {
     return null;
   }
 
-  const savedIdeas = SEED_IDEAS.filter((idea) => savedIds.includes(idea.id));
+  const allIdeas = [...userIdeas, ...SEED_IDEAS];
+  const savedIdeas = allIdeas.filter((idea) => savedIds.includes(idea.id));
 
   return (
     <div className="px-4 py-4">
@@ -52,8 +61,8 @@ export default function ProfilePage() {
 
         {/* Stats */}
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
-          <span>💡 0 ideas</span>
-          <span>🔖 {savedIds.length} saved</span>
+          <span>💡 {userIdeas.length} ideas</span>
+          <span>🔖 {savedIdeas.length} saved</span>
         </div>
 
         {/* Actions */}
@@ -85,9 +94,17 @@ export default function ProfilePage() {
         </Tabs.List>
 
         <Tabs.Content value="ideas">
-          <div className="py-12 text-center text-sm text-zinc-600">
-            You haven&apos;t posted any ideas yet. Start by submitting one!
-          </div>
+          {userIdeas.length > 0 ? (
+            <div className="space-y-3">
+              {userIdeas.map((idea) => (
+                <IdeaCard key={idea.id} idea={idea} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-zinc-600">
+              You haven&apos;t posted any ideas yet. Start by submitting one!
+            </div>
+          )}
         </Tabs.Content>
 
         <Tabs.Content value="saved">

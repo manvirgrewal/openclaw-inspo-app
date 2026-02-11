@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { CardSkeleton } from "@/components/cards/card-skeleton";
 import { FilterChips } from "@/components/feed/filter-chips";
@@ -138,10 +138,19 @@ const SEED_IDEAS: Idea[] = [
 
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
 
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      setUserIdeas(stored);
+    } catch {}
+  }, []);
+
+  const allIdeas = [...userIdeas, ...SEED_IDEAS];
   const filteredIdeas = selectedCategory
-    ? SEED_IDEAS.filter((idea) => idea.category === selectedCategory)
-    : SEED_IDEAS;
+    ? allIdeas.filter((idea) => idea.category === selectedCategory)
+    : allIdeas;
 
   return (
     <div>

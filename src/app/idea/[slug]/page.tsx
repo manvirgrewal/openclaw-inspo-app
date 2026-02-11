@@ -19,128 +19,8 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useToast } from "@/components/common/toast";
 import { CommentsSection } from "@/components/social/comments-section";
+import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
-
-// Seed data fallback (same pattern as home page)
-const SEED_IDEAS: Record<string, Idea> = {
-  "morning-briefing-agent": {
-    id: "1",
-    author_id: "seed-author-1",
-    slug: "morning-briefing-agent",
-    title: "Morning Briefing Agent",
-    description:
-      "Your agent reads your calendar, weather, and top emails every morning — delivers a 3-line summary so you can start your day without checking 5 different apps.",
-    body: `## How It Works
-
-This agent runs on a schedule every morning at your preferred time. It pulls data from three sources:
-
-1. **Calendar** — Today's events with times and attendees
-2. **Weather** — Current conditions and forecast for your location  
-3. **Email** — Top 5 unread emails by importance
-
-The output is a concise 3-line briefing delivered however you prefer — Slack message, notification, or spoken aloud.
-
-## Customization Ideas
-
-- Add news headlines from your preferred sources
-- Include stock prices or crypto portfolio changes
-- Add commute time estimates based on your first meeting location
-- Include a motivational quote or daily affirmation`,
-    prompt:
-      "Every morning at 8am, check my calendar for today's events, get the current weather for my location, and summarize my top 5 unread emails. Deliver this as a concise 3-line briefing.",
-    category: "productivity",
-    complexity: "quick",
-    skills: ["calendar", "email", "weather"],
-    tags: ["morning", "routine", "briefing"],
-    status: "published",
-    save_count: 142,
-    comment_count: 8,
-    built_count: 23,
-    view_count: 1200,
-    remix_of: null,
-    created_at: "2026-02-10T08:00:00Z",
-    updated_at: "2026-02-10T08:00:00Z",
-    published_at: "2026-02-10T08:00:00Z",
-    author: {
-      id: "seed-author-1",
-      username: "alexclaw",
-      display_name: "Alex",
-      avatar_url: null,
-    },
-  },
-  "expense-auto-tracker": {
-    id: "2",
-    author_id: "seed-author-2",
-    slug: "expense-auto-tracker",
-    title: "Expense Auto-Tracker",
-    description:
-      "Forward receipts to your agent via email — it extracts the amount, vendor, and category, then logs it to a spreadsheet automatically.",
-    body: `## Setup
-
-Forward any receipt or invoice email to your agent. It will:
-
-1. Parse the email for vendor name, amount, and date
-2. Auto-categorize the expense (food, transport, subscriptions, etc.)
-3. Append a new row to your designated spreadsheet
-
-## Tips
-
-- Works best with digital receipts (plain text or HTML emails)
-- Set up an email forwarding rule for automatic processing
-- Review categorization weekly and correct mistakes — the agent learns`,
-    prompt:
-      "When I forward an email with a receipt or invoice, extract the vendor name, total amount, date, and categorize it (food, transport, subscriptions, etc). Append a row to my expenses spreadsheet with this data.",
-    category: "finance",
-    complexity: "moderate",
-    skills: ["email", "sheets"],
-    tags: ["expenses", "tracking", "automation"],
-    status: "published",
-    save_count: 89,
-    comment_count: 12,
-    built_count: 15,
-    view_count: 890,
-    remix_of: null,
-    created_at: "2026-02-09T14:00:00Z",
-    updated_at: "2026-02-09T14:00:00Z",
-    published_at: "2026-02-09T14:00:00Z",
-    author: {
-      id: "seed-author-2",
-      username: "financebot",
-      display_name: "Finance Bot",
-      avatar_url: null,
-    },
-  },
-  "git-commit-summarizer": {
-    id: "3",
-    author_id: "seed-author-3",
-    slug: "git-commit-summarizer",
-    title: "Git Commit Summarizer",
-    description:
-      "At the end of each day, your agent reviews your git commits and generates a clean summary of what you accomplished — perfect for standups.",
-    body: null,
-    prompt:
-      "Every evening at 6pm, check my recent git commits across all active repos. Generate a bullet-point summary of what I accomplished today, grouped by project. Keep it concise enough for a standup update.",
-    category: "development",
-    complexity: "quick",
-    skills: ["github"],
-    tags: ["git", "standup", "developer"],
-    status: "published",
-    save_count: 201,
-    comment_count: 15,
-    built_count: 34,
-    view_count: 1800,
-    remix_of: null,
-    created_at: "2026-02-08T10:00:00Z",
-    updated_at: "2026-02-08T10:00:00Z",
-    published_at: "2026-02-08T10:00:00Z",
-    author: {
-      id: "seed-author-3",
-      username: "devtools",
-      display_name: "Dev Tools",
-      avatar_url: null,
-    },
-  },
-};
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("en-US", {
@@ -156,7 +36,15 @@ export default function IdeaDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const idea = SEED_IDEAS[slug];
+
+  // Check seed ideas + user-submitted ideas from localStorage
+  let idea: Idea | undefined = SEED_IDEAS.find((i) => i.slug === slug);
+  if (!idea && typeof window !== "undefined") {
+    try {
+      const userIdeas: Idea[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      idea = userIdeas.find((i) => i.slug === slug);
+    } catch {}
+  }
 
   const [copied, setCopied] = useState(false);
   const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();

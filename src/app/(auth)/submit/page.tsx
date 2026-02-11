@@ -157,15 +157,29 @@ export default function SubmitPage() {
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/ideas", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data.error?.message || "Failed to submit");
-      }
+      // Demo mode: save to localStorage instead of API
+      const newIdea = {
+        ...result.data,
+        id: `user-${Date.now()}`,
+        slug: result.data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+        author_id: "demo-user-1",
+        author: { id: "demo-user-1", username: "demo_user", display_name: "Demo User", avatar_url: null },
+        status: "published" as const,
+        save_count: 0,
+        comment_count: 0,
+        built_count: 0,
+        view_count: 0,
+        body: result.data.body ?? null,
+        skills: result.data.skills ?? [],
+        tags: result.data.tags ?? [],
+        remix_of: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        published_at: new Date().toISOString(),
+      };
+      const existing = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      existing.unshift(newIdea);
+      localStorage.setItem("inspo-user-ideas", JSON.stringify(existing));
       localStorage.removeItem(DRAFT_KEY);
       router.push("/");
     } catch (err) {
