@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
 import { FilterChips } from "@/components/feed/filter-chips";
@@ -39,6 +39,10 @@ export default function HomePage() {
       const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
       setUserIdeas(stored);
     } catch {}
+  }, []);
+
+  const handleDelete = useCallback((ideaId: string) => {
+    setUserIdeas((prev) => prev.filter((i) => i.id !== ideaId));
   }, []);
 
   const allIdeas = [...userIdeas, ...SEED_IDEAS];
@@ -84,7 +88,7 @@ export default function HomePage() {
                 <StackCard key={`stack-promo-${stack.id}`} stack={stack} />
               ) : null;
             }
-            return <IdeaCard key={(item as Idea).id} idea={item as Idea} />;
+            return <IdeaCard key={(item as Idea).id} idea={item as Idea} onDelete={handleDelete} />;
           })
         )}
 
