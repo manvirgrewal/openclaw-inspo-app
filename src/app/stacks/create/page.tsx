@@ -8,6 +8,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -78,18 +79,16 @@ function SortableStackItem({
     >
       <div className="flex items-start gap-2">
         {/* Drag handle + position */}
-        <div className="flex flex-col items-center gap-1 pt-0.5">
+        <div
+          {...attributes}
+          {...listeners}
+          className="flex cursor-grab select-none flex-col items-center gap-1 rounded-lg px-1 py-1 touch-none active:cursor-grabbing active:bg-zinc-800"
+          title="Hold to drag"
+        >
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">
             {index + 1}
           </span>
-          <button
-            {...attributes}
-            {...listeners}
-            className="cursor-grab touch-none rounded p-0.5 text-zinc-600 hover:text-zinc-300 active:cursor-grabbing"
-            title="Drag to reorder"
-          >
-            <GripVertical size={16} />
-          </button>
+          <GripVertical size={18} className="text-zinc-500" />
         </div>
 
         {/* Idea info */}
@@ -171,7 +170,8 @@ export default function CreateStackPage() {
 
   // DnD sensors
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
