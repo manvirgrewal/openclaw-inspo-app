@@ -7,6 +7,7 @@ import { FilterChips } from "@/components/feed/filter-chips";
 import { FeedTabs, type FeedTab } from "@/components/feed/feed-tabs";
 import { SaveNudgeBanner } from "@/components/common/save-nudge-banner";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useFollows } from "@/hooks/use-follows";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import type { Idea } from "@/modules/ideas/ideas.types";
@@ -28,6 +29,7 @@ function injectSlots(ideas: Idea[]): (Idea | { type: "stack"; index: number })[]
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
+  const { followedIds } = useFollows();
   const [activeTab, setActiveTab] = useState<FeedTab>("discover");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
@@ -44,8 +46,8 @@ export default function HomePage() {
     ? allIdeas.filter((idea) => idea.category === selectedCategory)
     : allIdeas;
 
-  // Following tab: show ideas from users you follow (demo: empty state for now)
-  const followingIdeas: Idea[] = [];
+  // Following tab: show ideas from users you follow
+  const followingIdeas = allIdeas.filter((idea) => idea.author_id && followedIds.includes(idea.author_id));
 
   const displayIdeas = activeTab === "following" ? followingIdeas : filteredIdeas;
   const feedItems = activeTab === "discover" && !selectedCategory

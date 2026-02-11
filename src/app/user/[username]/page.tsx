@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
+import { use } from "react";
 import Link from "next/link";
 import { ArrowLeft, UserPlus, Share2, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils/cn";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useFollows } from "@/hooks/use-follows";
 import { useToast } from "@/components/common/toast";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
@@ -106,8 +107,9 @@ export default function UserProfilePage({
   const { username } = use(params);
   const profile = SEED_PROFILES[username];
   const { isAuthenticated } = useAuth();
+  const { toggleFollow, isFollowing } = useFollows();
   const { toast } = useToast();
-  const [following, setFollowing] = useState(false);
+  const following = profile ? isFollowing(profile.id) : false;
 
   if (!profile) {
     return (
@@ -169,7 +171,7 @@ export default function UserProfilePage({
                 toast("Sign in to follow users");
                 return;
               }
-              setFollowing(!following);
+              toggleFollow(profile.id);
             }}
             className={cn(
               "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
