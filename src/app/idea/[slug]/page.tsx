@@ -293,7 +293,7 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Comments */}
-      <CommentsSection />
+      <CommentsSection ideaId={idea.id} />
     </div>
   );
 }

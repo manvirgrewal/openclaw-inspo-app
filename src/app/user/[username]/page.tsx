@@ -1,83 +1,124 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import Link from "next/link";
-import { ArrowLeft, Pin, UserPlus, Share2 } from "lucide-react";
+import { ArrowLeft, UserPlus, Share2 } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils/cn";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
-import type { Idea } from "@/modules/ideas/ideas.types";
-import type { Stack } from "@/modules/stacks/stacks.types";
+import { SEED_IDEAS } from "@/data/seed-ideas";
+import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import type { Profile } from "@/modules/users/users.types";
 
-// Seed data
-const SEED_PROFILE: Profile = {
-  id: "u1",
-  username: "sarah_dev",
-  display_name: "Sarah Chen",
-  avatar_url: null,
-  bio: "Full-stack dev automating everything I can. Building with OpenClaw daily.",
-  role: "user",
-  reputation_score: 420,
-  agent_platform: "OpenClaw",
-  active_skills: ["calendar", "email", "github", "weather"],
-  setup_description: null,
-  setup_score: 75,
-  onboarding_role: "Developer",
-  interests: ["productivity", "development"],
-  ideas_built_count: 12,
-  ideas_contributed_count: 8,
-  follower_count: 142,
-  following_count: 38,
-  pinned_ideas: ["p1"],
-  pinned_stacks: [],
-  pinned_builds: [],
-  onboarding_completed: true,
-  created_at: "2026-01-15T08:00:00Z",
-  updated_at: "2026-02-10T08:00:00Z",
+// Seed user profiles
+const SEED_PROFILES: Record<string, Profile> = {
+  sarah_dev: {
+    id: "u1",
+    username: "sarah_dev",
+    display_name: "Sarah Chen",
+    avatar_url: null,
+    bio: "Full-stack dev automating everything I can. Building with OpenClaw daily.",
+    role: "user",
+    reputation_score: 420,
+    agent_platform: "OpenClaw",
+    active_skills: ["calendar", "email", "github", "weather"],
+    setup_description: null,
+    setup_score: 75,
+    onboarding_role: "Developer",
+    interests: ["productivity", "development"],
+    ideas_built_count: 12,
+    ideas_contributed_count: 3,
+    follower_count: 142,
+    following_count: 38,
+    pinned_ideas: [],
+    pinned_stacks: [],
+    pinned_builds: [],
+    onboarding_completed: true,
+    created_at: "2026-01-15T08:00:00Z",
+    updated_at: "2026-02-10T08:00:00Z",
+  },
+  mike_builds: {
+    id: "u2",
+    username: "mike_builds",
+    display_name: "Mike Rivera",
+    avatar_url: null,
+    bio: "Finance nerd meets automation junkie. Making money while I sleep (sort of).",
+    role: "user",
+    reputation_score: 280,
+    agent_platform: "OpenClaw",
+    active_skills: ["email", "sheets", "web-search"],
+    setup_description: null,
+    setup_score: 60,
+    onboarding_role: "Entrepreneur",
+    interests: ["finance", "productivity"],
+    ideas_built_count: 8,
+    ideas_contributed_count: 2,
+    follower_count: 89,
+    following_count: 45,
+    pinned_ideas: [],
+    pinned_stacks: [],
+    pinned_builds: [],
+    onboarding_completed: true,
+    created_at: "2026-01-20T08:00:00Z",
+    updated_at: "2026-02-10T08:00:00Z",
+  },
+  jess_automates: {
+    id: "u3",
+    username: "jess_automates",
+    display_name: "Jess Park",
+    avatar_url: null,
+    bio: "Product manager by day, automation enthusiast by night. Everything should be one click.",
+    role: "user",
+    reputation_score: 310,
+    agent_platform: "Claude",
+    active_skills: ["calendar", "drive", "contacts"],
+    setup_description: null,
+    setup_score: 55,
+    onboarding_role: "Marketer",
+    interests: ["productivity", "communication"],
+    ideas_built_count: 6,
+    ideas_contributed_count: 1,
+    follower_count: 67,
+    following_count: 52,
+    pinned_ideas: [],
+    pinned_stacks: [],
+    pinned_builds: [],
+    onboarding_completed: true,
+    created_at: "2026-01-25T08:00:00Z",
+    updated_at: "2026-02-10T08:00:00Z",
+  },
 };
-
-const SEED_IDEAS: Idea[] = [
-  {
-    id: "p1", author_id: "u1", slug: "morning-briefing-agent",
-    title: "Morning Briefing Agent", description: "Your agent reads your calendar, weather, and top emails every AM — delivers a 3-line summary.",
-    body: null, prompt: "Every morning at 7am, check my calendar, weather, and unread emails. Give me a 3-line briefing.",
-    category: "productivity", complexity: "quick", skills: ["calendar", "email", "weather"], tags: [],
-    status: "published", save_count: 142, comment_count: 8, built_count: 35, view_count: 680,
-    remix_of: null, created_at: "2026-01-20T08:00:00Z", updated_at: "2026-01-20T08:00:00Z", published_at: "2026-01-20T08:00:00Z",
-  },
-  {
-    id: "p2", author_id: "u1", slug: "pr-summary-bot",
-    title: "PR Summary Bot", description: "Auto-generate PR descriptions from your git diff and commit messages.",
-    body: null, prompt: "Read the git diff and commit messages for my current branch. Write a clear PR description with: summary, changes, testing notes.",
-    category: "development", complexity: "moderate", skills: ["github"], tags: ["git"],
-    status: "published", save_count: 78, comment_count: 4, built_count: 22, view_count: 310,
-    remix_of: null, created_at: "2026-01-25T08:00:00Z", updated_at: "2026-01-25T08:00:00Z", published_at: "2026-01-25T08:00:00Z",
-  },
-];
-
-const SEED_STACKS: Stack[] = [
-  {
-    id: "s1", author_id: "u1", slug: "morning-autopilot",
-    title: "The Morning Autopilot", description: "Automate your entire morning routine.",
-    cover_image_url: null, category: "productivity", is_featured: true, status: "published",
-    save_count: 89, view_count: 340, created_at: "2026-02-01T08:00:00Z", updated_at: "2026-02-01T08:00:00Z",
-    items: Array.from({ length: 7 }, (_, i) => ({ stack_id: "s1", idea_id: `i${i}`, position: i, context_note: null })),
-    author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: null },
-  },
-];
 
 const TAB_ITEMS = [
   { value: "ideas", label: "Ideas" },
-  { value: "built", label: "Built" },
   { value: "stacks", label: "Stacks" },
   { value: "about", label: "About" },
 ];
 
-export default function UserProfilePage() {
-  const profile = SEED_PROFILE;
+export default function UserProfilePage({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = use(params);
+  const profile = SEED_PROFILES[username];
   const [following, setFollowing] = useState(false);
+
+  if (!profile) {
+    return (
+      <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
+        <h1 className="mb-2 text-xl font-semibold text-zinc-100">User not found</h1>
+        <p className="mb-6 text-sm text-zinc-500">@{username} doesn&apos;t exist yet.</p>
+        <Link href="/" className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700">
+          Back to Feed
+        </Link>
+      </div>
+    );
+  }
+
+  const userIdeas = SEED_IDEAS.filter((i) => i.author_id === profile.id);
+  const userStacks = SEED_STACKS_LIST.filter((s) => s.author_id === profile.id);
 
   return (
     <div className="px-4 py-4">
@@ -88,7 +129,6 @@ export default function UserProfilePage() {
 
       {/* Profile Header */}
       <div className="mb-6 text-center">
-        {/* Avatar */}
         <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-xl font-bold text-zinc-400">
           {profile.display_name?.[0] ?? profile.username[0].toUpperCase()}
         </div>
@@ -102,7 +142,7 @@ export default function UserProfilePage() {
 
         {/* Stats */}
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
-          <span>💡 {profile.ideas_contributed_count} ideas</span>
+          <span>💡 {userIdeas.length} ideas</span>
           <span>⚡ {profile.ideas_built_count} built</span>
           <span>👥 {profile.follower_count} followers</span>
         </div>
@@ -137,21 +177,6 @@ export default function UserProfilePage() {
         </div>
       </div>
 
-      {/* Pinned Section */}
-      {SEED_IDEAS.filter((i) => profile.pinned_ideas.includes(i.id)).length > 0 && (
-        <div className="mb-4">
-          <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-zinc-500">
-            <Pin size={12} />
-            📌 Pinned
-          </div>
-          <div className="space-y-3">
-            {SEED_IDEAS.filter((i) => profile.pinned_ideas.includes(i.id)).map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Tabs */}
       <Tabs.Root defaultValue="ideas">
         <Tabs.List className="mb-4 flex border-b border-zinc-800">
@@ -167,25 +192,31 @@ export default function UserProfilePage() {
         </Tabs.List>
 
         <Tabs.Content value="ideas">
-          <div className="space-y-3">
-            {SEED_IDEAS.map((idea) => (
-              <IdeaCard key={idea.id} idea={idea} />
-            ))}
-          </div>
-        </Tabs.Content>
-
-        <Tabs.Content value="built">
-          <div className="py-12 text-center text-sm text-zinc-600">
-            No builds to show yet
-          </div>
+          {userIdeas.length > 0 ? (
+            <div className="space-y-3">
+              {userIdeas.map((idea) => (
+                <IdeaCard key={idea.id} idea={idea} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-zinc-600">
+              No ideas posted yet
+            </div>
+          )}
         </Tabs.Content>
 
         <Tabs.Content value="stacks">
-          <div className="space-y-3">
-            {SEED_STACKS.map((stack) => (
-              <StackCard key={stack.id} stack={stack} />
-            ))}
-          </div>
+          {userStacks.length > 0 ? (
+            <div className="space-y-3">
+              {userStacks.map((stack) => (
+                <StackCard key={stack.id} stack={stack} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center text-sm text-zinc-600">
+              No stacks created yet
+            </div>
+          )}
         </Tabs.Content>
 
         <Tabs.Content value="about">
@@ -205,6 +236,12 @@ export default function UserProfilePage() {
                     <span key={skill} className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{skill}</span>
                   ))}
                 </div>
+              </div>
+            )}
+            {profile.onboarding_role && (
+              <div>
+                <h4 className="mb-1 font-medium text-zinc-300">Role</h4>
+                <p>{profile.onboarding_role}</p>
               </div>
             )}
             <div>

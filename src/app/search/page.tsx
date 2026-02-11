@@ -3,17 +3,35 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, X, Clock } from "lucide-react";
 import { IdeaCard } from "@/components/cards/idea-card";
+import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 const RECENT_KEY = "inspo-recent-searches";
 const MAX_RECENT = 8;
 
+function searchIdeas(query: string, allIdeas: Idea[]): Idea[] {
+  const q = query.toLowerCase().trim();
+  if (!q) return [];
+  return allIdeas.filter((idea) => {
+    const searchable = [
+      idea.title,
+      idea.description,
+      idea.prompt,
+      ...(idea.skills || []),
+      ...(idea.tags || []),
+      idea.category,
+    ].join(" ").toLowerCase();
+    // All words must match
+    return q.split(/\s+/).every((word) => searchable.includes(word));
+  });
+}
+
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Idea[]>([]);
-  const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [recent, setRecent] = useState<string[]>([]);
+  const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -23,26 +41,23 @@ export default function SearchPage() {
       const saved = localStorage.getItem(RECENT_KEY);
       if (saved) setRecent(JSON.parse(saved));
     } catch {}
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      setUserIdeas(stored);
+    } catch {}
   }, []);
 
-  const doSearch = useCallback(async (q: string) => {
+  const allIdeas = [...userIdeas, ...SEED_IDEAS];
+
+  const doSearch = useCallback((q: string) => {
     if (!q.trim()) {
       setResults([]);
       setSearched(false);
       return;
     }
-    setLoading(true);
     setSearched(true);
-    try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
-      const data = await res.json();
-      setResults(data.data ?? []);
-    } catch {
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    setResults(searchIdeas(q, allIdeas));
+  }, [allIdeas]);
 
   const saveRecent = (q: string) => {
     const trimmed = q.trim();
@@ -117,16 +132,10 @@ export default function SearchPage() {
         </div>
       )}
 
-      {/* Loading */}
-      {loading && (
-        <div className="flex justify-center py-12">
-          <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" />
-        </div>
-      )}
-
       {/* Results */}
-      {!loading && results.length > 0 && (
+      {results.length > 0 && (
         <div className="space-y-3">
+          <p className="text-xs text-zinc-500">{results.length} result{results.length !== 1 ? "s" : ""}</p>
           {results.map((idea) => (
             <IdeaCard key={idea.id} idea={idea} />
           ))}
@@ -134,7 +143,7 @@ export default function SearchPage() {
       )}
 
       {/* No results */}
-      {!loading && searched && results.length === 0 && (
+      {searched && results.length === 0 && (
         <div className="py-16 text-center">
           <Search size={32} className="mx-auto mb-3 text-zinc-700" />
           <p className="text-sm text-zinc-500">No results found for &ldquo;{query}&rdquo;</p>

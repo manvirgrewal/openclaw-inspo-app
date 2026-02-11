@@ -12,6 +12,7 @@ interface User {
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   signIn: () => void;
   signOut: () => void;
 }
@@ -19,6 +20,7 @@ interface AuthContextValue {
 const AuthContext = createContext<AuthContextValue>({
   user: null,
   isAuthenticated: false,
+  isLoading: true,
   signIn: () => {},
   signOut: () => {},
 });
@@ -34,6 +36,7 @@ const AUTH_KEY = "inspo-demo-auth";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -41,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(DEMO_USER);
       }
     } catch {}
+    setIsLoading(false);
   }, []);
 
   const signIn = useCallback(() => {
@@ -54,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

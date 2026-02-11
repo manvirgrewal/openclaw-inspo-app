@@ -18,16 +18,16 @@ const TAB_ITEMS = [
 ];
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const { savedIds } = useGuestSaves();
   const router = useRouter();
   const [userIdeas, setUserIdeas] = useState<import("@/modules/ideas/ideas.types").Idea[]>([]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.replace("/auth/login");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
 
   useEffect(() => {
     try {
@@ -36,8 +36,12 @@ export default function ProfilePage() {
     } catch {}
   }, []);
 
-  if (!user) {
-    return null;
+  if (isLoading || !user) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
+      </div>
+    );
   }
 
   const allIdeas = [...userIdeas, ...SEED_IDEAS];
