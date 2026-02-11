@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Hammer, Star, ChevronDown, ChevronUp, User } from "lucide-react";
+import { Hammer, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
+import { UserAvatar } from "@/components/common/user-avatar";
 
 interface BuiltEntry {
   id: string;
   idea_id: string;
-  user: { username: string; display_name: string };
+  user: { username: string; display_name: string; avatar_url?: string | null };
   story: string | null;
   time_saved_weekly: string | null;
   before_workflow: string | null;
@@ -26,7 +27,7 @@ const SEED_BUILDS: Record<string, BuiltEntry[]> = {
   "1": [
     {
       id: "b1", idea_id: "1",
-      user: { username: "sarah_dev", display_name: "Sarah Chen" },
+      user: { username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       story: "Set this up with OpenClaw in about 3 minutes. Added stock prices and news headlines to my briefing too. Now I don't open 5 apps every morning.",
       time_saved_weekly: "2 hours",
       before_workflow: "Manually checking calendar, weather app, Gmail, news, stocks every morning",
@@ -36,7 +37,7 @@ const SEED_BUILDS: Record<string, BuiltEntry[]> = {
     },
     {
       id: "b2", idea_id: "1",
-      user: { username: "devtools", display_name: "Dev Tools" },
+      user: { username: "devtools", display_name: "Dev Tools", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=devtools&backgroundColor=c0e8ff" },
       story: "Works perfectly. I customized the time to 6:30am so it's ready when I wake up.",
       time_saved_weekly: "1.5 hours",
       before_workflow: null, after_workflow: null,
@@ -47,7 +48,7 @@ const SEED_BUILDS: Record<string, BuiltEntry[]> = {
   "3": [
     {
       id: "b3", idea_id: "3",
-      user: { username: "mike_builds", display_name: "Mike Rivera" },
+      user: { username: "mike_builds", display_name: "Mike Rivera", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=mike_builds&backgroundColor=ffd5dc" },
       story: "Our whole team uses this now. The standup summaries are actually useful instead of 'I did stuff'.",
       time_saved_weekly: "30 minutes",
       before_workflow: "Trying to remember what I did yesterday at standup",
@@ -107,9 +108,13 @@ function BuildEntry({ entry }: { entry: BuiltEntry }) {
     <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-800">
-            <User size={12} className="text-zinc-500" />
-          </div>
+          <UserAvatar
+            avatarUrl={entry.user.avatar_url}
+            displayName={entry.user.display_name}
+            username={entry.user.username}
+            size="sm"
+            className="!h-6 !w-6 !text-[10px]"
+          />
           <div>
             <Link href={`/user/${entry.user.username}`} className="text-sm font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
               {entry.user.display_name}

@@ -2,15 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { User, Reply, Send } from "lucide-react";
+import { Reply, Send } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
+import { UserAvatar } from "@/components/common/user-avatar";
 
 interface Comment {
   id: string;
   idea_id: string;
-  author: { username: string; display_name: string };
+  author: { username: string; display_name: string; avatar_url?: string | null };
   body: string;
   created_at: string;
   parent_id: string | null;
@@ -23,19 +24,19 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
   "1": [
     {
       id: "c1", idea_id: "1",
-      author: { username: "sarah_dev", display_name: "Sarah Chen" },
+      author: { username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       body: "I built this with OpenClaw and it works great! Added stock prices to the briefing too.",
       created_at: "2026-02-10T12:00:00Z", parent_id: null,
     },
     {
       id: "c2", idea_id: "1",
-      author: { username: "mike_builds", display_name: "Mike Rivera" },
+      author: { username: "mike_builds", display_name: "Mike Rivera", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=mike_builds&backgroundColor=ffd5dc" },
       body: "Nice idea! How do you handle timezone differences for the weather API?",
       created_at: "2026-02-10T14:30:00Z", parent_id: null,
     },
     {
       id: "c3", idea_id: "1",
-      author: { username: "jess_automates", display_name: "Jess Park" },
+      author: { username: "jess_automates", display_name: "Jess Park", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=jess_automates&backgroundColor=d1f4d9" },
       body: "I set the location in the agent config — works across timezones seamlessly.",
       created_at: "2026-02-10T15:00:00Z", parent_id: "c2",
     },
@@ -43,7 +44,7 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
   "2": [
     {
       id: "c4", idea_id: "2",
-      author: { username: "devtools", display_name: "Dev Tools" },
+      author: { username: "devtools", display_name: "Dev Tools", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=devtools&backgroundColor=c0e8ff" },
       body: "This saved me so much time during tax season. Highly recommend pairing with the budget tracker.",
       created_at: "2026-02-09T16:00:00Z", parent_id: null,
     },
@@ -51,13 +52,13 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
   "3": [
     {
       id: "c5", idea_id: "3",
-      author: { username: "jess_automates", display_name: "Jess Park" },
+      author: { username: "jess_automates", display_name: "Jess Park", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=jess_automates&backgroundColor=d1f4d9" },
       body: "Perfect for async standup updates. Our team uses this daily now.",
       created_at: "2026-02-09T10:00:00Z", parent_id: null,
     },
     {
       id: "c6", idea_id: "3",
-      author: { username: "sarah_dev", display_name: "Sarah Chen" },
+      author: { username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       body: "Would love a version that also includes PR review summaries!",
       created_at: "2026-02-09T11:30:00Z", parent_id: null,
     },
@@ -65,7 +66,7 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
   "4": [
     {
       id: "c7", idea_id: "4",
-      author: { username: "mike_builds", display_name: "Mike Rivera" },
+      author: { username: "mike_builds", display_name: "Mike Rivera", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=mike_builds&backgroundColor=ffd5dc" },
       body: "The context it pulls before meetings is genuinely useful. Feels like having an EA.",
       created_at: "2026-02-08T09:00:00Z", parent_id: null,
     },
@@ -73,7 +74,7 @@ const SEED_COMMENTS: Record<string, Comment[]> = {
   "5": [
     {
       id: "c8", idea_id: "5",
-      author: { username: "sarah_dev", display_name: "Sarah Chen" },
+      author: { username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       body: "Getting this every Sunday evening has become my favorite part of the week.",
       created_at: "2026-02-07T18:00:00Z", parent_id: null,
     },
@@ -129,9 +130,13 @@ function CommentItem({
   return (
     <div className={cn("mt-3", depth > 0 && "ml-6 border-l border-zinc-800 pl-4")}>
       <div className="flex items-start gap-2.5">
-        <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800">
-          <User size={12} className="text-zinc-500" />
-        </div>
+        <UserAvatar
+          avatarUrl={comment.author?.avatar_url}
+          displayName={comment.author?.display_name}
+          username={comment.author?.username}
+          size="sm"
+          className="mt-0.5 !h-6 !w-6 !text-[10px]"
+        />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs">
             <Link href={`/user/${comment.author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100">

@@ -23,7 +23,7 @@ export const SEED_STACK_DETAILS: Record<string, StackDetail> = {
       view_count: 340,
       created_at: "2026-02-01T08:00:00Z",
       updated_at: "2026-02-01T08:00:00Z",
-      author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: null },
+      author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       items: [
         { idea: SEED_IDEAS[0], context_note: "Start your morning with a full briefing — calendar, weather, and emails in one shot." },
         { idea: SEED_IDEAS[3], context_note: "Now prep for your first meeting with relevant context pulled automatically." },
@@ -46,7 +46,7 @@ export const SEED_STACK_DETAILS: Record<string, StackDetail> = {
       view_count: 210,
       created_at: "2026-02-03T12:00:00Z",
       updated_at: "2026-02-03T12:00:00Z",
-      author: { id: "u2", username: "alex_finance", display_name: "Alex", avatar_url: null },
+      author: { id: "u2", username: "alex_finance", display_name: "Alex", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=alex_finance&backgroundColor=ffeab6" },
       items: [
         { idea: SEED_IDEAS[1], context_note: "Start by auto-tracking every expense as it happens." },
         { idea: SEED_IDEAS[0], context_note: "Pair with a daily briefing to stay on top of spending patterns." },
@@ -68,7 +68,7 @@ export const SEED_STACK_DETAILS: Record<string, StackDetail> = {
       view_count: 520,
       created_at: "2026-02-05T14:00:00Z",
       updated_at: "2026-02-05T14:00:00Z",
-      author: { id: "u3", username: "maya_creates", display_name: "Maya", avatar_url: null },
+      author: { id: "u3", username: "maya_creates", display_name: "Maya", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=maya_creates&backgroundColor=d1f4d9" },
       items: [
         { idea: SEED_IDEAS[4], context_note: "Research phase — gather interesting material to write about." },
         { idea: SEED_IDEAS[2], context_note: "Summarize what you've done so far to keep track." },
@@ -90,7 +90,7 @@ export const SEED_STACK_DETAILS: Record<string, StackDetail> = {
       view_count: 290,
       created_at: "2026-02-07T10:00:00Z",
       updated_at: "2026-02-07T10:00:00Z",
-      author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: null },
+      author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: "https://api.dicebear.com/9.x/notionists/svg?seed=sarah_dev&backgroundColor=c0aede" },
       items: [
         { idea: SEED_IDEAS[2], context_note: "Start with automated commit summaries for your daily standup." },
         { idea: SEED_IDEAS[3], context_note: "Before code review meetings, pull context automatically." },
