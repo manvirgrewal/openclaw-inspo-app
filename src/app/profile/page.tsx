@@ -6,14 +6,18 @@ import { ArrowLeft, Share2, Settings, Sparkles, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
+import { useProfile } from "@/hooks/use-profile";
 import { IdeaCard } from "@/components/cards/idea-card";
+import { EditProfileModal } from "@/components/profile/edit-profile-modal";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth();
   const { savedIds } = useGuestSaves();
+  const { profile, updateProfile, loaded: profileLoaded } = useProfile();
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -120,11 +124,22 @@ export default function ProfilePage() {
       {/* Profile Header */}
       <div className="mb-6 text-center">
         <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-xl font-bold text-zinc-400">
-          {user!.display_name?.[0] ?? user!.username[0].toUpperCase()}
+          {(profile.display_name ?? user!.display_name)?.[0]?.toUpperCase() ?? "?"}
         </div>
 
-        <h1 className="text-lg font-bold">{user!.display_name}</h1>
-        <p className="text-sm text-zinc-500">@{user!.username}</p>
+        <h1 className="text-lg font-bold">{profile.display_name || user!.display_name}</h1>
+        <p className="text-sm text-zinc-500">@{profile.username || user!.username}</p>
+
+        {profile.bio && (
+          <p className="mx-auto mt-2 max-w-xs text-sm text-zinc-400">{profile.bio}</p>
+        )}
+
+        {(profile.onboarding_role || profile.agent_platform) && (
+          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-zinc-500">
+            {profile.onboarding_role && <span className="rounded-full bg-zinc-800 px-2 py-0.5">{profile.onboarding_role}</span>}
+            {profile.agent_platform && <span className="rounded-full bg-zinc-800 px-2 py-0.5">{profile.agent_platform}</span>}
+          </div>
+        )}
 
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
           <span>💡 {userIdeas.length} ideas</span>
@@ -132,7 +147,10 @@ export default function ProfilePage() {
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-3">
-          <button className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700">
+          <button
+            onClick={() => setEditOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700"
+          >
             <Settings size={14} />
             Edit Profile
           </button>
@@ -141,6 +159,13 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      <EditProfileModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        profile={profile}
+        onSave={updateProfile}
+      />
 
       {/* Tabs */}
       <Tabs.Root defaultValue="saved">
@@ -208,8 +233,36 @@ export default function ProfilePage() {
           <div className="space-y-4 text-sm text-zinc-400">
             <div>
               <h4 className="mb-1 font-medium text-zinc-300">Username</h4>
-              <p>@{user!.username}</p>
+              <p>@{profile.username || user!.username}</p>
             </div>
+            {profile.bio && (
+              <div>
+                <h4 className="mb-1 font-medium text-zinc-300">Bio</h4>
+                <p>{profile.bio}</p>
+              </div>
+            )}
+            {profile.agent_platform && (
+              <div>
+                <h4 className="mb-1 font-medium text-zinc-300">Agent Platform</h4>
+                <p>{profile.agent_platform}</p>
+              </div>
+            )}
+            {profile.setup_description && (
+              <div>
+                <h4 className="mb-1 font-medium text-zinc-300">Agent Setup</h4>
+                <p>{profile.setup_description}</p>
+              </div>
+            )}
+            {profile.interests && profile.interests.length > 0 && (
+              <div>
+                <h4 className="mb-1 font-medium text-zinc-300">Interests</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  {profile.interests.map((i) => (
+                    <span key={i} className="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{i}</span>
+                  ))}
+                </div>
+              </div>
+            )}
             <div>
               <h4 className="mb-1 font-medium text-zinc-300">Member since</h4>
               <p>February 2026</p>
