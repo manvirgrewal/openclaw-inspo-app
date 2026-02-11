@@ -21,7 +21,7 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
   const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();
   const { toast } = useToast();
   const saved = isSaved(idea.id);
-  const [localCountDelta, setLocalCountDelta] = useState(0);
+  const [localCountDelta, setLocalCountDelta] = useState(() => isSaved(idea.id) ? 1 : 0);
 
   const category = CATEGORY_MAP[idea.category];
   const complexity = COMPLEXITY_OPTIONS.find((c) => c.id === idea.complexity);
