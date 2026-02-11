@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { Hammer, Star, ChevronDown, ChevronUp, User } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
@@ -110,7 +111,9 @@ function BuildEntry({ entry }: { entry: BuiltEntry }) {
             <User size={12} className="text-zinc-500" />
           </div>
           <div>
-            <span className="text-sm font-medium text-zinc-300">{entry.user.display_name}</span>
+            <Link href={`/user/${entry.user.username}`} className="text-sm font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+              {entry.user.display_name}
+            </Link>
             <span className="ml-2 text-xs text-zinc-600">{timeAgo(entry.created_at)}</span>
           </div>
         </div>

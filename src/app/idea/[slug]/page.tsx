@@ -143,9 +143,13 @@ export default function IdeaDetailPage({
           <User size={14} className="text-zinc-400" />
         </div>
         <div>
-          <span className="font-medium text-zinc-300">
-            {idea.author?.display_name ?? idea.author?.username ?? "Anonymous"}
-          </span>
+          {idea.author?.username ? (
+            <Link href={`/user/${idea.author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+              {idea.author.display_name ?? idea.author.username}
+            </Link>
+          ) : (
+            <span className="font-medium text-zinc-300">Anonymous</span>
+          )}
           {idea.published_at && (
             <>
               <span className="mx-1.5">·</span>
