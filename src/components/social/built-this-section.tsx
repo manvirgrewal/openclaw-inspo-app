@@ -1,0 +1,328 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { Hammer, Star, ChevronDown, ChevronUp, User } from "lucide-react";
+import { cn } from "@/lib/utils/cn";
+import { useAuth } from "@/lib/auth/auth-context";
+import { useToast } from "@/components/common/toast";
+
+interface BuiltEntry {
+  id: string;
+  idea_id: string;
+  user: { username: string; display_name: string };
+  story: string | null;
+  time_saved_weekly: string | null;
+  before_workflow: string | null;
+  after_workflow: string | null;
+  impact_rating: number | null; // 1-5
+  created_at: string;
+}
+
+const BUILDS_KEY = "inspo-builds";
+
+// Seed builds per idea
+const SEED_BUILDS: Record<string, BuiltEntry[]> = {
+  "1": [
+    {
+      id: "b1", idea_id: "1",
+      user: { username: "sarah_dev", display_name: "Sarah Chen" },
+      story: "Set this up with OpenClaw in about 3 minutes. Added stock prices and news headlines to my briefing too. Now I don't open 5 apps every morning.",
+      time_saved_weekly: "2 hours",
+      before_workflow: "Manually checking calendar, weather app, Gmail, news, stocks every morning",
+      after_workflow: "One notification at 7am with everything I need",
+      impact_rating: 5,
+      created_at: "2026-02-10T09:00:00Z",
+    },
+    {
+      id: "b2", idea_id: "1",
+      user: { username: "devtools", display_name: "Dev Tools" },
+      story: "Works perfectly. I customized the time to 6:30am so it's ready when I wake up.",
+      time_saved_weekly: "1.5 hours",
+      before_workflow: null, after_workflow: null,
+      impact_rating: 4,
+      created_at: "2026-02-10T11:00:00Z",
+    },
+  ],
+  "3": [
+    {
+      id: "b3", idea_id: "3",
+      user: { username: "mike_builds", display_name: "Mike Rivera" },
+      story: "Our whole team uses this now. The standup summaries are actually useful instead of 'I did stuff'.",
+      time_saved_weekly: "30 minutes",
+      before_workflow: "Trying to remember what I did yesterday at standup",
+      after_workflow: "Copy-paste the summary and add any context",
+      impact_rating: 5,
+      created_at: "2026-02-09T14:00:00Z",
+    },
+  ],
+};
+
+function readBuilds(): Record<string, BuiltEntry[]> {
+  try {
+    return JSON.parse(localStorage.getItem(BUILDS_KEY) || "{}");
+  } catch { return {}; }
+}
+
+function writeBuilds(all: Record<string, BuiltEntry[]>) {
+  try { localStorage.setItem(BUILDS_KEY, JSON.stringify(all)); } catch {}
+}
+
+function StarRating({ rating, onChange }: { rating: number; onChange?: (r: number) => void }) {
+  return (
+    <div className="flex gap-0.5">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => onChange?.(i)}
+          disabled={!onChange}
+          className={cn(
+            "transition-colors",
+            onChange ? "cursor-pointer hover:text-yellow-300" : "cursor-default",
+            i <= rating ? "text-yellow-400" : "text-zinc-700"
+          )}
+        >
+          <Star size={16} fill={i <= rating ? "currentColor" : "none"} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function timeAgo(dateStr: string): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const hours = Math.floor(diff / 3600000);
+  if (hours < 1) return "just now";
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
+function BuildEntry({ entry }: { entry: BuiltEntry }) {
+  const [expanded, setExpanded] = useState(false);
+  const hasDetails = entry.before_workflow || entry.after_workflow || entry.time_saved_weekly;
+
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-2">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-800">
+            <User size={12} className="text-zinc-500" />
+          </div>
+          <div>
+            <span className="text-sm font-medium text-zinc-300">{entry.user.display_name}</span>
+            <span className="ml-2 text-xs text-zinc-600">{timeAgo(entry.created_at)}</span>
+          </div>
+        </div>
+        {entry.impact_rating && <StarRating rating={entry.impact_rating} />}
+      </div>
+
+      {entry.story && (
+        <p className="mt-2 text-sm text-zinc-400">{entry.story}</p>
+      )}
+
+      {hasDetails && (
+        <>
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="mt-2 flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-400"
+          >
+            {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            {expanded ? "Hide details" : "Show impact details"}
+          </button>
+
+          {expanded && (
+            <div className="mt-2 space-y-2 rounded-lg bg-zinc-800/50 p-3 text-xs">
+              {entry.time_saved_weekly && (
+                <div>
+                  <span className="font-medium text-zinc-400">⏱ Time saved weekly:</span>
+                  <span className="ml-1 text-zinc-300">{entry.time_saved_weekly}</span>
+                </div>
+              )}
+              {entry.before_workflow && (
+                <div>
+                  <span className="font-medium text-red-400/70">Before:</span>
+                  <span className="ml-1 text-zinc-400">{entry.before_workflow}</span>
+                </div>
+              )}
+              {entry.after_workflow && (
+                <div>
+                  <span className="font-medium text-green-400/70">After:</span>
+                  <span className="ml-1 text-zinc-400">{entry.after_workflow}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+interface BuiltThisSectionProps {
+  ideaId: string;
+  onBuiltCountChange?: (count: number) => void;
+}
+
+export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectionProps) {
+  const { isAuthenticated, user } = useAuth();
+  const { toast } = useToast();
+  const [builds, setBuilds] = useState<BuiltEntry[]>([]);
+  const [hasBuilt, setHasBuilt] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+
+  // Form state
+  const [story, setStory] = useState("");
+  const [timeSaved, setTimeSaved] = useState("");
+  const [beforeWork, setBeforeWork] = useState("");
+  const [afterWork, setAfterWork] = useState("");
+  const [rating, setRating] = useState(0);
+
+  useEffect(() => {
+    const seeds = SEED_BUILDS[ideaId] || [];
+    const userBuilds = readBuilds()[ideaId] || [];
+    const all = [...seeds, ...userBuilds];
+    setBuilds(all);
+    onBuiltCountChange?.(all.length);
+    // Check if current user already built
+    if (user) {
+      setHasBuilt(all.some((b) => b.user.username === user.username));
+    }
+  }, [ideaId, user, onBuiltCountChange]);
+
+  const handleSubmit = useCallback(() => {
+    if (!user || !rating) return;
+    const entry: BuiltEntry = {
+      id: `user-build-${Date.now()}`,
+      idea_id: ideaId,
+      user: { username: user.username, display_name: user.display_name },
+      story: story.trim() || null,
+      time_saved_weekly: timeSaved.trim() || null,
+      before_workflow: beforeWork.trim() || null,
+      after_workflow: afterWork.trim() || null,
+      impact_rating: rating,
+      created_at: new Date().toISOString(),
+    };
+    const all = readBuilds();
+    all[ideaId] = [...(all[ideaId] || []), entry];
+    writeBuilds(all);
+    setBuilds((prev) => {
+      const next = [...prev, entry];
+      onBuiltCountChange?.(next.length);
+      return next;
+    });
+    setHasBuilt(true);
+    setShowForm(false);
+    setStory(""); setTimeSaved(""); setBeforeWork(""); setAfterWork(""); setRating(0);
+    toast("Nice! Your build has been shared 🎉");
+  }, [ideaId, user, story, timeSaved, beforeWork, afterWork, rating, toast, onBuiltCountChange]);
+
+  return (
+    <div className="mt-6 border-t border-zinc-800 pt-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300">
+          <Hammer size={14} /> Built This ({builds.length})
+        </h2>
+        {isAuthenticated && !hasBuilt && !showForm && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400 transition-colors hover:bg-orange-500/20"
+          >
+            ⚡ I Built This
+          </button>
+        )}
+        {hasBuilt && (
+          <span className="flex items-center gap-1 rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">
+            <Hammer size={12} /> You built this!
+          </span>
+        )}
+      </div>
+
+      {/* Submit form */}
+      {showForm && (
+        <div className="mb-4 space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+          <h3 className="text-sm font-medium text-zinc-200">Share your build</h3>
+
+          <div>
+            <label className="mb-1 block text-xs text-zinc-500">Impact rating *</label>
+            <StarRating rating={rating} onChange={setRating} />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-zinc-500">How did it go? (optional)</label>
+            <textarea
+              value={story}
+              onChange={(e) => setStory(e.target.value)}
+              placeholder="I set this up in 5 minutes and now..."
+              rows={2}
+              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs text-zinc-500">Time saved weekly (optional)</label>
+            <input
+              type="text"
+              value={timeSaved}
+              onChange={(e) => setTimeSaved(e.target.value)}
+              placeholder="e.g. 2 hours"
+              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="mb-1 block text-xs text-zinc-500">Before (optional)</label>
+              <input
+                type="text"
+                value={beforeWork}
+                onChange={(e) => setBeforeWork(e.target.value)}
+                placeholder="Checked 5 apps manually"
+                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-zinc-500">After (optional)</label>
+              <input
+                type="text"
+                value={afterWork}
+                onChange={(e) => setAfterWork(e.target.value)}
+                placeholder="One notification at 7am"
+                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={handleSubmit}
+              disabled={!rating}
+              className="flex-1 rounded-lg bg-orange-500/20 py-2 text-sm font-medium text-orange-400 transition-colors hover:bg-orange-500/30 disabled:opacity-40"
+            >
+              Share Build
+            </button>
+            <button
+              onClick={() => setShowForm(false)}
+              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-700"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Builds list */}
+      {builds.length > 0 ? (
+        <div className="space-y-2">
+          {builds.map((entry) => (
+            <BuildEntry key={entry.id} entry={entry} />
+          ))}
+        </div>
+      ) : !showForm ? (
+        <p className="py-4 text-center text-sm text-zinc-600">
+          No one has built this yet. Be the first!
+        </p>
+      ) : null}
+    </div>
+  );
+}

@@ -19,6 +19,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useToast } from "@/components/common/toast";
 import { CommentsSection } from "@/components/social/comments-section";
+import { BuiltThisSection } from "@/components/social/built-this-section";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
@@ -54,8 +55,9 @@ export default function IdeaDetailPage({
   const { toast } = useToast();
   const saved = idea ? isSaved(idea.id) : false;
 
-  // Live comment count — set by CommentsSection once it loads seed + user comments
+  // Live counts — set by child sections once they load seed + user data
   const [liveCommentCount, setLiveCommentCount] = useState(0);
+  const [liveBuiltCount, setLiveBuiltCount] = useState(0);
 
   // Live save count
   const liveSaveCount = idea ? idea.save_count + (saved ? 1 : 0) : 0;
@@ -158,7 +160,7 @@ export default function IdeaDetailPage({
           <Bookmark size={14} /> {liveSaveCount} saves
         </span>
         <span className="flex items-center gap-1.5">
-          <Hammer size={14} /> {idea.built_count} built
+          <Hammer size={14} /> {liveBuiltCount} built
         </span>
         <span className="flex items-center gap-1.5">
           <MessageSquare size={14} /> {liveCommentCount} comments
@@ -300,6 +302,9 @@ export default function IdeaDetailPage({
           {saved ? "Saved" : "Save"}
         </button>
       </div>
+
+      {/* Built This */}
+      <BuiltThisSection ideaId={idea.id} onBuiltCountChange={setLiveBuiltCount} />
 
       {/* Comments */}
       <CommentsSection ideaId={idea.id} onCommentCountChange={setLiveCommentCount} />
