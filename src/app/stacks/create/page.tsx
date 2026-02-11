@@ -1,11 +1,29 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Search, Plus, GripVertical, X, Layers, Send } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Search, Plus, GripVertical, X, Layers, Send, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
+import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useToast } from "@/components/common/toast";
 import { CATEGORIES } from "@/config/categories";
 import { SEED_IDEAS } from "@/data/seed-ideas";
@@ -21,9 +39,96 @@ const MAX_TITLE = 80;
 const MAX_DESC = 300;
 const MAX_CONTEXT = 200;
 
+// ─── Sortable Item ────────────────────────────────────────────
+function SortableStackItem({
+  item,
+  index,
+  onRemove,
+  onUpdateNote,
+}: {
+  item: StackItemDraft;
+  index: number;
+  onRemove: (id: string) => void;
+  onUpdateNote: (id: string, note: string) => void;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: item.idea.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : undefined,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "rounded-lg border border-zinc-800 bg-zinc-900 p-3",
+        isDragging && "shadow-lg shadow-black/40 ring-1 ring-emerald-500/30"
+      )}
+    >
+      <div className="flex items-start gap-2">
+        {/* Drag handle + position */}
+        <div className="flex flex-col items-center gap-1 pt-0.5">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">
+            {index + 1}
+          </span>
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab touch-none rounded p-0.5 text-zinc-600 hover:text-zinc-300 active:cursor-grabbing"
+            title="Drag to reorder"
+          >
+            <GripVertical size={16} />
+          </button>
+        </div>
+
+        {/* Idea info */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <p className="text-sm font-medium text-zinc-200">{item.idea.title}</p>
+              <p className="mt-0.5 text-xs text-zinc-500 line-clamp-1">
+                {item.idea.description}
+              </p>
+            </div>
+            <button
+              onClick={() => onRemove(item.idea.id)}
+              className="shrink-0 text-zinc-600 hover:text-red-400"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Context note */}
+          <input
+            type="text"
+            value={item.context_note}
+            onChange={(e) => onUpdateNote(item.idea.id, e.target.value)}
+            maxLength={MAX_CONTEXT}
+            placeholder="Add context — why this idea fits here..."
+            className="mt-2 w-full rounded border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-700 focus:border-zinc-600 focus:outline-none"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────
 export default function CreateStackPage() {
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const { savedIds } = useGuestSaves();
   const { toast } = useToast();
 
   const [title, setTitle] = useState("");
@@ -44,19 +149,42 @@ export default function CreateStackPage() {
     } catch {}
   }, []);
 
-  // Filter ideas for search (exclude already added)
+  // Only saved ideas are available for stacks
+  const savedIdeas = useMemo(
+    () => allIdeas.filter((idea) => savedIds.includes(idea.id)),
+    [allIdeas, savedIds]
+  );
+
+  // Filter for search (exclude already added)
   const addedIds = new Set(items.map((i) => i.idea.id));
-  const searchResults = searchQuery.trim()
-    ? allIdeas
-        .filter((idea) => !addedIds.has(idea.id))
-        .filter(
-          (idea) =>
-            idea.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            idea.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            idea.category.toLowerCase().includes(searchQuery.toLowerCase())
-        )
-        .slice(0, 8)
-    : allIdeas.filter((idea) => !addedIds.has(idea.id)).slice(0, 8);
+  const searchResults = useMemo(() => {
+    const available = savedIdeas.filter((idea) => !addedIds.has(idea.id));
+    if (!searchQuery.trim()) return available;
+    const q = searchQuery.toLowerCase();
+    return available.filter(
+      (idea) =>
+        idea.title.toLowerCase().includes(q) ||
+        idea.description.toLowerCase().includes(q) ||
+        idea.category.toLowerCase().includes(q)
+    );
+  }, [savedIdeas, addedIds, searchQuery]);
+
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.idea.id === active.id);
+        const newIndex = prev.findIndex((i) => i.idea.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
+  }, []);
 
   const addIdea = useCallback((idea: Idea) => {
     setItems((prev) => [...prev, { idea, context_note: "" }]);
@@ -74,20 +202,9 @@ export default function CreateStackPage() {
     );
   }, []);
 
-  const moveItem = useCallback((fromIndex: number, direction: "up" | "down") => {
-    setItems((prev) => {
-      const next = [...prev];
-      const toIndex = direction === "up" ? fromIndex - 1 : fromIndex + 1;
-      if (toIndex < 0 || toIndex >= next.length) return prev;
-      [next[fromIndex], next[toIndex]] = [next[toIndex], next[fromIndex]];
-      return next;
-    });
-  }, []);
-
   const handleSubmit = async () => {
     const newErrors: Record<string, string> = {};
-    if (!title.trim()) newErrors.title = "Title is required";
-    if (title.trim().length < 3) newErrors.title = "Title must be at least 3 characters";
+    if (!title.trim() || title.trim().length < 3) newErrors.title = "Title must be at least 3 characters";
     if (!description.trim()) newErrors.description = "Description is required";
     if (!category) newErrors.category = "Pick a category";
     if (items.length < 2) newErrors.items = "Add at least 2 ideas to your stack";
@@ -99,11 +216,7 @@ export default function CreateStackPage() {
 
     setSubmitting(true);
     try {
-      const slug = title
-        .trim()
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-|-$/g, "");
+      const slug = title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
       const newStack: Stack & { _items: { idea: Idea; context_note: string | null }[] } = {
         id: `user-stack-${Date.now()}`,
@@ -131,14 +244,11 @@ export default function CreateStackPage() {
           position: i,
           context_note: item.context_note.trim() || null,
         })),
-        // Store full idea data for detail page rendering
         _items: items.map((item) => ({
           idea: item.idea,
           context_note: item.context_note.trim() || null,
         })),
       };
-
-      // Patch stack_id into items
       newStack.items = newStack.items!.map((it) => ({ ...it, stack_id: newStack.id }));
 
       const existing = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
@@ -147,7 +257,7 @@ export default function CreateStackPage() {
 
       toast("Stack created!");
       router.push(`/stacks/${newStack.slug}`);
-    } catch (err) {
+    } catch {
       toast("Something went wrong");
     } finally {
       setSubmitting(false);
@@ -159,12 +269,8 @@ export default function CreateStackPage() {
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
         <Layers size={32} className="mb-3 text-zinc-600" />
         <h1 className="mb-2 text-lg font-semibold text-zinc-200">Sign in to create stacks</h1>
-        <p className="mb-6 text-sm text-zinc-500">
-          Bundle ideas together into powerful workflows.
-        </p>
-        <Link href="/" className="text-sm text-zinc-400 underline hover:text-zinc-200">
-          Back to feed
-        </Link>
+        <p className="mb-6 text-sm text-zinc-500">Bundle ideas together into powerful workflows.</p>
+        <Link href="/" className="text-sm text-zinc-400 underline hover:text-zinc-200">Back to feed</Link>
       </div>
     );
   }
@@ -174,8 +280,7 @@ export default function CreateStackPage() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <Link href="/stacks" className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
-          <ArrowLeft size={20} />
-          <span className="text-sm">Stacks</span>
+          <span className="text-sm">← Stacks</span>
         </Link>
       </div>
 
@@ -227,9 +332,7 @@ export default function CreateStackPage() {
                 onClick={() => { setCategory(cat.id); setErrors((p) => ({ ...p, category: "" })); }}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-xs transition-colors",
-                  category === cat.id
-                    ? cat.color
-                    : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
+                  category === cat.id ? cat.color : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
                 )}
               >
                 {cat.label}
@@ -242,87 +345,50 @@ export default function CreateStackPage() {
         {/* Ideas in Stack */}
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-sm font-medium text-zinc-300">
-              Ideas ({items.length}) *
-            </label>
+            <label className="text-sm font-medium text-zinc-300">Ideas ({items.length}) *</label>
             <button
               onClick={() => setShowSearch(true)}
               className="flex items-center gap-1 rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
             >
               <Plus size={14} />
-              Add Idea
+              Add from Saved
             </button>
           </div>
           {errors.items && <p className="mb-2 text-xs text-red-400">{errors.items}</p>}
 
           {items.length === 0 ? (
             <div className="rounded-lg border border-dashed border-zinc-700 py-10 text-center">
-              <Layers size={24} className="mx-auto mb-2 text-zinc-600" />
+              <Bookmark size={24} className="mx-auto mb-2 text-zinc-600" />
               <p className="text-sm text-zinc-500">No ideas added yet</p>
-              <p className="text-xs text-zinc-600">Search and add ideas to build your stack</p>
+              <p className="text-xs text-zinc-600">
+                {savedIdeas.length === 0
+                  ? "Save some ideas from the feed first, then add them to your stack"
+                  : `You have ${savedIdeas.length} saved idea${savedIdeas.length === 1 ? "" : "s"} to choose from`}
+              </p>
             </div>
           ) : (
-            <div className="space-y-2">
-              {items.map((item, i) => (
-                <div
-                  key={item.idea.id}
-                  className="rounded-lg border border-zinc-800 bg-zinc-900 p-3"
-                >
-                  <div className="flex items-start gap-2">
-                    {/* Position + reorder */}
-                    <div className="flex flex-col items-center gap-1 pt-0.5">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">
-                        {i + 1}
-                      </span>
-                      <button
-                        onClick={() => moveItem(i, "up")}
-                        disabled={i === 0}
-                        className="text-zinc-600 hover:text-zinc-300 disabled:opacity-20"
-                        title="Move up"
-                      >
-                        ▲
-                      </button>
-                      <button
-                        onClick={() => moveItem(i, "down")}
-                        disabled={i === items.length - 1}
-                        className="text-zinc-600 hover:text-zinc-300 disabled:opacity-20"
-                        title="Move down"
-                      >
-                        ▼
-                      </button>
-                    </div>
-
-                    {/* Idea info */}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <p className="text-sm font-medium text-zinc-200">{item.idea.title}</p>
-                          <p className="mt-0.5 text-xs text-zinc-500 line-clamp-1">
-                            {item.idea.description}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => removeIdea(item.idea.id)}
-                          className="shrink-0 text-zinc-600 hover:text-red-400"
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-
-                      {/* Context note */}
-                      <input
-                        type="text"
-                        value={item.context_note}
-                        onChange={(e) => updateContextNote(item.idea.id, e.target.value)}
-                        maxLength={MAX_CONTEXT}
-                        placeholder="Add context — why this idea fits here..."
-                        className="mt-2 w-full rounded border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-700 focus:border-zinc-600 focus:outline-none"
-                      />
-                    </div>
-                  </div>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={items.map((i) => i.idea.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2">
+                  {items.map((item, i) => (
+                    <SortableStackItem
+                      key={item.idea.id}
+                      item={item}
+                      index={i}
+                      onRemove={removeIdea}
+                      onUpdateNote={updateContextNote}
+                    />
+                  ))}
                 </div>
-              ))}
-            </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
 
@@ -337,7 +403,7 @@ export default function CreateStackPage() {
         </button>
       </div>
 
-      {/* Search Modal */}
+      {/* Search Modal — only saved ideas */}
       {showSearch && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
@@ -351,7 +417,7 @@ export default function CreateStackPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search ideas to add..."
+                  placeholder="Search your saved ideas..."
                   autoFocus
                   className="flex-1 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
                 />
@@ -359,10 +425,29 @@ export default function CreateStackPage() {
                   <X size={18} />
                 </button>
               </div>
+              <p className="mt-2 text-[10px] text-zinc-600">
+                <Bookmark size={10} className="mr-1 inline" />
+                Only your saved ideas appear here. Save ideas from the feed to add them to stacks.
+              </p>
             </div>
-            <div className="overflow-y-auto p-2" style={{ maxHeight: "calc(80dvh - 60px)" }}>
+            <div className="overflow-y-auto p-2" style={{ maxHeight: "calc(80dvh - 80px)" }}>
               {searchResults.length === 0 ? (
-                <p className="py-8 text-center text-sm text-zinc-600">No ideas found</p>
+                <div className="py-8 text-center">
+                  <p className="text-sm text-zinc-600">
+                    {savedIdeas.length === 0
+                      ? "No saved ideas yet"
+                      : "No matching saved ideas"}
+                  </p>
+                  {savedIdeas.length === 0 && (
+                    <Link
+                      href="/"
+                      onClick={() => setShowSearch(false)}
+                      className="mt-2 inline-block text-xs text-emerald-400 hover:underline"
+                    >
+                      Browse ideas to save →
+                    </Link>
+                  )}
+                </div>
               ) : (
                 searchResults.map((idea) => (
                   <button
@@ -374,9 +459,7 @@ export default function CreateStackPage() {
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-zinc-200">{idea.title}</p>
                       <p className="text-xs text-zinc-500 line-clamp-1">{idea.description}</p>
-                      <p className="mt-0.5 text-[10px] text-zinc-600">
-                        {idea.category} · {idea.complexity}
-                      </p>
+                      <p className="mt-0.5 text-[10px] text-zinc-600">{idea.category} · {idea.complexity}</p>
                     </div>
                   </button>
                 ))
