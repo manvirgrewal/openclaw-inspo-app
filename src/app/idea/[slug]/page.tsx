@@ -20,6 +20,7 @@ import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useToast } from "@/components/common/toast";
 import { CommentsSection } from "@/components/social/comments-section";
 import { BuiltThisSection } from "@/components/social/built-this-section";
+import { ShareButton } from "@/components/share/share-button";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
@@ -301,6 +302,12 @@ export default function IdeaDetailPage({
           <Bookmark size={16} fill={saved ? "currentColor" : "none"} />
           {saved ? "Saved" : "Save"}
         </button>
+
+        <ShareButton
+          title={idea.title}
+          slug={idea.slug}
+          description={idea.description}
+        />
       </div>
 
       {/* Built This */}

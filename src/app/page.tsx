@@ -2,12 +2,33 @@
 
 import { useState, useEffect } from "react";
 import { IdeaCard } from "@/components/cards/idea-card";
+import { StackCard } from "@/components/cards/stack-card";
 import { FilterChips } from "@/components/feed/filter-chips";
+import { FeedTabs, type FeedTab } from "@/components/feed/feed-tabs";
 import { SaveNudgeBanner } from "@/components/common/save-nudge-banner";
+import { useAuth } from "@/lib/auth/auth-context";
 import { SEED_IDEAS } from "@/data/seed-ideas";
+import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
+// Inject a stack promo card every N ideas
+function injectSlots(ideas: Idea[]): (Idea | { type: "stack"; index: number })[] {
+  const result: (Idea | { type: "stack"; index: number })[] = [];
+  let stackIdx = 0;
+  for (let i = 0; i < ideas.length; i++) {
+    result.push(ideas[i]);
+    // Insert a stack promo after every 3rd idea (positions 2, 5, 8...)
+    if ((i + 1) % 3 === 0 && stackIdx < SEED_STACKS_LIST.length) {
+      result.push({ type: "stack", index: stackIdx });
+      stackIdx++;
+    }
+  }
+  return result;
+}
+
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const [activeTab, setActiveTab] = useState<FeedTab>("discover");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
 
@@ -23,21 +44,49 @@ export default function HomePage() {
     ? allIdeas.filter((idea) => idea.category === selectedCategory)
     : allIdeas;
 
+  // Following tab: show ideas from users you follow (demo: empty state for now)
+  const followingIdeas: Idea[] = [];
+
+  const displayIdeas = activeTab === "following" ? followingIdeas : filteredIdeas;
+  const feedItems = activeTab === "discover" && !selectedCategory
+    ? injectSlots(displayIdeas)
+    : displayIdeas;
+
   return (
     <div>
-      {/* Filter chips */}
-      <FilterChips selected={selectedCategory} onSelect={setSelectedCategory} />
+      {/* Feed tabs */}
+      <FeedTabs active={activeTab} onTabChange={setActiveTab} isAuthenticated={isAuthenticated} />
+
+      {/* Filter chips (discover only) */}
+      {activeTab === "discover" && (
+        <FilterChips selected={selectedCategory} onSelect={setSelectedCategory} />
+      )}
 
       {/* Save nudge banner */}
       <SaveNudgeBanner />
 
       {/* Feed */}
       <div className="flex flex-col gap-3 px-4 pb-4">
-        {filteredIdeas.map((idea) => (
-          <IdeaCard key={idea.id} idea={idea} />
-        ))}
+        {activeTab === "following" && followingIdeas.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="mb-2 text-sm text-zinc-400">Your feed is empty</p>
+            <p className="text-xs text-zinc-600">
+              Follow creators from their profiles to see their ideas here.
+            </p>
+          </div>
+        ) : (
+          feedItems.map((item, i) => {
+            if ("type" in item && item.type === "stack") {
+              const stack = SEED_STACKS_LIST[item.index];
+              return stack ? (
+                <StackCard key={`stack-promo-${stack.id}`} stack={stack} />
+              ) : null;
+            }
+            return <IdeaCard key={(item as Idea).id} idea={item as Idea} />;
+          })
+        )}
 
-        {filteredIdeas.length === 0 && (
+        {activeTab === "discover" && displayIdeas.length === 0 && (
           <div className="py-12 text-center text-sm text-zinc-500">
             No ideas in this category yet. Be the first to submit one!
           </div>
