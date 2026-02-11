@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import React from "react";
 
 const SAVES_KEY = "inspo-guest-saves";
 const MAX_GUEST_SAVES = 50;
@@ -17,7 +18,23 @@ function writeSaves(ids: string[]) {
   try { localStorage.setItem(SAVES_KEY, JSON.stringify(ids)); } catch {}
 }
 
-export function useGuestSaves() {
+interface GuestSavesContextValue {
+  savedIds: string[];
+  saveIdea: (id: string) => void;
+  unsaveIdea: (id: string) => void;
+  isSaved: (id: string) => boolean;
+  getSaveCount: () => number;
+}
+
+const GuestSavesContext = createContext<GuestSavesContextValue>({
+  savedIds: [],
+  saveIdea: () => {},
+  unsaveIdea: () => {},
+  isSaved: () => false,
+  getSaveCount: () => 0,
+});
+
+export function GuestSavesProvider({ children }: { children: ReactNode }) {
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -45,7 +62,15 @@ export function useGuestSaves() {
 
   const getSaveCount = useCallback(() => savedIds.length, [savedIds]);
 
-  return { savedIds, saveIdea, unsaveIdea, isSaved, getSaveCount };
+  return React.createElement(
+    GuestSavesContext.Provider,
+    { value: { savedIds, saveIdea, unsaveIdea, isSaved, getSaveCount } },
+    children
+  );
+}
+
+export function useGuestSaves() {
+  return useContext(GuestSavesContext);
 }
 
 // Static helpers for use outside hooks

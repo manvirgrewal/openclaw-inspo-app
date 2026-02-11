@@ -5,6 +5,7 @@ import { TopBar } from "@/components/navigation/top-bar";
 import { BottomNav } from "@/components/navigation/bottom-nav";
 import { DesktopNav } from "@/components/navigation/desktop-nav";
 import { AuthProvider } from "@/lib/auth/auth-context";
+import { GuestSavesProvider } from "@/hooks/use-guest-saves";
 import { ToastProvider } from "@/components/common/toast";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} dark`}>
       <body className="min-h-dvh bg-zinc-950 font-sans text-zinc-100 antialiased">
         <AuthProvider>
+          <GuestSavesProvider>
           <ToastProvider>
             {/* Mobile: top bar + bottom nav */}
             <div className="md:hidden">
@@ -60,6 +62,7 @@ export default function RootLayout({
             </main>
             <BottomNav />
           </ToastProvider>
+          </GuestSavesProvider>
         </AuthProvider>
       </body>
     </html>
