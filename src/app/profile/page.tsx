@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft, Share2, Settings, Sparkles, LogIn } from "lucide-react";
+import { ArrowLeft, Settings, Sparkles, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
@@ -12,6 +12,7 @@ import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
 import { EditProfileModal } from "@/components/profile/edit-profile-modal";
 import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
+import { ShareButton } from "@/components/share/share-button";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 import type { Stack } from "@/modules/stacks/stacks.types";
@@ -178,9 +179,12 @@ export default function ProfilePage() {
             <Settings size={14} />
             Edit Profile
           </button>
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-zinc-200">
-            <Share2 size={16} />
-          </button>
+          <ShareButton
+            title={`${profile.display_name || user!.display_name} on OpenClaw Inspo`}
+            shareUrl={`/user/${profile.username || user!.username}`}
+            description={profile.bio ?? undefined}
+            iconOnly
+          />
         </div>
       </div>
 

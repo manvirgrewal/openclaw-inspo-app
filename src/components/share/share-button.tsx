@@ -7,19 +7,24 @@ import { useToast } from "@/components/common/toast";
 
 interface ShareButtonProps {
   title: string;
-  slug: string;
+  slug?: string;
+  /** Override the share URL (defaults to /idea/{slug}) */
+  shareUrl?: string;
   description?: string;
   className?: string;
+  /** Render as icon-only button */
+  iconOnly?: boolean;
 }
 
-export function ShareButton({ title, slug, description, className }: ShareButtonProps) {
+export function ShareButton({ title, slug, shareUrl, description, className, iconOnly }: ShareButtonProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
+  const path = shareUrl ?? (slug ? `/idea/${slug}` : "");
   const url = typeof window !== "undefined"
-    ? `${window.location.origin}/idea/${slug}`
-    : `/idea/${slug}`;
+    ? (path.startsWith("http") ? path : `${window.location.origin}${path}`)
+    : path;
 
   const handleCopyLink = useCallback(async () => {
     try {
@@ -56,10 +61,13 @@ export function ShareButton({ title, slug, description, className }: ShareButton
             setShowMenu(!showMenu);
           }
         }}
-        className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+        className={cn(
+          "flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-300 transition-colors hover:bg-zinc-700",
+          iconOnly ? "h-9 w-9 text-zinc-400 hover:text-zinc-200" : "gap-1.5 px-3 py-2 text-sm font-medium"
+        )}
       >
         <Share2 size={16} />
-        Share
+        {!iconOnly && "Share"}
       </button>
 
       {showMenu && (

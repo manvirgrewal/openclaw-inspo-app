@@ -2,12 +2,13 @@
 
 import { useState, use } from "react";
 import Link from "next/link";
-import { ArrowLeft, UserPlus, Share2, LogIn } from "lucide-react";
+import { ArrowLeft, UserPlus, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils/cn";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
 import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
+import { ShareButton } from "@/components/share/share-button";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useFollows } from "@/hooks/use-follows";
 import { useToast } from "@/components/common/toast";
@@ -117,9 +118,12 @@ export default function UserProfilePage({
             <UserPlus size={14} />
             {following ? "Following" : "Follow"}
           </button>
-          <button className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-zinc-200">
-            <Share2 size={16} />
-          </button>
+          <ShareButton
+            title={`${profile.display_name ?? profile.username} on OpenClaw Inspo`}
+            shareUrl={`/user/${profile.username}`}
+            description={profile.bio ?? undefined}
+            iconOnly
+          />
         </div>
       </div>
 
