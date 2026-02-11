@@ -190,8 +190,10 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
   useEffect(() => {
     const seeds = SEED_COMMENTS[ideaId] || [];
     const userComments = readComments()[ideaId] || [];
-    setComments([...seeds, ...userComments]);
-  }, [ideaId]);
+    const all = [...seeds, ...userComments];
+    setComments(all);
+    onCommentCountChange?.(all.length);
+  }, [ideaId, onCommentCountChange]);
 
   const addComment = useCallback((body: string, parentId: string | null) => {
     if (!user) return;

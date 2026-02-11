@@ -51,20 +51,8 @@ export default function IdeaDetailPage({
   const { toast } = useToast();
   const saved = idea ? isSaved(idea.id) : false;
 
-  // Live comment count from seed + user comments
-  const [liveCommentCount, setLiveCommentCount] = useState(idea?.comment_count ?? 0);
-  useEffect(() => {
-    if (!idea) return;
-    // Count seed comments (from CommentsSection's internal data) + user comments
-    try {
-      const userComments = JSON.parse(localStorage.getItem("inspo-comments") || "{}");
-      const userCount = (userComments[idea.id] || []).length;
-      // idea.comment_count is the seed count, add user comments on top
-      setLiveCommentCount(idea.comment_count + userCount);
-    } catch {
-      setLiveCommentCount(idea.comment_count);
-    }
-  }, [idea]);
+  // Live comment count — set by CommentsSection once it loads seed + user comments
+  const [liveCommentCount, setLiveCommentCount] = useState(0);
 
   // Live save count
   const liveSaveCount = idea ? idea.save_count + (saved ? 1 : 0) : 0;
