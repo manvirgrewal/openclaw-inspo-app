@@ -57,7 +57,7 @@ export function FollowListModal({
     <div
       ref={backdropRef}
       onClick={handleBackdropClick}
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
     >
       <div className="relative max-h-[80dvh] w-full max-w-md overflow-hidden rounded-t-2xl bg-zinc-900 sm:rounded-2xl">
         {/* Header */}
