@@ -85,6 +85,7 @@ function SubmitPageInner() {
   const [showPreview, setShowPreview] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   // Load existing idea for editing, or draft
@@ -115,15 +116,16 @@ function SubmitPageInner() {
     } catch {}
   }, [editId]);
 
-  // Auto-save draft
+  // Auto-save draft (skip if already submitted to prevent race condition)
   useEffect(() => {
+    if (submitted) return;
     const timeout = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
       } catch {}
     }, 500);
     return () => clearTimeout(timeout);
-  }, [form]);
+  }, [form, submitted]);
 
   const updateField = useCallback((field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -222,6 +224,8 @@ function SubmitPageInner() {
 
       localStorage.setItem("inspo-user-ideas", JSON.stringify(existing));
       localStorage.removeItem(DRAFT_KEY);
+      setSubmitted(true);
+      setForm(emptyForm);
       router.push(isEditing ? "/profile" : "/");
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");
