@@ -88,9 +88,62 @@ Repo: https://github.com/manvirgrewal/openclaw-inspo-app
 
 **Next up:**
 - [ ] Supabase local setup + run migration
-- [ ] Search page UI
-- [ ] Submit idea page
-- [ ] Stack card component + stacks page
-- [ ] Profile page
+- [x] Search page UI
+- [x] Submit idea page
+- [x] Stack card component + stacks page
+- [x] Profile page
+
+---
+
+### Session 3: Phase 2 — User-Facing Pages & Auth Flow
+
+**Commit:** `cf9bc07` — `feat: phase 2 - user-facing pages and auth flow`
+
+**Submit Idea Page** (`src/app/(auth)/submit/page.tsx`):
+- [x] Mobile-first form with all fields (title, description, prompt, category chips, complexity chips, skills tag input, tags, body)
+- [x] Live preview toggle showing IdeaCard with current form data
+- [x] Zod validation via ideaCreateSchema on submit
+- [x] Auto-save draft to localStorage (debounced 500ms)
+- [x] Character counts on all text fields
+- [x] Posts to /api/ideas on submit
+
+**Search Page** (`src/app/search/page.tsx`):
+- [x] Auto-focused search input with debounced queries (300ms)
+- [x] Results displayed as IdeaCard list
+- [x] "No results" empty state
+- [x] Recent searches stored in localStorage (max 8, shown when input empty)
+- [x] Calls GET /api/search?q=...
+
+**Stack Card + Stacks Pages:**
+- [x] `src/components/cards/stack-card.tsx` — emerald accent, "STACK" label, idea count, save count, author, CTA button
+- [x] `src/app/stacks/page.tsx` — stack listing with 4 seed stacks, category filtering via FilterChips
+- [x] `src/app/stacks/[slug]/page.tsx` — stack detail with numbered ideas, context notes, "Copy All Prompts" button
+
+**User Profile Page** (`src/app/user/[username]/page.tsx`):
+- [x] Profile header: avatar placeholder, display name, username, bio, stats
+- [x] Setup section: agent platform, active skills
+- [x] Radix Tabs: Ideas | Built | Stacks | About
+- [x] Pinned section (📌 Pinned) above tabs
+- [x] Follow button (UI only)
+- [x] Seed data for development
+
+**Auth Pages:**
+- [x] `src/app/auth/login/page.tsx` — OAuth buttons (Google, GitHub, Discord), magic link email input
+- [x] `src/app/auth/callback/route.ts` — Supabase OAuth code exchange, onboarding redirect for new users
+- [x] `src/app/auth/onboarding/page.tsx` — 4-step flow (username, role, interests, platform), progress bar, skippable steps
+
+**Desktop Navigation:**
+- [x] `src/components/navigation/desktop-nav.tsx` — sticky top nav, hidden on mobile (md:block)
+- [x] Updated `layout.tsx` — mobile: top-bar + bottom-nav, desktop: desktop-nav + bottom-nav hidden
+
+**Other:**
+- [x] Clean production build ✅
+
+**Next up:**
+- [ ] Supabase local setup + run migration
+- [ ] Connect pages to real Supabase data
+- [ ] Wire up auth flow end-to-end
+- [ ] Share/embed functionality
+- [ ] Challenges page
 
 ---
