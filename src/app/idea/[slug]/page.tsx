@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -50,6 +50,24 @@ export default function IdeaDetailPage({
   const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();
   const { toast } = useToast();
   const saved = idea ? isSaved(idea.id) : false;
+
+  // Live comment count from seed + user comments
+  const [liveCommentCount, setLiveCommentCount] = useState(idea?.comment_count ?? 0);
+  useEffect(() => {
+    if (!idea) return;
+    // Count seed comments (from CommentsSection's internal data) + user comments
+    try {
+      const userComments = JSON.parse(localStorage.getItem("inspo-comments") || "{}");
+      const userCount = (userComments[idea.id] || []).length;
+      // idea.comment_count is the seed count, add user comments on top
+      setLiveCommentCount(idea.comment_count + userCount);
+    } catch {
+      setLiveCommentCount(idea.comment_count);
+    }
+  }, [idea]);
+
+  // Live save count
+  const liveSaveCount = idea ? idea.save_count + (saved ? 1 : 0) : 0;
 
   const handleCopy = useCallback(async () => {
     if (!idea) return;
@@ -146,13 +164,13 @@ export default function IdeaDetailPage({
       {/* Stats row */}
       <div className="mb-6 flex items-center gap-5 text-sm text-zinc-500">
         <span className="flex items-center gap-1.5">
-          <Bookmark size={14} /> {idea.save_count} saves
+          <Bookmark size={14} /> {liveSaveCount} saves
         </span>
         <span className="flex items-center gap-1.5">
           <Hammer size={14} /> {idea.built_count} built
         </span>
         <span className="flex items-center gap-1.5">
-          <MessageSquare size={14} /> {idea.comment_count} comments
+          <MessageSquare size={14} /> {liveCommentCount} comments
         </span>
       </div>
 
@@ -293,7 +311,7 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Comments */}
-      <CommentsSection ideaId={idea.id} />
+      <CommentsSection ideaId={idea.id} onCommentCountChange={setLiveCommentCount} />
     </div>
   );
 }

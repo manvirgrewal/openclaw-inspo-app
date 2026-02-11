@@ -177,9 +177,10 @@ function CommentItem({
 
 interface CommentsSectionProps {
   ideaId: string;
+  onCommentCountChange?: (count: number) => void;
 }
 
-export function CommentsSection({ ideaId }: CommentsSectionProps) {
+export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectionProps) {
   const { isAuthenticated, user } = useAuth();
   const { toast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -207,7 +208,11 @@ export function CommentsSection({ ideaId }: CommentsSectionProps) {
     all[ideaId] = [...(all[ideaId] || []), comment];
     writeComments(all);
     // Update state
-    setComments((prev) => [...prev, comment]);
+    setComments((prev) => {
+      const next = [...prev, comment];
+      onCommentCountChange?.(next.length);
+      return next;
+    });
     toast("Comment posted!");
   }, [ideaId, user, toast]);
 
