@@ -1,3 +1,6 @@
+// NOTE: Next.js 16 deprecated middleware.ts in favor of instrumentation hooks.
+// This file is kept for session refresh functionality but should be migrated
+// to the new pattern when stabilized. See: https://nextjs.org/docs/app/building-your-application/routing/middleware
 import { updateSession } from "@/lib/supabase/middleware";
 import type { NextRequest } from "next/server";
 
