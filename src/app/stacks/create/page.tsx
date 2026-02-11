@@ -406,10 +406,10 @@ export default function CreateStackPage() {
       {/* Search Modal — only saved ideas */}
       {showSearch && (
         <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
+          className="fixed inset-0 z-[60] flex items-start justify-center bg-black/60 backdrop-blur-sm pt-16 sm:items-center sm:pt-0"
           onClick={(e) => { if (e.target === e.currentTarget) setShowSearch(false); }}
         >
-          <div className="mb-[calc(env(safe-area-inset-bottom,0px)+64px)] max-h-[75dvh] w-full max-w-lg overflow-hidden rounded-t-2xl bg-zinc-900 sm:mb-0 sm:max-h-[80dvh] sm:rounded-2xl">
+          <div className="max-h-[70dvh] w-full max-w-lg overflow-hidden rounded-2xl bg-zinc-900 mx-4 sm:mx-0 sm:max-h-[80dvh]">
             <div className="border-b border-zinc-800 p-4">
               <div className="flex items-center gap-2">
                 <Search size={16} className="text-zinc-500" />
