@@ -114,7 +114,7 @@ function SortableStackItem({
             value={item.context_note}
             onChange={(e) => onUpdateNote(item.idea.id, e.target.value)}
             maxLength={MAX_CONTEXT}
-            placeholder="Add context — why this idea fits here..."
+            placeholder="Why this prompt fits here..."
             className="mt-2 w-full rounded border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-700 focus:border-zinc-600 focus:outline-none"
           />
         </div>
