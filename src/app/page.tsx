@@ -4,6 +4,7 @@ import { useState } from "react";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { CardSkeleton } from "@/components/cards/card-skeleton";
 import { FilterChips } from "@/components/feed/filter-chips";
+import { SaveNudgeBanner } from "@/components/common/save-nudge-banner";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 // Seed data for development — replaced with real API calls once Supabase is connected
@@ -146,6 +147,9 @@ export default function HomePage() {
     <div>
       {/* Filter chips */}
       <FilterChips selected={selectedCategory} onSelect={setSelectedCategory} />
+
+      {/* Save nudge banner */}
+      <SaveNudgeBanner />
 
       {/* Feed */}
       <div className="flex flex-col gap-3 px-4 pb-4">

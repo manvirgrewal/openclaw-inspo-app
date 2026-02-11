@@ -4,6 +4,8 @@ import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@/config/constants";
 import { TopBar } from "@/components/navigation/top-bar";
 import { BottomNav } from "@/components/navigation/bottom-nav";
 import { DesktopNav } from "@/components/navigation/desktop-nav";
+import { AuthProvider } from "@/lib/auth/auth-context";
+import { ToastProvider } from "@/components/common/toast";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -45,16 +47,20 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} dark`}>
       <body className="min-h-dvh bg-zinc-950 font-sans text-zinc-100 antialiased">
-        {/* Mobile: top bar + bottom nav */}
-        <div className="md:hidden">
-          <TopBar />
-        </div>
-        {/* Desktop: top navigation */}
-        <DesktopNav />
-        <main className="mx-auto min-h-dvh max-w-3xl pb-20 md:pb-4">
-          {children}
-        </main>
-        <BottomNav />
+        <AuthProvider>
+          <ToastProvider>
+            {/* Mobile: top bar + bottom nav */}
+            <div className="md:hidden">
+              <TopBar />
+            </div>
+            {/* Desktop: top navigation */}
+            <DesktopNav />
+            <main className="mx-auto min-h-dvh max-w-3xl pb-20 md:pb-4">
+              {children}
+            </main>
+            <BottomNav />
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   );

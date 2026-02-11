@@ -6,6 +6,8 @@ import { Copy, Bookmark, MessageSquare, MoreHorizontal, Check } from "lucide-rea
 import { cn } from "@/lib/utils/cn";
 import { CATEGORY_MAP } from "@/config/categories";
 import { COMPLEXITY_OPTIONS } from "@/config/constants";
+import { useGuestSaves } from "@/hooks/use-guest-saves";
+import { useToast } from "@/components/common/toast";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 interface IdeaCardProps {
@@ -16,7 +18,10 @@ interface IdeaCardProps {
 
 export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
   const [copied, setCopied] = useState(false);
-  const [saved, setSaved] = useState(idea.is_saved ?? false);
+  const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();
+  const { toast } = useToast();
+  const saved = isSaved(idea.id);
+  const [localCountDelta, setLocalCountDelta] = useState(0);
 
   const category = CATEGORY_MAP[idea.category];
   const complexity = COMPLEXITY_OPTIONS.find((c) => c.id === idea.complexity);
@@ -28,11 +33,10 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
       try {
         await navigator.clipboard.writeText(idea.prompt);
         setCopied(true);
-        // Haptic feedback on mobile
+        toast("Copied!");
         if (navigator.vibrate) navigator.vibrate(50);
         setTimeout(() => setCopied(false), 2000);
       } catch {
-        // Fallback for older browsers
         const textarea = document.createElement("textarea");
         textarea.value = idea.prompt;
         document.body.appendChild(textarea);
@@ -40,20 +44,29 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
         document.execCommand("copy");
         document.body.removeChild(textarea);
         setCopied(true);
+        toast("Copied!");
         setTimeout(() => setCopied(false), 2000);
       }
     },
-    [idea.prompt],
+    [idea.prompt, toast],
   );
 
   const handleSave = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      setSaved((prev) => !prev);
+      if (saved) {
+        unsaveIdea(idea.id);
+        setLocalCountDelta((d) => d - 1);
+        toast("Idea unsaved");
+      } else {
+        saveIdea(idea.id);
+        setLocalCountDelta((d) => d + 1);
+        toast("Idea saved!");
+      }
       onSave?.(idea.id);
     },
-    [idea.id, onSave],
+    [idea.id, onSave, saved, saveIdea, unsaveIdea, toast],
   );
 
   return (
@@ -166,7 +179,7 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
           )}
         >
           <Bookmark size={14} fill={saved ? "currentColor" : "none"} />
-          <span>{idea.save_count + (saved && !idea.is_saved ? 1 : 0)}</span>
+          <span>{idea.save_count + localCountDelta}</span>
         </button>
 
         {/* Comments */}

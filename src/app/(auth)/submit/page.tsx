@@ -7,8 +7,9 @@ import { CATEGORIES } from "@/config/categories";
 import { COMPLEXITY_OPTIONS, MAX_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_PROMPT_LENGTH, MAX_BODY_LENGTH } from "@/config/constants";
 import { ideaCreateSchema } from "@/modules/ideas/ideas.validation";
 import { IdeaCard } from "@/components/cards/idea-card";
-import { ArrowLeft, Send, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Send, Eye, EyeOff, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth/auth-context";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 const DRAFT_KEY = "inspo-submit-draft";
@@ -35,8 +36,46 @@ const emptyForm: FormData = {
   body: "",
 };
 
+const OAUTH_PROVIDERS = [
+  { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-zinc-900 hover:bg-zinc-200" },
+  { id: "github", label: "Continue with GitHub", icon: "⚫", color: "bg-zinc-800 text-zinc-100 hover:bg-zinc-700" },
+  { id: "discord", label: "Continue with Discord", icon: "🟣", color: "bg-indigo-600 text-white hover:bg-indigo-500" },
+];
+
+function AuthGate() {
+  return (
+    <div className="flex min-h-[60dvh] flex-col items-center justify-center px-4 text-center">
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
+        <Sparkles size={28} className="text-zinc-300" />
+      </div>
+      <h1 className="mb-2 text-xl font-bold text-zinc-100">Share your automation ideas with the community</h1>
+      <p className="mb-8 max-w-sm text-sm text-zinc-500">
+        Sign in to submit ideas, follow creators, and keep your saves synced across devices.
+      </p>
+      <div className="mb-6 w-full max-w-xs space-y-3">
+        {OAUTH_PROVIDERS.map((p) => (
+          <button
+            key={p.id}
+            className={`flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-medium transition-colors ${p.color}`}
+          >
+            <span>{p.icon}</span>
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-zinc-600">
+        Just browsing? No worries — you can save ideas and come back anytime.
+      </p>
+      <Link href="/" className="mt-4 text-sm text-zinc-500 underline hover:text-zinc-300">
+        Back to browsing
+      </Link>
+    </div>
+  );
+}
+
 export default function SubmitPage() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const [form, setForm] = useState<FormData>(emptyForm);
   const [skillInput, setSkillInput] = useState("");
   const [tagInput, setTagInput] = useState("");
@@ -158,6 +197,8 @@ export default function SubmitPage() {
     updated_at: new Date().toISOString(),
     published_at: new Date().toISOString(),
   };
+
+  if (!isAuthenticated) return <AuthGate />;
 
   return (
     <div className="px-4 py-4">

@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, User, Plus } from "lucide-react";
+import { Search, User, Plus, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { APP_NAME } from "@/config/constants";
+import { useAuth } from "@/lib/auth/auth-context";
 
 const NAV_LINKS = [
   { href: "/", label: "Discover" },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 
 export function DesktopNav() {
   const pathname = usePathname();
+  const { user, isAuthenticated, signIn, signOut } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 hidden border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-md md:block">
@@ -60,13 +62,34 @@ export function DesktopNav() {
           >
             <Search size={18} />
           </Link>
-          <Link
-            href="/auth/login"
-            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
-          >
-            <User size={16} />
-            Sign In
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/profile"
+                className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
+              >
+                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-700">
+                  <User size={12} />
+                </div>
+                {user?.display_name}
+              </Link>
+              <button
+                onClick={signOut}
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-zinc-200"
+                title="Sign out"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={signIn}
+              className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-1.5 text-sm text-zinc-300 transition-colors hover:bg-zinc-700"
+            >
+              <User size={16} />
+              Sign In
+            </button>
+          )}
         </div>
       </div>
     </header>

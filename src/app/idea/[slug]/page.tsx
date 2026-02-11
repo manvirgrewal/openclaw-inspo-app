@@ -15,6 +15,10 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { CATEGORY_MAP } from "@/config/categories";
 import { COMPLEXITY_OPTIONS } from "@/config/constants";
+import { useAuth } from "@/lib/auth/auth-context";
+import { useGuestSaves } from "@/hooks/use-guest-saves";
+import { useToast } from "@/components/common/toast";
+import { CommentsSection } from "@/components/social/comments-section";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 // Seed data fallback (same pattern as home page)
@@ -155,7 +159,9 @@ export default function IdeaDetailPage({
   const idea = SEED_IDEAS[slug];
 
   const [copied, setCopied] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();
+  const { toast } = useToast();
+  const saved = idea ? isSaved(idea.id) : false;
 
   const handleCopy = useCallback(async () => {
     if (!idea) return;
@@ -171,8 +177,9 @@ export default function IdeaDetailPage({
       document.body.removeChild(textarea);
     }
     setCopied(true);
+    toast("Copied to clipboard!");
     setTimeout(() => setCopied(false), 2500);
-  }, [idea]);
+  }, [idea, toast]);
 
   if (!idea) {
     return (
@@ -376,7 +383,15 @@ export default function IdeaDetailPage({
       {/* Action bar */}
       <div className="flex items-center gap-3 border-t border-zinc-800 pt-4">
         <button
-          onClick={() => setSaved((s) => !s)}
+          onClick={() => {
+            if (saved) {
+              unsaveIdea(idea.id);
+              toast("Idea unsaved");
+            } else {
+              saveIdea(idea.id);
+              toast("Idea saved!");
+            }
+          }}
           className={cn(
             "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             saved
@@ -388,6 +403,9 @@ export default function IdeaDetailPage({
           {saved ? "Saved" : "Save"}
         </button>
       </div>
+
+      {/* Comments */}
+      <CommentsSection />
     </div>
   );
 }

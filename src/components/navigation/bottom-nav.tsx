@@ -4,17 +4,19 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Plus, Layers, User } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-
-const NAV_ITEMS = [
-  { href: "/", icon: Home, label: "Home" },
-  { href: "/search", icon: Search, label: "Search" },
-  { href: "/submit", icon: Plus, label: "Add" },
-  { href: "/stacks", icon: Layers, label: "Stacks" },
-  { href: "/profile", icon: User, label: "Me" },
-] as const;
+import { useAuth } from "@/lib/auth/auth-context";
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
+
+  const NAV_ITEMS = [
+    { href: "/", icon: Home, label: "Home" },
+    { href: "/search", icon: Search, label: "Search" },
+    { href: "/submit", icon: Plus, label: "Add" },
+    { href: "/stacks", icon: Layers, label: "Stacks" },
+    { href: isAuthenticated ? "/profile" : "/auth/login", icon: User, label: "Me" },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-zinc-800 bg-zinc-950/95 backdrop-blur-md md:hidden">
