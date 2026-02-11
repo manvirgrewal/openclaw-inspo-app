@@ -7,6 +7,59 @@ Repo: https://github.com/manvirgrewal/openclaw-inspo-app
 
 ---
 
+## 2026-02-11 — Phase 3: Auth Gating, Guest Saves & Social Features
+
+### Session 4: Auth Context, Guest Saves, Comments, Nudges
+
+**Commit:** `77582d0` — `feat: phase 3 - auth context, guest saves, comments, toast, auth-gated submit, navigation updates`
+
+**Auth System:**
+- [x] `src/lib/auth/auth-context.tsx` — React context with demo mode (localStorage toggle)
+- [x] `useAuth()` hook returning `{ user, isAuthenticated, signIn, signOut }`
+- [x] AuthProvider wrapping app in root layout
+- [x] Desktop nav: "Sign In" button calls `signIn()` (demo toggle), shows avatar + sign out when authenticated
+- [x] Bottom nav: "Me" tab routes to `/auth/login` when guest, `/profile` when authenticated
+
+**Auth-Gated Submit Page:**
+- [x] `/submit` checks auth state
+- [x] Unauthenticated: friendly page with OAuth buttons, inviting tone, zero pressure
+- [x] Authenticated: shows existing submit form unchanged
+
+**Guest Saves (localStorage):**
+- [x] `src/hooks/use-guest-saves.ts` — saveIdea, unsaveIdea, isSaved, getSavedIds, getSaveCount
+- [x] Max 50 saves for guests
+- [x] IdeaCard uses guest saves — toggle works immediately, count updates locally
+- [x] Idea detail page uses guest saves with toast feedback
+
+**Toast Notifications:**
+- [x] `src/components/common/toast.tsx` — ToastProvider + useToast()
+- [x] Auto-dismiss after 2 seconds, positioned above bottom nav on mobile
+- [x] Used for: "Copied!", "Idea saved!", "Idea unsaved"
+
+**Comments Section:**
+- [x] `src/components/social/comments-section.tsx` — threaded comments with seed data (4 comments)
+- [x] Auth-gated: comment input for authenticated, gentle nudge for guests
+- [x] Reply button on each comment (auth-gated)
+- [x] Added to idea detail page
+
+**Gentle Sign-Up Nudges:**
+- [x] Save nudge banner: shows after 5th guest save, dismissible, 7-day cooldown
+- [x] Comment nudge: "Want to join the conversation? Sign in to comment" — inline, not blocking
+- [x] All nudges are non-modal, non-blocking, non-guilt-tripping
+
+**Other:**
+- [x] Clean production build ✅
+
+**Next up:**
+- [ ] Supabase local setup + run migration
+- [ ] Connect auth to real Supabase Auth
+- [ ] Saves/collections page with inline nudge
+- [ ] Share/embed functionality
+- [ ] Challenges page
+- [ ] Real-time save sync when Supabase connects
+
+---
+
 ## 2026-02-11 — Project Kickoff
 
 ### Session 1: Scaffolding & Foundation
