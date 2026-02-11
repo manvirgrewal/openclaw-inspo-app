@@ -9,10 +9,12 @@ import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useProfile } from "@/hooks/use-profile";
 import { useFollows } from "@/hooks/use-follows";
 import { IdeaCard } from "@/components/cards/idea-card";
+import { StackCard } from "@/components/cards/stack-card";
 import { EditProfileModal } from "@/components/profile/edit-profile-modal";
 import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
+import type { Stack } from "@/modules/stacks/stacks.types";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth();
@@ -20,6 +22,7 @@ export default function ProfilePage() {
   const { profile, updateProfile, loaded: profileLoaded } = useProfile();
   const { followedIds, toggleFollow, getFollowerIds, getFollowingIds } = useFollows();
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
+  const [userStacks, setUserStacks] = useState<Stack[]>([]);
   const [editOpen, setEditOpen] = useState(false);
   const [followListOpen, setFollowListOpen] = useState(false);
   const [followListTab, setFollowListTab] = useState<FollowListTab>("followers");
@@ -28,6 +31,10 @@ export default function ProfilePage() {
     try {
       const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
       setUserIdeas(stored);
+    } catch {}
+    try {
+      const storedStacks = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
+      setUserStacks(storedStacks);
     } catch {}
   }, []);
 
@@ -243,7 +250,23 @@ export default function ProfilePage() {
         </Tabs.Content>
 
         <Tabs.Content value="stacks">
-          <div className="py-12 text-center text-sm text-zinc-600">No stacks yet</div>
+          {userStacks.length > 0 ? (
+            <div className="space-y-3">
+              {userStacks.map((stack) => (
+                <StackCard key={stack.id} stack={stack} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center">
+              <p className="mb-2 text-sm text-zinc-600">No stacks yet</p>
+              <Link
+                href="/stacks/create"
+                className="text-sm text-emerald-400 hover:underline"
+              >
+                Create your first stack →
+              </Link>
+            </div>
+          )}
         </Tabs.Content>
 
         <Tabs.Content value="about">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
 import { ArrowLeft, Copy, Check, Layers, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -9,20 +9,48 @@ import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useToast } from "@/components/common/toast";
 import { SEED_STACK_DETAILS } from "@/data/seed-stacks";
 
+function useStackDetail(slug: string) {
+  const [userStack, setUserStack] = useState<any>(null);
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
+      const found = stored.find((s: any) => s.slug === slug);
+      if (found) setUserStack(found);
+    } catch {}
+  }, [slug]);
+
+  // Check seed stacks first, then user stacks
+  const seedDetail = SEED_STACK_DETAILS[slug];
+  if (seedDetail) return seedDetail;
+
+  if (userStack) {
+    return {
+      stack: {
+        ...userStack,
+        items: (userStack._items || []).map((item: any, i: number) => ({
+          idea: item.idea,
+          context_note: item.context_note,
+        })),
+      },
+    };
+  }
+  return null;
+}
+
 export default function StackDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
-  const detail = SEED_STACK_DETAILS[slug];
+  const detail = useStackDetail(slug);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
   const copyAllPrompts = useCallback(async () => {
     if (!detail) return;
     const allPrompts = detail.stack.items
-      .map((item, i) => `--- ${i + 1}. ${item.idea?.title ?? "Untitled"} ---\n${item.idea?.prompt ?? ""}`)
+      .map((item: any, i: number) => `--- ${i + 1}. ${item.idea?.title ?? "Untitled"} ---\n${item.idea?.prompt ?? ""}`)
       .join("\n\n");
     try {
       await navigator.clipboard.writeText(allPrompts);
@@ -103,7 +131,7 @@ export default function StackDetailPage({
 
       {/* Ideas in order */}
       <div className="space-y-3">
-        {stack.items.map((item, i) => (
+        {stack.items.map((item: any, i: number) => (
           <div key={item.idea?.id ?? i}>
             {/* Context note */}
             {item.context_note && (

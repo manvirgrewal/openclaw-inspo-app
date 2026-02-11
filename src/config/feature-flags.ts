@@ -16,7 +16,7 @@ export const FLAGS = {
   REMIXES: false,
   FOLLOWS: false,
   CHALLENGES: false,
-  USER_STACKS: false, // Users creating stacks (admin-only in v1)
+  USER_STACKS: true, // Users creating stacks
   NOTIFICATIONS: false,
   WEEKLY_DIGEST: false,
 
