@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OpenClaw Inspo
+
+Discover, save, and share AI agent automation ideas.
+
+A community-driven platform where users browse actionable prompts and workflows for AI agents — copy a prompt, paste it into your agent, and it just works. Think Product Hunt meets Reddit for AI automation.
+
+## Features
+
+- **Feed** — Infinite scroll of idea cards, filterable by category and complexity
+- **Copy Prompt** — One tap to copy a battle-tested prompt to your clipboard
+- **Stacks** — Curated bundles of ideas that work together (e.g. "The Morning Autopilot")
+- **Search** — Full-text search across all ideas
+- **User Profiles** — Showcase your builds, setups, and contributed ideas
+- **Submit Ideas** — Guided form with live card preview
+- **Mobile-First** — Designed for phones first, enhanced for desktop
+- **PWA** — Add to home screen for a native app feel
+- **Dark Mode** — Default and only mode. We live in terminals.
+
+## Tech Stack
+
+| Layer | Tech |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript (strict) |
+| Styling | Tailwind CSS + Radix UI |
+| Database | Supabase (PostgreSQL + Auth + RLS) |
+| State | Zustand + TanStack Query |
+| Validation | Zod |
+| Icons | Lucide React |
+| Hosting | Vercel (planned) |
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- Docker (for Supabase local)
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/manvirgrewal/openclaw-inspo-app.git
+cd openclaw-inspo-app
+npm install
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev          # Starts on http://localhost:3005
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Supabase (local)
 
-## Learn More
+```bash
+npx supabase start  # Starts local Supabase (needs Docker)
+# Then update .env.local with the local Supabase URL + keys
+```
 
-To learn more about Next.js, take a look at the following resources:
+The database migration is at `supabase/migrations/00001_initial_schema.sql`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Build
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run build
+npm start            # Production server
+```
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/              # Routes (pages + API)
+│   ├── api/          # API endpoints (ideas, search, events, etc.)
+│   ├── auth/         # Login, callback, onboarding
+│   ├── idea/[slug]/  # Idea detail page
+│   ├── stacks/       # Stack listing + detail
+│   ├── user/[username]/ # User profiles
+│   ├── search/       # Search page
+│   └── submit/       # Submit idea form
+├── modules/          # Domain logic (ideas, stacks, social, users, etc.)
+├── components/       # UI components (cards, feed, navigation, profile)
+├── lib/              # Infrastructure (supabase, utils)
+├── hooks/            # Custom React hooks
+└── config/           # Categories, constants, feature flags
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Ports
+
+| Service | Port |
+|---|---|
+| OpenClaw Inspo App | 3005 |
+| Supabase (local) | 54321 (default) |
+
+## Status
+
+**Pre-alpha** — Core scaffold complete with seed data. Supabase integration pending.
+
+See [DEVLOG.md](./DEVLOG.md) for detailed progress.
+
+## License
+
+TBD
