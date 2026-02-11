@@ -237,7 +237,7 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
     const entry: BuiltEntry = {
       id: `user-build-${Date.now()}`,
       idea_id: ideaId,
-      user: { username: user.username, display_name: user.display_name },
+      user: { username: user.username, display_name: user.display_name, avatar_url: user.avatar_url ?? null },
       story: story.trim() || null,
       time_saved_weekly: timeSaved.trim() || null,
       before_workflow: beforeWork.trim() || null,

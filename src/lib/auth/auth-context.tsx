@@ -41,7 +41,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       if (localStorage.getItem(AUTH_KEY) === "true") {
-        setUser(DEMO_USER);
+        // Merge profile data (avatar, display name) if available
+        const profile = JSON.parse(localStorage.getItem("inspo-user-profile") || "{}");
+        setUser({
+          ...DEMO_USER,
+          display_name: profile.display_name || DEMO_USER.display_name,
+          avatar_url: profile.avatar_url || DEMO_USER.avatar_url,
+        });
       }
     } catch {}
     setIsLoading(false);

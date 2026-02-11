@@ -228,7 +228,7 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
     const comment: Comment = {
       id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       idea_id: ideaId,
-      author: { username: user.username, display_name: user.display_name },
+      author: { username: user.username, display_name: user.display_name, avatar_url: user.avatar_url ?? null },
       body,
       created_at: new Date().toISOString(),
       parent_id: parentId,
