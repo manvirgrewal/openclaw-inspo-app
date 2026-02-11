@@ -29,6 +29,8 @@ export default function ProfilePage() {
   const [followListOpen, setFollowListOpen] = useState(false);
   const [followListTab, setFollowListTab] = useState<FollowListTab>("followers");
 
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+
   useEffect(() => {
     try {
       const stored = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
@@ -38,22 +40,9 @@ export default function ProfilePage() {
       const storedStacks = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
       setUserStacks(storedStacks);
     } catch {}
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
-      </div>
-    );
-  }
-
-  // Pinned idea IDs
-  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
-  useEffect(() => {
     try {
-      const stored = JSON.parse(localStorage.getItem("inspo-pinned-ideas") || "[]");
-      setPinnedIds(stored);
+      const storedPins = JSON.parse(localStorage.getItem("inspo-pinned-ideas") || "[]");
+      setPinnedIds(storedPins);
     } catch {}
   }, []);
 
@@ -73,6 +62,14 @@ export default function ProfilePage() {
       return next;
     });
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
+      </div>
+    );
+  }
 
   // Guest profile
   if (!isAuthenticated) {
