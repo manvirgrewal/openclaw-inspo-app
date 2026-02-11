@@ -170,14 +170,16 @@ function BuildEntry({ entry }: { entry: BuiltEntry }) {
 interface BuiltThisSectionProps {
   ideaId: string;
   onBuiltCountChange?: (count: number) => void;
+  onAvgRatingChange?: (avg: number | null) => void;
 }
 
-export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectionProps) {
+export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange }: BuiltThisSectionProps) {
   const { isAuthenticated, user } = useAuth();
   const { toast } = useToast();
   const [builds, setBuilds] = useState<BuiltEntry[]>([]);
   const [hasBuilt, setHasBuilt] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
 
   // Form state
   const [story, setStory] = useState("");
@@ -192,11 +194,19 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectio
     const all = [...seeds, ...userBuilds];
     setBuilds(all);
     onBuiltCountChange?.(all.length);
+    // Compute average rating
+    const rated = all.filter((b) => b.impact_rating != null);
+    if (rated.length > 0) {
+      const avg = rated.reduce((sum, b) => sum + b.impact_rating!, 0) / rated.length;
+      onAvgRatingChange?.(Math.round(avg * 10) / 10);
+    } else {
+      onAvgRatingChange?.(null);
+    }
     // Check if current user already built
     if (user) {
       setHasBuilt(all.some((b) => b.user.username === user.username));
     }
-  }, [ideaId, user, onBuiltCountChange]);
+  }, [ideaId, user, onBuiltCountChange, onAvgRatingChange]);
 
   const handleSubmit = useCallback(() => {
     if (!user || !rating) return;
@@ -217,6 +227,11 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectio
     setBuilds((prev) => {
       const next = [...prev, entry];
       onBuiltCountChange?.(next.length);
+      const rated = next.filter((b) => b.impact_rating != null);
+      if (rated.length > 0) {
+        const avg = rated.reduce((sum, b) => sum + b.impact_rating!, 0) / rated.length;
+        onAvgRatingChange?.(Math.round(avg * 10) / 10);
+      }
       return next;
     });
     setHasBuilt(true);
@@ -228,24 +243,31 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectio
   return (
     <div className="mt-6 border-t border-zinc-800 pt-4">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300">
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300 hover:text-zinc-100 transition-colors"
+        >
+          {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           <Hammer size={14} /> Built This ({builds.length})
-        </h2>
-        {isAuthenticated && !hasBuilt && !showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400 transition-colors hover:bg-orange-500/20"
-          >
-            ⚡ I Built This
-          </button>
-        )}
-        {hasBuilt && (
-          <span className="flex items-center gap-1 rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">
-            <Hammer size={12} /> You built this!
-          </span>
-        )}
+        </button>
+        <div className="flex items-center gap-2">
+          {isAuthenticated && !hasBuilt && !showForm && (
+            <button
+              onClick={() => { setCollapsed(false); setShowForm(true); }}
+              className="rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400 transition-colors hover:bg-orange-500/20"
+            >
+              ⚡ I Built This
+            </button>
+          )}
+          {hasBuilt && (
+            <span className="flex items-center gap-1 rounded-lg bg-orange-500/10 px-3 py-1.5 text-xs font-medium text-orange-400">
+              <Hammer size={12} /> You built this!
+            </span>
+          )}
+        </div>
       </div>
 
+      {!collapsed && <>
       {/* Submit form */}
       {showForm && (
         <div className="mb-4 space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
@@ -331,6 +353,7 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange }: BuiltThisSectio
           No one has built this yet. Be the first!
         </p>
       ) : null}
+      </>}
     </div>
   );
 }

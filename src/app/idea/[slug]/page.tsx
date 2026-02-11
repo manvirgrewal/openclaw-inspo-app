@@ -13,6 +13,7 @@ import {
   Clock,
   User,
   Pencil,
+  Star,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { CATEGORY_MAP } from "@/config/categories";
@@ -63,6 +64,7 @@ export default function IdeaDetailPage({
   // Live counts — set by child sections once they load seed + user data
   const [liveCommentCount, setLiveCommentCount] = useState(0);
   const [liveBuiltCount, setLiveBuiltCount] = useState(0);
+  const [avgRating, setAvgRating] = useState<number | null>(null);
 
   // Live save count
   const liveSaveCount = idea ? idea.save_count + (saved ? 1 : 0) : 0;
@@ -173,6 +175,11 @@ export default function IdeaDetailPage({
 
       {/* Stats row */}
       <div className="mb-6 flex items-center gap-5 text-sm text-zinc-500">
+        {avgRating !== null && (
+          <span className="flex items-center gap-1 text-yellow-400">
+            <Star size={14} fill="currentColor" /> {avgRating.toFixed(1)}
+          </span>
+        )}
         <span className="flex items-center gap-1.5">
           <Bookmark size={14} /> {liveSaveCount} saves
         </span>
@@ -320,7 +327,7 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Built This */}
-      <BuiltThisSection ideaId={idea.id} onBuiltCountChange={setLiveBuiltCount} />
+      <BuiltThisSection ideaId={idea.id} onBuiltCountChange={setLiveBuiltCount} onAvgRatingChange={setAvgRating} />
 
       {/* Comments */}
       <CommentsSection ideaId={idea.id} onCommentCountChange={setLiveCommentCount} />
