@@ -32,6 +32,7 @@ export default function HomePage() {
   const { followedIds } = useFollows();
   const [activeTab, setActiveTab] = useState<FeedTab>("discover");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [followingCategory, setFollowingCategory] = useState<string | null>(null);
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
 
   useEffect(() => {
@@ -52,8 +53,11 @@ export default function HomePage() {
 
   // Following tab: show ideas from users you follow
   const followingIdeas = allIdeas.filter((idea) => idea.author_id && followedIds.includes(idea.author_id));
+  const filteredFollowing = followingCategory
+    ? followingIdeas.filter((idea) => idea.category === followingCategory)
+    : followingIdeas;
 
-  const displayIdeas = activeTab === "following" ? followingIdeas : filteredIdeas;
+  const displayIdeas = activeTab === "following" ? filteredFollowing : filteredIdeas;
   const feedItems = activeTab === "discover" && !selectedCategory
     ? injectSlots(displayIdeas)
     : displayIdeas;
@@ -63,10 +67,11 @@ export default function HomePage() {
       {/* Feed tabs */}
       <FeedTabs active={activeTab} onTabChange={setActiveTab} isAuthenticated={isAuthenticated} />
 
-      {/* Filter chips (discover only) */}
-      {activeTab === "discover" && (
-        <FilterChips selected={selectedCategory} onSelect={setSelectedCategory} />
-      )}
+      {/* Filter chips */}
+      <FilterChips
+        selected={activeTab === "following" ? followingCategory : selectedCategory}
+        onSelect={activeTab === "following" ? setFollowingCategory : setSelectedCategory}
+      />
 
       {/* Save nudge banner */}
       <SaveNudgeBanner />
