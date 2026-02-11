@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Mail } from "lucide-react";
+import { ArrowLeft, Mail, Zap } from "lucide-react";
+import { useAuth } from "@/lib/auth/auth-context";
 
 const OAUTH_PROVIDERS = [
   { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-zinc-900 hover:bg-zinc-200" },
@@ -11,6 +13,8 @@ const OAUTH_PROVIDERS = [
 ];
 
 export default function LoginPage() {
+  const { signIn } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -88,6 +92,26 @@ export default function LoginPage() {
             </button>
           </div>
         )}
+
+        {/* Demo mode */}
+        <div className="mt-6 flex items-center gap-3">
+          <div className="h-px flex-1 bg-zinc-800" />
+          <span className="text-xs text-zinc-600">demo</span>
+          <div className="h-px flex-1 bg-zinc-800" />
+        </div>
+        <button
+          onClick={() => {
+            signIn();
+            router.push("/");
+          }}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+        >
+          <Zap size={16} />
+          Try Demo Mode
+        </button>
+        <p className="mt-2 text-center text-xs text-zinc-600">
+          No account needed — explore all features instantly
+        </p>
       </div>
     </div>
   );

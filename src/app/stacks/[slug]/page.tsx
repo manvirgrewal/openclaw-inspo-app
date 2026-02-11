@@ -75,7 +75,11 @@ export default function StackDetailPage({
 
       {/* Meta */}
       <div className="mb-4 flex items-center gap-3 text-xs text-zinc-500">
-        {stack.author && <span>by @{stack.author.username}</span>}
+        {stack.author && (
+          <Link href={`/user/${stack.author.username}`} className="hover:text-zinc-300 hover:underline">
+            by @{stack.author.username}
+          </Link>
+        )}
         <span>·</span>
         <span>{stack.items.length} ideas</span>
         <span>·</span>

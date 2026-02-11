@@ -15,7 +15,7 @@ export function BottomNav() {
     { href: "/search", icon: Search, label: "Search" },
     { href: "/submit", icon: Plus, label: "Add" },
     { href: "/stacks", icon: Layers, label: "Stacks" },
-    { href: isAuthenticated ? "/profile" : "/auth/login", icon: User, label: "Me" },
+    { href: "/profile", icon: User, label: "Me" },
   ];
 
   return (

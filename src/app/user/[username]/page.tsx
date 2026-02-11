@@ -2,11 +2,13 @@
 
 import { useState, use } from "react";
 import Link from "next/link";
-import { ArrowLeft, UserPlus, Share2 } from "lucide-react";
+import { ArrowLeft, UserPlus, Share2, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils/cn";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
+import { useAuth } from "@/lib/auth/auth-context";
+import { useToast } from "@/components/common/toast";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import type { Profile } from "@/modules/users/users.types";
@@ -103,6 +105,8 @@ export default function UserProfilePage({
 }) {
   const { username } = use(params);
   const profile = SEED_PROFILES[username];
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
   const [following, setFollowing] = useState(false);
 
   if (!profile) {
@@ -160,7 +164,13 @@ export default function UserProfilePage({
         {/* Actions */}
         <div className="mt-4 flex items-center justify-center gap-3">
           <button
-            onClick={() => setFollowing(!following)}
+            onClick={() => {
+              if (!isAuthenticated) {
+                toast("Sign in to follow users");
+                return;
+              }
+              setFollowing(!following);
+            }}
             className={cn(
               "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
               following

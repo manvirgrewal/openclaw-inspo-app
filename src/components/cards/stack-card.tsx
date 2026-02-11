@@ -48,7 +48,12 @@ export function StackCard({ stack, className }: StackCardProps) {
         {stack.author && (
           <>
             <span>·</span>
-            <span>by @{stack.author.username}</span>
+            <span
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.location.href = `/user/${stack.author!.username}`; }}
+              className="cursor-pointer hover:text-zinc-300 hover:underline"
+            >
+              by @{stack.author.username}
+            </span>
           </>
         )}
       </div>
