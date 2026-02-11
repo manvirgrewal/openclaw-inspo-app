@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, use } from "react";
+import { useState, useEffect, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, UserPlus, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils/cn";
@@ -16,6 +17,7 @@ import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import { getProfileByUsername } from "@/data/seed-profiles";
 import { UserAvatar } from "@/components/common/user-avatar";
+import type { Idea } from "@/modules/ideas/ideas.types";
 
 const TAB_ITEMS = [
   { value: "ideas", label: "Ideas" },
@@ -29,8 +31,49 @@ export default function UserProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = use(params);
-  const profile = getProfileByUsername(username);
+  const router = useRouter();
+  const seedProfile = getProfileByUsername(username);
   const { user, isAuthenticated } = useAuth();
+
+  // If viewing own profile, redirect to /profile
+  const isOwnProfile = user && user.username === username;
+  useEffect(() => {
+    if (isOwnProfile) router.replace("/profile");
+  }, [isOwnProfile, router]);
+
+  // Merge localStorage profile data for demo_user (or any local user)
+  const [localProfile, setLocalProfile] = useState<any>(null);
+  const [localIdeas, setLocalIdeas] = useState<Idea[]>([]);
+  const [localStacks, setLocalStacks] = useState<any[]>([]);
+  useEffect(() => {
+    try {
+      // Check if this username matches the logged-in demo user's profile
+      const storedProfile = JSON.parse(localStorage.getItem("inspo-user-profile") || "{}");
+      if (storedProfile.username === username || (username === "demo_user" && Object.keys(storedProfile).length > 0)) {
+        setLocalProfile(storedProfile);
+      }
+      // Load user-created ideas
+      const ideas: Idea[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      setLocalIdeas(ideas.filter((i) => i.author?.username === username));
+      // Load user-created stacks
+      const stacks = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
+      setLocalStacks(stacks.filter((s: any) => s.author?.username === username));
+    } catch {}
+  }, [username]);
+
+  // Merge seed profile with local overrides
+  const profile = seedProfile ? {
+    ...seedProfile,
+    ...(localProfile ? {
+      display_name: localProfile.display_name || seedProfile.display_name,
+      bio: localProfile.bio || seedProfile.bio,
+      avatar_url: localProfile.avatar_url || seedProfile.avatar_url,
+      agent_platform: localProfile.agent_platform || seedProfile.agent_platform,
+      active_skills: localProfile.active_skills?.length ? localProfile.active_skills : seedProfile.active_skills,
+      onboarding_role: localProfile.onboarding_role || seedProfile.onboarding_role,
+      setup_description: localProfile.setup_description || seedProfile.setup_description,
+    } : {}),
+  } : null;
   const { toggleFollow, isFollowing, followedIds, getFollowerIds, getFollowingIds } = useFollows();
   const { toast } = useToast();
   const following = profile ? isFollowing(profile.id) : false;
@@ -49,8 +92,8 @@ export default function UserProfilePage({
     );
   }
 
-  const userIdeas = SEED_IDEAS.filter((i) => i.author_id === profile.id);
-  const userStacks = SEED_STACKS_LIST.filter((s) => s.author_id === profile.id);
+  const userIdeas = [...SEED_IDEAS.filter((i) => i.author_id === profile.id), ...localIdeas];
+  const userStacks = [...SEED_STACKS_LIST.filter((s) => s.author_id === profile.id), ...localStacks];
 
   return (
     <div className="px-4 py-4">
@@ -187,7 +230,7 @@ export default function UserProfilePage({
               <div>
                 <h4 className="mb-1 font-medium text-zinc-300">Skills</h4>
                 <div className="flex flex-wrap gap-1.5">
-                  {profile.active_skills.map((skill) => (
+                  {profile.active_skills.map((skill: string) => (
                     <span key={skill} className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{skill}</span>
                   ))}
                 </div>
