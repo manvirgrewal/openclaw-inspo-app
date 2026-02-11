@@ -1,97 +1,19 @@
 "use client";
 
-import { use } from "react";
+import { useState, use } from "react";
 import Link from "next/link";
 import { ArrowLeft, UserPlus, Share2, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
 import { cn } from "@/lib/utils/cn";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
+import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useFollows } from "@/hooks/use-follows";
 import { useToast } from "@/components/common/toast";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
-import type { Profile } from "@/modules/users/users.types";
-
-// Seed user profiles
-const SEED_PROFILES: Record<string, Profile> = {
-  sarah_dev: {
-    id: "u1",
-    username: "sarah_dev",
-    display_name: "Sarah Chen",
-    avatar_url: null,
-    bio: "Full-stack dev automating everything I can. Building with OpenClaw daily.",
-    role: "user",
-    reputation_score: 420,
-    agent_platform: "OpenClaw",
-    active_skills: ["calendar", "email", "github", "weather"],
-    setup_description: null,
-    setup_score: 75,
-    onboarding_role: "Developer",
-    interests: ["productivity", "development"],
-    ideas_built_count: 12,
-    ideas_contributed_count: 2, // ideas 1, 3
-    follower_count: 142,
-    following_count: 38,
-    pinned_ideas: [],
-    pinned_stacks: [],
-    pinned_builds: [],
-    onboarding_completed: true,
-    created_at: "2026-01-15T08:00:00Z",
-    updated_at: "2026-02-10T08:00:00Z",
-  },
-  mike_builds: {
-    id: "u2",
-    username: "mike_builds",
-    display_name: "Mike Rivera",
-    avatar_url: null,
-    bio: "Finance nerd meets automation junkie. Making money while I sleep (sort of).",
-    role: "user",
-    reputation_score: 280,
-    agent_platform: "OpenClaw",
-    active_skills: ["email", "sheets", "web-search"],
-    setup_description: null,
-    setup_score: 60,
-    onboarding_role: "Entrepreneur",
-    interests: ["finance", "productivity"],
-    ideas_built_count: 8,
-    ideas_contributed_count: 2, // ideas 2, 5
-    follower_count: 89,
-    following_count: 45,
-    pinned_ideas: [],
-    pinned_stacks: [],
-    pinned_builds: [],
-    onboarding_completed: true,
-    created_at: "2026-01-20T08:00:00Z",
-    updated_at: "2026-02-10T08:00:00Z",
-  },
-  jess_automates: {
-    id: "u3",
-    username: "jess_automates",
-    display_name: "Jess Park",
-    avatar_url: null,
-    bio: "Product manager by day, automation enthusiast by night. Everything should be one click.",
-    role: "user",
-    reputation_score: 310,
-    agent_platform: "Claude",
-    active_skills: ["calendar", "drive", "contacts"],
-    setup_description: null,
-    setup_score: 55,
-    onboarding_role: "Marketer",
-    interests: ["productivity", "communication"],
-    ideas_built_count: 6,
-    ideas_contributed_count: 1, // idea 4
-    follower_count: 67,
-    following_count: 52,
-    pinned_ideas: [],
-    pinned_stacks: [],
-    pinned_builds: [],
-    onboarding_completed: true,
-    created_at: "2026-01-25T08:00:00Z",
-    updated_at: "2026-02-10T08:00:00Z",
-  },
-};
+import { getProfileByUsername } from "@/data/seed-profiles";
 
 const TAB_ITEMS = [
   { value: "ideas", label: "Ideas" },
@@ -105,11 +27,13 @@ export default function UserProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = use(params);
-  const profile = SEED_PROFILES[username];
-  const { isAuthenticated } = useAuth();
-  const { toggleFollow, isFollowing } = useFollows();
+  const profile = getProfileByUsername(username);
+  const { user, isAuthenticated } = useAuth();
+  const { toggleFollow, isFollowing, followedIds, getFollowerIds, getFollowingIds } = useFollows();
   const { toast } = useToast();
   const following = profile ? isFollowing(profile.id) : false;
+  const [followListOpen, setFollowListOpen] = useState(false);
+  const [followListTab, setFollowListTab] = useState<FollowListTab>("followers");
 
   if (!profile) {
     return (
@@ -149,8 +73,18 @@ export default function UserProfilePage({
         {/* Stats */}
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
           <span>💡 {userIdeas.length} ideas</span>
-          <span>⚡ {profile.ideas_built_count} built</span>
-          <span>👥 {profile.follower_count} followers</span>
+          <button
+            onClick={() => { setFollowListTab("followers"); setFollowListOpen(true); }}
+            className="hover:text-zinc-300 transition-colors"
+          >
+            <span className="font-semibold text-zinc-300">{getFollowerIds(profile.id).length}</span> followers
+          </button>
+          <button
+            onClick={() => { setFollowListTab("following"); setFollowListOpen(true); }}
+            className="hover:text-zinc-300 transition-colors"
+          >
+            <span className="font-semibold text-zinc-300">{getFollowingIds(profile.id).length}</span> following
+          </button>
         </div>
 
         {/* Setup */}
@@ -263,6 +197,19 @@ export default function UserProfilePage({
           </div>
         </Tabs.Content>
       </Tabs.Root>
+
+      <FollowListModal
+        open={followListOpen}
+        onClose={() => setFollowListOpen(false)}
+        tab={followListTab}
+        onTabChange={setFollowListTab}
+        profileId={profile.id}
+        followingIds={getFollowingIds(profile.id)}
+        followerIds={getFollowerIds(profile.id)}
+        myFollowedIds={followedIds}
+        myUserId={user?.id ?? null}
+        onToggleFollow={toggleFollow}
+      />
     </div>
   );
 }

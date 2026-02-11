@@ -7,8 +7,10 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useProfile } from "@/hooks/use-profile";
+import { useFollows } from "@/hooks/use-follows";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { EditProfileModal } from "@/components/profile/edit-profile-modal";
+import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
@@ -16,8 +18,11 @@ export default function ProfilePage() {
   const { user, isAuthenticated, isLoading, signIn } = useAuth();
   const { savedIds } = useGuestSaves();
   const { profile, updateProfile, loaded: profileLoaded } = useProfile();
+  const { followedIds, toggleFollow, getFollowerIds, getFollowingIds } = useFollows();
   const [userIdeas, setUserIdeas] = useState<Idea[]>([]);
   const [editOpen, setEditOpen] = useState(false);
+  const [followListOpen, setFollowListOpen] = useState(false);
+  const [followListTab, setFollowListTab] = useState<FollowListTab>("followers");
 
   useEffect(() => {
     try {
@@ -144,6 +149,18 @@ export default function ProfilePage() {
         <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
           <span>💡 {userIdeas.length} ideas</span>
           <span>🔖 {savedIdeas.length} saved</span>
+          <button
+            onClick={() => { setFollowListTab("followers"); setFollowListOpen(true); }}
+            className="hover:text-zinc-300 transition-colors"
+          >
+            <span className="font-semibold text-zinc-300">{getFollowerIds(user!.id).length}</span> followers
+          </button>
+          <button
+            onClick={() => { setFollowListTab("following"); setFollowListOpen(true); }}
+            className="hover:text-zinc-300 transition-colors"
+          >
+            <span className="font-semibold text-zinc-300">{getFollowingIds(user!.id).length}</span> following
+          </button>
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-3">
@@ -270,6 +287,19 @@ export default function ProfilePage() {
           </div>
         </Tabs.Content>
       </Tabs.Root>
+
+      <FollowListModal
+        open={followListOpen}
+        onClose={() => setFollowListOpen(false)}
+        tab={followListTab}
+        onTabChange={setFollowListTab}
+        profileId={user!.id}
+        followingIds={getFollowingIds(user!.id)}
+        followerIds={getFollowerIds(user!.id)}
+        myFollowedIds={followedIds}
+        myUserId={user!.id}
+        onToggleFollow={toggleFollow}
+      />
     </div>
   );
 }

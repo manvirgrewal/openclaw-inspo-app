@@ -1,14 +1,25 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 
 const FOLLOWS_KEY = "inspo-follows";
 
 /**
- * Persists the set of user IDs the demo user follows.
- * Returns the list, a toggle function, and a membership check.
+ * Seed follow graph — simulates existing relationships between seed users.
+ * Map of userId → userIds they follow.
  */
-export function useFollows() {
+const SEED_GRAPH: Record<string, string[]> = {
+  u1: ["u2", "u3"],           // sarah follows mike & jess
+  u2: ["u1"],                 // mike follows sarah
+  u3: ["u1", "u2"],           // jess follows sarah & mike
+};
+
+/**
+ * Persists the demo user's follow relationships in localStorage.
+ * Also exposes the full follow graph (seed + demo) for computing
+ * followers/following for any user.
+ */
+export function useFollows(myUserId: string = "demo-user-1") {
   const [followedIds, setFollowedIds] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -39,5 +50,34 @@ export function useFollows() {
     [followedIds]
   );
 
-  return { followedIds, toggleFollow, isFollowing, loaded };
+  // Full graph: seed + demo user's follows
+  const fullGraph = useMemo(() => {
+    const graph = { ...SEED_GRAPH };
+    graph[myUserId] = followedIds;
+    return graph;
+  }, [followedIds, myUserId]);
+
+  /** Get IDs that a given user is following */
+  const getFollowingIds = useCallback(
+    (userId: string): string[] => fullGraph[userId] ?? [],
+    [fullGraph]
+  );
+
+  /** Get IDs that follow a given user */
+  const getFollowerIds = useCallback(
+    (userId: string): string[] =>
+      Object.entries(fullGraph)
+        .filter(([, following]) => following.includes(userId))
+        .map(([id]) => id),
+    [fullGraph]
+  );
+
+  return {
+    followedIds,
+    toggleFollow,
+    isFollowing,
+    getFollowingIds,
+    getFollowerIds,
+    loaded,
+  };
 }
