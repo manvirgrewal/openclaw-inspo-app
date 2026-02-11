@@ -15,6 +15,7 @@ import { useToast } from "@/components/common/toast";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import { getProfileByUsername } from "@/data/seed-profiles";
+import { UserAvatar } from "@/components/common/user-avatar";
 
 const TAB_ITEMS = [
   { value: "ideas", label: "Ideas" },
@@ -60,9 +61,13 @@ export default function UserProfilePage({
 
       {/* Profile Header */}
       <div className="mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-xl font-bold text-zinc-400">
-          {profile.display_name?.[0] ?? profile.username[0].toUpperCase()}
-        </div>
+        <UserAvatar
+          avatarUrl={profile.avatar_url}
+          displayName={profile.display_name}
+          username={profile.username}
+          size="lg"
+          className="mx-auto mb-3"
+        />
 
         <h1 className="text-lg font-bold">{profile.display_name ?? profile.username}</h1>
         <p className="text-sm text-zinc-500">@{profile.username}</p>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { X, UserPlus, UserCheck } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { getProfileById, ALL_PROFILES } from "@/data/seed-profiles";
+import { UserAvatar } from "@/components/common/user-avatar";
 import type { Profile } from "@/modules/users/users.types";
 
 export type FollowListTab = "followers" | "following";
@@ -107,9 +108,13 @@ export function FollowListModal({
                     <Link
                       href={isMe ? "/profile" : `/user/${profile.username}`}
                       onClick={onClose}
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-sm font-bold text-zinc-400"
                     >
-                      {(profile.display_name ?? profile.username)[0].toUpperCase()}
+                      <UserAvatar
+                        avatarUrl={profile.avatar_url}
+                        displayName={profile.display_name}
+                        username={profile.username}
+                        size="md"
+                      />
                     </Link>
 
                     {/* Info */}

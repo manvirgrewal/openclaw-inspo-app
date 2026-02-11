@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, type FormEvent } from "react";
 import { X, Camera, Check } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { CATEGORIES } from "@/config/categories";
+import { AvatarCropModal } from "@/components/profile/avatar-crop-modal";
+import { fileToDataUrl } from "@/lib/utils/image-compress";
 import type { LocalProfile } from "@/hooks/use-profile";
 
 const PLATFORMS = ["OpenClaw", "Claude", "GPT", "Custom", "Other"];
@@ -24,8 +26,11 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
   const [role, setRole] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [setupDescription, setSetupDescription] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const backdropRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Sync form state when modal opens
   useEffect(() => {
@@ -37,8 +42,26 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
       setRole(profile.onboarding_role ?? "");
       setInterests(profile.interests ?? []);
       setSetupDescription(profile.setup_description ?? "");
+      setAvatarUrl(profile.avatar_url ?? null);
     }
   }, [open, profile]);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Validate: images only, max 10MB raw
+    if (!file.type.startsWith("image/")) return;
+    if (file.size > 10 * 1024 * 1024) return;
+    const dataUrl = await fileToDataUrl(file);
+    setCropSrc(dataUrl);
+    // Reset input so same file can be re-selected
+    e.target.value = "";
+  };
+
+  const handleCropSave = (compressed: string) => {
+    setAvatarUrl(compressed);
+    setCropSrc(null);
+  };
 
   if (!open) return null;
 
@@ -56,6 +79,7 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
       display_name: displayName.trim() || undefined,
       username: username.trim() || undefined,
       bio: bio.trim() || undefined,
+      avatar_url: avatarUrl ?? undefined,
       agent_platform: agentPlatform || undefined,
       onboarding_role: role || undefined,
       interests: interests.length > 0 ? interests : [],
@@ -111,16 +135,32 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
           {/* Avatar placeholder */}
           <div className="flex justify-center">
             <div className="relative">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 text-2xl font-bold text-zinc-400">
-                {displayName?.[0]?.toUpperCase() ?? username?.[0]?.toUpperCase() ?? "?"}
-              </div>
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="h-20 w-20 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 text-2xl font-bold text-zinc-400">
+                  {displayName?.[0]?.toUpperCase() ?? username?.[0]?.toUpperCase() ?? "?"}
+                </div>
+              )}
               <button
                 type="button"
+                onClick={() => fileInputRef.current?.click()}
                 className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-zinc-700 text-zinc-300 shadow-lg hover:bg-zinc-600"
-                title="Change avatar (coming soon)"
+                title="Change photo"
               >
                 <Camera size={14} />
               </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
             </div>
           </div>
 
@@ -251,6 +291,14 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
           <div className="h-4" />
         </form>
       </div>
+
+      {/* Crop modal */}
+      <AvatarCropModal
+        open={!!cropSrc}
+        imageSrc={cropSrc ?? ""}
+        onClose={() => setCropSrc(null)}
+        onSave={handleCropSave}
+      />
     </div>
   );
 }

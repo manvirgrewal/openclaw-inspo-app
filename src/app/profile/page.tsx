@@ -10,6 +10,7 @@ import { useProfile } from "@/hooks/use-profile";
 import { useFollows } from "@/hooks/use-follows";
 import { IdeaCard } from "@/components/cards/idea-card";
 import { StackCard } from "@/components/cards/stack-card";
+import { UserAvatar } from "@/components/common/user-avatar";
 import { EditProfileModal } from "@/components/profile/edit-profile-modal";
 import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
 import { ShareButton } from "@/components/share/share-button";
@@ -136,9 +137,12 @@ export default function ProfilePage() {
 
       {/* Profile Header */}
       <div className="mb-6 text-center">
-        <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-xl font-bold text-zinc-400">
-          {(profile.display_name ?? user!.display_name)?.[0]?.toUpperCase() ?? "?"}
-        </div>
+        <UserAvatar
+          avatarUrl={profile.avatar_url}
+          displayName={profile.display_name ?? user!.display_name}
+          size="lg"
+          className="mx-auto mb-3"
+        />
 
         <h1 className="text-lg font-bold">{profile.display_name || user!.display_name}</h1>
         <p className="text-sm text-zinc-500">@{profile.username || user!.username}</p>
