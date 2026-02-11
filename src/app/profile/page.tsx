@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft, Share2, Settings, Sparkles, LogIn } from "lucide-react";
 import * as Tabs from "@radix-ui/react-tabs";
@@ -30,8 +30,31 @@ export default function ProfilePage() {
     );
   }
 
+  // Pinned idea IDs
+  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-pinned-ideas") || "[]");
+      setPinnedIds(stored);
+    } catch {}
+  }, []);
+
   const allIdeas = [...userIdeas, ...SEED_IDEAS];
   const savedIdeas = allIdeas.filter((idea) => savedIds.includes(idea.id));
+
+  const handleDelete = useCallback((ideaId: string) => {
+    setUserIdeas((prev) => prev.filter((i) => i.id !== ideaId));
+  }, []);
+
+  const handlePin = useCallback((ideaId: string) => {
+    setPinnedIds((prev) => {
+      const next = prev.includes(ideaId)
+        ? prev.filter((id) => id !== ideaId)
+        : [ideaId, ...prev].slice(0, 3); // max 3 pinned
+      try { localStorage.setItem("inspo-pinned-ideas", JSON.stringify(next)); } catch {}
+      return next;
+    });
+  }, []);
 
   // Guest profile
   if (!isAuthenticated) {
@@ -141,8 +164,19 @@ export default function ProfilePage() {
         <Tabs.Content value="ideas">
           {userIdeas.length > 0 ? (
             <div className="space-y-3">
-              {userIdeas.map((idea) => (
-                <IdeaCard key={idea.id} idea={idea} />
+              {/* Pinned first, then rest */}
+              {[...userIdeas].sort((a, b) => {
+                const aPin = pinnedIds.includes(a.id) ? -1 : 0;
+                const bPin = pinnedIds.includes(b.id) ? -1 : 0;
+                return aPin - bPin;
+              }).map((idea) => (
+                <IdeaCard
+                  key={idea.id}
+                  idea={idea}
+                  onDelete={handleDelete}
+                  onPin={handlePin}
+                  isPinned={pinnedIds.includes(idea.id)}
+                />
               ))}
             </div>
           ) : (

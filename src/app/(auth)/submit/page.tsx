@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { CATEGORIES } from "@/config/categories";
 import { COMPLEXITY_OPTIONS, MAX_TITLE_LENGTH, MAX_DESCRIPTION_LENGTH, MAX_PROMPT_LENGTH, MAX_BODY_LENGTH } from "@/config/constants";
@@ -73,10 +73,13 @@ function AuthGate() {
   );
 }
 
-export default function SubmitPage() {
+function SubmitPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
   const { isAuthenticated } = useAuth();
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [isEditing, setIsEditing] = useState(false);
   const [skillInput, setSkillInput] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [showPreview, setShowPreview] = useState(false);
@@ -84,13 +87,33 @@ export default function SubmitPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  // Load draft from localStorage
+  // Load existing idea for editing, or draft
   useEffect(() => {
+    if (editId) {
+      try {
+        const stored: any[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+        const idea = stored.find((i) => i.id === editId);
+        if (idea) {
+          setForm({
+            title: idea.title || "",
+            description: idea.description || "",
+            prompt: idea.prompt || "",
+            category: idea.category || "",
+            complexity: idea.complexity || "",
+            skills: idea.skills || [],
+            tags: idea.tags || [],
+            body: idea.body || "",
+          });
+          setIsEditing(true);
+          return;
+        }
+      } catch {}
+    }
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
       if (saved) setForm(JSON.parse(saved));
     } catch {}
-  }, []);
+  }, [editId]);
 
   // Auto-save draft
   useEffect(() => {
@@ -157,31 +180,49 @@ export default function SubmitPage() {
 
     setSubmitting(true);
     try {
-      // Demo mode: save to localStorage instead of API
-      const newIdea = {
-        ...result.data,
-        id: `user-${Date.now()}`,
-        slug: result.data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
-        author_id: "demo-user-1",
-        author: { id: "demo-user-1", username: "demo_user", display_name: "Demo User", avatar_url: null },
-        status: "published" as const,
-        save_count: 0,
-        comment_count: 0,
-        built_count: 0,
-        view_count: 0,
-        body: result.data.body ?? null,
-        skills: result.data.skills ?? [],
-        tags: result.data.tags ?? [],
-        remix_of: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        published_at: new Date().toISOString(),
-      };
-      const existing = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
-      existing.unshift(newIdea);
+      const existing: any[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+
+      if (isEditing && editId) {
+        // Update existing idea
+        const idx = existing.findIndex((i) => i.id === editId);
+        if (idx !== -1) {
+          existing[idx] = {
+            ...existing[idx],
+            ...result.data,
+            body: result.data.body ?? null,
+            skills: result.data.skills ?? [],
+            tags: result.data.tags ?? [],
+            slug: result.data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+            updated_at: new Date().toISOString(),
+          };
+        }
+      } else {
+        // Create new idea
+        const newIdea = {
+          ...result.data,
+          id: `user-${Date.now()}`,
+          slug: result.data.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+          author_id: "demo-user-1",
+          author: { id: "demo-user-1", username: "demo_user", display_name: "Demo User", avatar_url: null },
+          status: "published" as const,
+          save_count: 0,
+          comment_count: 0,
+          built_count: 0,
+          view_count: 0,
+          body: result.data.body ?? null,
+          skills: result.data.skills ?? [],
+          tags: result.data.tags ?? [],
+          remix_of: null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          published_at: new Date().toISOString(),
+        };
+        existing.unshift(newIdea);
+      }
+
       localStorage.setItem("inspo-user-ideas", JSON.stringify(existing));
       localStorage.removeItem(DRAFT_KEY);
-      router.push("/");
+      router.push(isEditing ? "/profile" : "/");
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -231,7 +272,7 @@ export default function SubmitPage() {
         </button>
       </div>
 
-      <h1 className="mb-6 text-xl font-bold">Submit an Idea</h1>
+      <h1 className="mb-6 text-xl font-bold">{isEditing ? "Edit Idea" : "Submit an Idea"}</h1>
 
       {showPreview ? (
         <div className="space-y-4">
@@ -426,10 +467,18 @@ export default function SubmitPage() {
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-100 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-white disabled:opacity-50"
           >
             <Send size={16} />
-            {submitting ? "Submitting..." : "Submit Idea"}
+            {submitting ? (isEditing ? "Saving..." : "Submitting...") : (isEditing ? "Save Changes" : "Submit Idea")}
           </button>
         </div>
       )}
     </div>
+  );
+}
+
+export default function SubmitPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" /></div>}>
+      <SubmitPageInner />
+    </Suspense>
   );
 }

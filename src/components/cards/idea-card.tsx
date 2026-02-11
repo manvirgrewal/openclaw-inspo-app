@@ -2,28 +2,41 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { Copy, Bookmark, MessageSquare, MoreHorizontal, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Copy, Bookmark, MessageSquare, MoreHorizontal, Check, Share2, Flag, Pencil, Trash2, Pin, PinOff } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { CATEGORY_MAP } from "@/config/categories";
 import { COMPLEXITY_OPTIONS } from "@/config/constants";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
+import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 interface IdeaCardProps {
   idea: Idea;
   onSave?: (ideaId: string) => void;
+  onDelete?: (ideaId: string) => void;
+  onPin?: (ideaId: string) => void;
+  showManage?: boolean;
+  isPinned?: boolean;
   className?: string;
 }
 
-export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
+export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, className }: IdeaCardProps) {
   const [copied, setCopied] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const [showReport, setShowReport] = useState(false);
+  const [reportReason, setReportReason] = useState("");
   const { isSaved, saveIdea, unsaveIdea } = useGuestSaves();
+  const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
   const saved = isSaved(idea.id);
   const [localCountDelta, setLocalCountDelta] = useState(() => isSaved(idea.id) ? 1 : 0);
 
-  // Live comment count: seed comment_count + user comments from localStorage
+  const isOwner = user && idea.author_id === user.id;
+
+  // Live comment count
   const [liveCommentCount, setLiveCommentCount] = useState(idea.comment_count);
   useEffect(() => {
     try {
@@ -79,14 +92,77 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
     [idea.id, onSave, saved, saveIdea, unsaveIdea, toast],
   );
 
+  const handleShare = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/idea/${idea.slug}`;
+    if ("share" in navigator) {
+      (navigator as Navigator).share({ title: idea.title, text: idea.description, url });
+    } else {
+      (navigator as Navigator).clipboard.writeText(url);
+      toast("Link copied!");
+    }
+    setShowMenu(false);
+  }, [idea, toast]);
+
+  const handleDelete = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      const stored: Idea[] = JSON.parse(localStorage.getItem("inspo-user-ideas") || "[]");
+      const updated = stored.filter((i) => i.id !== idea.id);
+      localStorage.setItem("inspo-user-ideas", JSON.stringify(updated));
+      toast("Idea deleted");
+      onDelete?.(idea.id);
+    } catch {}
+    setShowMenu(false);
+  }, [idea.id, toast, onDelete]);
+
+  const handlePin = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onPin?.(idea.id);
+    toast(isPinned ? "Unpinned" : "Pinned to profile!");
+    setShowMenu(false);
+  }, [idea.id, isPinned, onPin, toast]);
+
+  const handleReport = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!reportReason.trim()) return;
+    try {
+      const reports = JSON.parse(localStorage.getItem("inspo-reports") || "[]");
+      reports.push({
+        id: `report-${Date.now()}`,
+        target_type: "idea",
+        target_id: idea.id,
+        reason: reportReason.trim(),
+        created_at: new Date().toISOString(),
+      });
+      localStorage.setItem("inspo-reports", JSON.stringify(reports));
+    } catch {}
+    toast("Report submitted. Thanks for helping keep the community safe.");
+    setShowReport(false);
+    setReportReason("");
+    setShowMenu(false);
+  }, [idea.id, reportReason, toast]);
+
   return (
     <Link
       href={`/idea/${idea.slug}`}
       className={cn(
         "block w-full rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-zinc-700 hover:bg-zinc-900/80 active:bg-zinc-800/60",
+        isPinned && "border-yellow-500/20",
         className,
       )}
     >
+      {/* Pinned badge */}
+      {isPinned && (
+        <div className="mb-2 flex items-center gap-1 text-[10px] font-medium text-yellow-500/70">
+          <Pin size={10} /> Pinned
+        </div>
+      )}
+
       {/* Row 1: Complexity + Category */}
       <div className="mb-2 flex items-center gap-2 text-xs">
         {complexity && (
@@ -97,19 +173,14 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
         {category && (
           <>
             <span className="text-zinc-600">·</span>
-            <span
-              className={cn(
-                "rounded-full border px-2 py-0.5",
-                category.color,
-              )}
-            >
+            <span className={cn("rounded-full border px-2 py-0.5", category.color)}>
               {category.label}
             </span>
           </>
         )}
       </div>
 
-      {/* Row 2: Title */}
+      {/* Title */}
       <h3 className="mb-1 text-base font-semibold leading-snug text-zinc-100 line-clamp-2 sm:text-lg">
         {idea.title}
       </h3>
@@ -131,33 +202,27 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
         </p>
       )}
 
-      {/* Row 3: Description */}
+      {/* Description */}
       <p className="mb-3 text-sm leading-relaxed text-zinc-400 line-clamp-3">
         {idea.description}
       </p>
 
-      {/* Row 4: Skill chips */}
+      {/* Skill chips */}
       {idea.skills.length > 0 && (
         <div className="mb-3 flex gap-1.5 overflow-x-auto scrollbar-none">
           {idea.skills.slice(0, 4).map((skill) => (
-            <span
-              key={skill}
-              className="shrink-0 rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400"
-            >
+            <span key={skill} className="shrink-0 rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
               {skill}
             </span>
           ))}
           {idea.skills.length > 4 && (
-            <span className="shrink-0 text-xs text-zinc-500">
-              +{idea.skills.length - 4}
-            </span>
+            <span className="shrink-0 text-xs text-zinc-500">+{idea.skills.length - 4}</span>
           )}
         </div>
       )}
 
-      {/* Row 5: Actions */}
+      {/* Actions */}
       <div className="flex items-center gap-3">
-        {/* Copy Prompt Button */}
         <button
           onClick={handleCopy}
           className={cn(
@@ -167,48 +232,145 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
               : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:bg-zinc-600",
           )}
         >
-          {copied ? (
-            <>
-              <Check size={14} /> Copied!
-            </>
-          ) : (
-            <>
-              <Copy size={14} /> Copy
-            </>
-          )}
+          {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
         </button>
 
-        {/* Save */}
         <button
           onClick={handleSave}
           className={cn(
             "flex items-center gap-1 text-xs transition-colors",
-            saved
-              ? "text-yellow-400"
-              : "text-zinc-500 hover:text-zinc-300",
+            saved ? "text-yellow-400" : "text-zinc-500 hover:text-zinc-300",
           )}
         >
           <Bookmark size={14} fill={saved ? "currentColor" : "none"} />
           <span>{idea.save_count + localCountDelta}</span>
         </button>
 
-        {/* Comments */}
         <span className="flex items-center gap-1 text-xs text-zinc-500">
           <MessageSquare size={14} />
           <span>{liveCommentCount}</span>
         </span>
 
         {/* More menu */}
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}
-          className="ml-auto text-zinc-600 hover:text-zinc-400"
-        >
-          <MoreHorizontal size={16} />
-        </button>
+        <div className="relative ml-auto">
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setShowMenu(!showMenu);
+            }}
+            className="text-zinc-600 hover:text-zinc-400"
+          >
+            <MoreHorizontal size={16} />
+          </button>
+
+          {showMenu && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); }}
+              />
+              <div
+                className="absolute right-0 bottom-full z-50 mb-1 w-44 rounded-xl border border-zinc-800 bg-zinc-900 p-1 shadow-xl"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              >
+                {/* Share */}
+                <button
+                  onClick={handleShare}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                >
+                  <Share2 size={14} /> Share
+                </button>
+
+                {/* Owner actions */}
+                {isOwner && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/submit?edit=${idea.id}`);
+                        setShowMenu(false);
+                      }}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                    >
+                      <Pencil size={14} /> Edit
+                    </button>
+                    {onPin && (
+                      <button
+                        onClick={handlePin}
+                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                      >
+                        {isPinned ? <PinOff size={14} /> : <Pin size={14} />}
+                        {isPinned ? "Unpin" : "Pin to Profile"}
+                      </button>
+                    )}
+                    <button
+                      onClick={handleDelete}
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-zinc-800"
+                    >
+                      <Trash2 size={14} /> Delete
+                    </button>
+                  </>
+                )}
+
+                {/* Report (non-owner only) */}
+                {!isOwner && isAuthenticated && (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowReport(true);
+                      setShowMenu(false);
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-500 hover:bg-zinc-800"
+                  >
+                    <Flag size={14} /> Report
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Report modal */}
+      {showReport && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowReport(false); }}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl border border-zinc-800 bg-zinc-900 p-5"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+          >
+            <h3 className="mb-3 text-sm font-semibold text-zinc-200">Report this idea</h3>
+            <textarea
+              value={reportReason}
+              onChange={(e) => setReportReason(e.target.value)}
+              placeholder="What's the issue? (spam, inappropriate, misleading, etc.)"
+              rows={3}
+              className="mb-3 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+              autoFocus
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleReport}
+                disabled={!reportReason.trim()}
+                className="flex-1 rounded-lg bg-red-500/20 py-2 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/30 disabled:opacity-40"
+              >
+                Submit Report
+              </button>
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowReport(false); }}
+                className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-700"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Link>
   );
 }
