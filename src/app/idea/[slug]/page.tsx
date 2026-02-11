@@ -143,9 +143,17 @@ export default function IdeaDetailPage({
 
       {/* Author + date */}
       <div className="mb-6 flex items-center gap-3 text-sm text-zinc-500">
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800">
-          <User size={14} className="text-zinc-400" />
-        </div>
+        {idea.author?.avatar_url ? (
+          <img
+            src={idea.author.avatar_url}
+            alt={idea.author.username}
+            className="h-7 w-7 rounded-full object-cover"
+          />
+        ) : (
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800">
+            <User size={14} className="text-zinc-400" />
+          </div>
+        )}
         <div>
           {idea.author?.username ? (
             <Link href={`/user/${idea.author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
