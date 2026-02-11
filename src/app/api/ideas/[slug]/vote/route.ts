@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseOrError } from "@/lib/supabase/guard";
 
 const voteSchema = z.object({
   value: z.union([z.literal(1), z.literal(-1)]),
@@ -12,7 +12,8 @@ export async function POST(
 ) {
   try {
     const { slug } = await params;
-    const supabase = await createServerSupabaseClient();
+    const { supabase, error: dbError } = await getSupabaseOrError();
+    if (dbError) return dbError;
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

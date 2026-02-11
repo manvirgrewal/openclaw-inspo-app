@@ -10,8 +10,9 @@ import type { Idea } from "@/modules/ideas/ideas.types";
 const SEED_IDEAS: Idea[] = [
   {
     id: "1",
-    author_id: null,
+    author_id: "u1",
     slug: "morning-briefing-agent",
+    author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: null },
     title: "Morning Briefing Agent",
     description:
       "Your agent reads your calendar, weather, and top emails every morning — delivers a 3-line summary so you can start your day without checking 5 different apps.",
@@ -34,8 +35,9 @@ const SEED_IDEAS: Idea[] = [
   },
   {
     id: "2",
-    author_id: null,
+    author_id: "u2",
     slug: "expense-auto-tracker",
+    author: { id: "u2", username: "mike_builds", display_name: "Mike Rivera", avatar_url: null },
     title: "Expense Auto-Tracker",
     description:
       "Forward receipts to your agent via email — it extracts the amount, vendor, and category, then logs it to a spreadsheet automatically.",
@@ -58,8 +60,9 @@ const SEED_IDEAS: Idea[] = [
   },
   {
     id: "3",
-    author_id: null,
+    author_id: "u1",
     slug: "git-commit-summarizer",
+    author: { id: "u1", username: "sarah_dev", display_name: "Sarah Chen", avatar_url: null },
     title: "Git Commit Summarizer",
     description:
       "At the end of each day, your agent reviews your git commits and generates a clean summary of what you accomplished — perfect for standups or personal tracking.",
@@ -82,8 +85,9 @@ const SEED_IDEAS: Idea[] = [
   },
   {
     id: "4",
-    author_id: null,
+    author_id: "u3",
     slug: "meeting-prep-assistant",
+    author: { id: "u3", username: "jess_automates", display_name: "Jess Park", avatar_url: null },
     title: "Meeting Prep Assistant",
     description:
       "30 minutes before any calendar event, your agent pulls relevant context — last meeting notes, shared docs, and attendee info — so you walk in prepared.",
@@ -106,8 +110,9 @@ const SEED_IDEAS: Idea[] = [
   },
   {
     id: "5",
-    author_id: null,
+    author_id: "u2",
     slug: "weekly-learning-digest",
+    author: { id: "u2", username: "mike_builds", display_name: "Mike Rivera", avatar_url: null },
     title: "Weekly Learning Digest",
     description:
       "Your agent curates a personalized learning digest — it scans your saved articles, bookmarks, and interests to recommend 5 things worth reading this week.",

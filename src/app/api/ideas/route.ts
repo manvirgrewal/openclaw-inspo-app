@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseOrError } from "@/lib/supabase/guard";
 import { feedParamsSchema, ideaCreateSchema } from "@/modules/ideas/ideas.validation";
 import { FEED_PAGE_SIZE } from "@/config/constants";
 
@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { cursor, limit, category, complexity, skills, sort } = parsed.data;
-    const supabase = await createServerSupabaseClient();
+    const { supabase, error: dbError } = await getSupabaseOrError();
+    if (dbError) return dbError;
 
     let query = supabase
       .from("ideas")
@@ -77,7 +78,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const { supabase, error: dbError } = await getSupabaseOrError();
+    if (dbError) return dbError;
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

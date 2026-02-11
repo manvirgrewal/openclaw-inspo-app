@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseOrError } from "@/lib/supabase/guard";
 
 const eventSchema = z.object({
   event_type: z.string().min(1).max(50),
@@ -15,7 +15,8 @@ const eventsPayloadSchema = z.union([
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createServerSupabaseClient();
+    const { supabase, error: dbError } = await getSupabaseOrError();
+    if (dbError) return dbError;
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {

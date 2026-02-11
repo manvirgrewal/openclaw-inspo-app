@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getSupabaseOrError } from "@/lib/supabase/guard";
 
 const searchSchema = z.object({
   q: z.string().min(1).max(200),
@@ -21,7 +21,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { q, limit, cursor } = parsed.data;
-    const supabase = await createServerSupabaseClient();
+    const { supabase, error: dbError } = await getSupabaseOrError();
+    if (dbError) return dbError;
 
     let query = supabase
       .from("ideas")

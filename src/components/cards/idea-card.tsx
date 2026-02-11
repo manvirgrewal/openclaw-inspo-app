@@ -91,6 +91,23 @@ export function IdeaCard({ idea, onSave, className }: IdeaCardProps) {
         {idea.title}
       </h3>
 
+      {/* Author */}
+      {idea.author && (
+        <p className="mb-2 text-xs text-zinc-500">
+          by{" "}
+          <span
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.location.href = `/user/${idea.author!.username}`;
+            }}
+            className="text-zinc-400 hover:text-zinc-200 hover:underline cursor-pointer"
+          >
+            @{idea.author.username}
+          </span>
+        </p>
+      )}
+
       {/* Row 3: Description */}
       <p className="mb-3 text-sm leading-relaxed text-zinc-400 line-clamp-3">
         {idea.description}
