@@ -76,6 +76,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
+  // Auto-refresh when profile is updated anywhere
+  useEffect(() => {
+    const handler = () => refreshUser();
+    window.addEventListener("inspo-profile-updated", handler);
+    return () => window.removeEventListener("inspo-profile-updated", handler);
+  }, [refreshUser]);
+
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, signIn, signOut, refreshUser }}>
       {children}

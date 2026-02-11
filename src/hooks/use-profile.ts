@@ -48,6 +48,8 @@ export function useProfile() {
     setProfile((prev) => {
       const next = { ...prev, ...patch };
       save(next);
+      // Notify auth context that profile changed
+      window.dispatchEvent(new Event("inspo-profile-updated"));
       return next;
     });
   }, []);

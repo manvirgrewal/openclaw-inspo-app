@@ -19,7 +19,7 @@ import type { Idea } from "@/modules/ideas/ideas.types";
 import type { Stack } from "@/modules/stacks/stacks.types";
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, isLoading, signIn, refreshUser } = useAuth();
+  const { user, isAuthenticated, isLoading, signIn } = useAuth();
   const { savedIds } = useGuestSaves();
   const { profile, updateProfile, loaded: profileLoaded } = useProfile();
   const { followedIds, toggleFollow, getFollowerIds, getFollowingIds } = useFollows();
@@ -193,7 +193,7 @@ export default function ProfilePage() {
         open={editOpen}
         onClose={() => setEditOpen(false)}
         profile={profile}
-        onSave={(patch) => { updateProfile(patch); refreshUser(); }}
+        onSave={updateProfile}
       />
 
       {/* Tabs */}
