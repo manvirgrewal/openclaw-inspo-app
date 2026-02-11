@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Copy,
@@ -11,6 +12,7 @@ import {
   Hammer,
   Clock,
   User,
+  Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { CATEGORY_MAP } from "@/config/categories";
@@ -38,6 +40,8 @@ export default function IdeaDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
+  const { user } = useAuth();
 
   // Check seed ideas first
   const seedIdea = SEED_IDEAS.find((i) => i.slug === slug);
@@ -286,6 +290,16 @@ export default function IdeaDetailPage({
 
       {/* Action bar */}
       <div className="flex items-center gap-3 border-t border-zinc-800 pt-4">
+        {/* Edit (owner only) */}
+        {user && idea.author_id === user.id && (
+          <button
+            onClick={() => router.push(`/submit?edit=${idea.id}`)}
+            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+          >
+            <Pencil size={16} /> Edit
+          </button>
+        )}
+
         <button
           onClick={() => {
             if (saved) {
