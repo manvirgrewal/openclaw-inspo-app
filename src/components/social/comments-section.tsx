@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
 import { UserAvatar } from "@/components/common/user-avatar";
+import { resolveAuthor } from "@/lib/utils/resolve-author";
 
 interface Comment {
   id: string;
@@ -150,20 +151,22 @@ function CommentItem({
     setShowReplyInput(false);
   };
 
+  const resolved = resolveAuthor(comment.author);
+
   return (
     <div className={cn("mt-3", depth > 0 && "ml-6 border-l border-zinc-800 pl-4")}>
       <div className="flex items-start gap-2.5">
         <UserAvatar
-          avatarUrl={comment.author?.avatar_url}
-          displayName={comment.author?.display_name}
-          username={comment.author?.username}
+          avatarUrl={resolved.avatar_url}
+          displayName={resolved.display_name}
+          username={resolved.username}
           size="sm"
           className="mt-0.5 !h-6 !w-6 !text-[10px]"
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs">
-            <Link href={`/user/${comment.author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100">
-              {comment.author.display_name}
+            <Link href={`/user/${resolved.username}`} className="font-medium text-zinc-300 hover:text-zinc-100">
+              {resolved.display_name}
             </Link>
             <span className="text-zinc-600">{timeAgo(comment.created_at)}</span>
           </div>

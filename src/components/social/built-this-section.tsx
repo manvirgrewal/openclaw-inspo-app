@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils/cn";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
 import { UserAvatar } from "@/components/common/user-avatar";
+import { resolveAuthor } from "@/lib/utils/resolve-author";
 
 interface BuiltEntry {
   id: string;
@@ -127,21 +128,22 @@ function timeAgo(dateStr: string): string {
 function BuildEntry({ entry }: { entry: BuiltEntry }) {
   const [expanded, setExpanded] = useState(false);
   const hasDetails = entry.before_workflow || entry.after_workflow || entry.time_saved_weekly;
+  const resolved = resolveAuthor(entry.user);
 
   return (
     <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <UserAvatar
-            avatarUrl={entry.user.avatar_url}
-            displayName={entry.user.display_name}
-            username={entry.user.username}
+            avatarUrl={resolved.avatar_url}
+            displayName={resolved.display_name}
+            username={resolved.username}
             size="sm"
             className="!h-6 !w-6 !text-[10px]"
           />
           <div>
-            <Link href={`/user/${entry.user.username}`} className="text-sm font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
-              {entry.user.display_name}
+            <Link href={`/user/${resolved.username}`} className="text-sm font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+              {resolved.display_name}
             </Link>
             <span className="ml-2 text-xs text-zinc-600">{timeAgo(entry.created_at)}</span>
           </div>

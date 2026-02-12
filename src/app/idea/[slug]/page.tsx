@@ -25,6 +25,7 @@ import { CommentsSection } from "@/components/social/comments-section";
 import { BuiltThisSection } from "@/components/social/built-this-section";
 import { ShareButton } from "@/components/share/share-button";
 import { SEED_IDEAS } from "@/data/seed-ideas";
+import { resolveAuthor } from "@/lib/utils/resolve-author";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 function formatDate(dateStr: string): string {
@@ -145,8 +146,7 @@ export default function IdeaDetailPage({
 
       {/* Author + date */}
       {(() => {
-        const isOwner = user && idea.author_id === user.id;
-        const author = idea.author ? (isOwner && user ? { ...idea.author, avatar_url: user.avatar_url ?? idea.author.avatar_url, display_name: user.display_name ?? idea.author.display_name } : idea.author) : null;
+        const author = idea.author ? resolveAuthor(idea.author) : null;
         return (
       <div className="mb-6 flex items-center gap-3 text-sm text-zinc-500">
         {author?.avatar_url ? (

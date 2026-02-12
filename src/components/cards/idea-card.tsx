@@ -10,6 +10,7 @@ import { COMPLEXITY_OPTIONS } from "@/config/constants";
 import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
+import { resolveAuthor } from "@/lib/utils/resolve-author";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 interface IdeaCardProps {
@@ -187,7 +188,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
 
       {/* Author */}
       {idea.author && (() => {
-        const author = isOwner && user ? { ...idea.author, avatar_url: user.avatar_url ?? idea.author.avatar_url, display_name: user.display_name ?? idea.author.display_name } : idea.author;
+        const author = resolveAuthor(idea.author);
         return (
         <div className="mb-2 flex items-center gap-1.5 text-xs text-zinc-500">
           {author.avatar_url ? (
