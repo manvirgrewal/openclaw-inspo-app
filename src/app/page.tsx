@@ -64,6 +64,21 @@ export default function HomePage() {
 
   return (
     <div>
+      {/* Hero — compact, warm, sets the tone */}
+      {activeTab === "discover" && !selectedCategory && (
+        <div className="relative overflow-hidden border-b border-stone-800/40 px-4 py-5">
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.04] via-transparent to-orange-500/[0.03]" />
+          <div className="relative">
+            <h1 className="mb-1 text-lg font-bold text-stone-100">
+              Discover what&apos;s possible <span className="text-gradient-spark">✦</span>
+            </h1>
+            <p className="text-sm text-stone-400">
+              Copy a prompt. Paste it into your AI agent. Watch the magic happen.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Feed tabs */}
       <FeedTabs active={activeTab} onTabChange={setActiveTab} isAuthenticated={isAuthenticated} />
 

@@ -198,7 +198,7 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Prompt section */}
-      <div className="mb-6 rounded-xl border border-stone-800 bg-stone-900 p-4">
+      <div className="mb-6 rounded-xl border border-amber-500/10 bg-stone-900/80 p-4 shadow-lg shadow-amber-500/[0.03]">
         <div className="mb-2 flex items-center justify-between">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-500">
             Prompt
