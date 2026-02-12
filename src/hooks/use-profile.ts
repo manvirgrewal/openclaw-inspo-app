@@ -45,13 +45,13 @@ export function useProfile() {
   }, []);
 
   const updateProfile = useCallback((patch: Partial<LocalProfile>) => {
-    setProfile((prev) => {
-      const next = { ...prev, ...patch };
-      save(next);
-      // Notify auth context that profile changed
-      window.dispatchEvent(new Event("inspo-profile-updated"));
-      return next;
-    });
+    // Save to localStorage immediately (not inside setState which React defers)
+    const current = load();
+    const next = { ...current, ...patch };
+    save(next);
+    setProfile(next);
+    // Notify auth context after React finishes rendering
+    queueMicrotask(() => window.dispatchEvent(new Event("inspo-profile-updated")));
   }, []);
 
   return { profile, updateProfile, loaded };
