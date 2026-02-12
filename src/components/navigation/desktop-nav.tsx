@@ -10,7 +10,6 @@ import { useAuth } from "@/lib/auth/auth-context";
 const NAV_LINKS = [
   { href: "/", label: "Discover" },
   { href: "/stacks", label: "Stacks" },
-  { href: "/challenges", label: "Challenges" },
 ];
 
 export function DesktopNav() {
