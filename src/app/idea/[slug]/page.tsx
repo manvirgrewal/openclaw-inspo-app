@@ -144,11 +144,15 @@ export default function IdeaDetailPage({
       <p className="mb-4 text-base leading-relaxed text-zinc-400">{idea.description}</p>
 
       {/* Author + date */}
+      {(() => {
+        const isOwner = user && idea.author_id === user.id;
+        const author = idea.author ? (isOwner && user ? { ...idea.author, avatar_url: user.avatar_url ?? idea.author.avatar_url, display_name: user.display_name ?? idea.author.display_name } : idea.author) : null;
+        return (
       <div className="mb-6 flex items-center gap-3 text-sm text-zinc-500">
-        {idea.author?.avatar_url ? (
+        {author?.avatar_url ? (
           <img
-            src={idea.author.avatar_url}
-            alt={idea.author.username}
+            src={author.avatar_url}
+            alt={author.username}
             className="h-7 w-7 rounded-full object-cover"
           />
         ) : (
@@ -157,9 +161,9 @@ export default function IdeaDetailPage({
           </div>
         )}
         <div>
-          {idea.author?.username ? (
-            <Link href={`/user/${idea.author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
-              {idea.author.display_name ?? idea.author.username}
+          {author?.username ? (
+            <Link href={`/user/${author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+              {author.display_name ?? author.username}
             </Link>
           ) : (
             <span className="font-medium text-zinc-300">Anonymous</span>
@@ -172,6 +176,8 @@ export default function IdeaDetailPage({
           )}
         </div>
       </div>
+        );
+      })()}
 
       {/* Stats row */}
       <div className="mb-6 flex items-center gap-5 text-sm text-zinc-500">

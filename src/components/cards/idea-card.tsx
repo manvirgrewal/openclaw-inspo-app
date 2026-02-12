@@ -186,17 +186,19 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       </h3>
 
       {/* Author */}
-      {idea.author && (
+      {idea.author && (() => {
+        const author = isOwner && user ? { ...idea.author, avatar_url: user.avatar_url ?? idea.author.avatar_url, display_name: user.display_name ?? idea.author.display_name } : idea.author;
+        return (
         <div className="mb-2 flex items-center gap-1.5 text-xs text-zinc-500">
-          {idea.author.avatar_url ? (
+          {author.avatar_url ? (
             <img
-              src={idea.author.avatar_url}
-              alt={idea.author.username}
+              src={author.avatar_url}
+              alt={author.username}
               className="h-5 w-5 rounded-full object-cover"
             />
           ) : (
             <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-700 text-[10px] font-medium text-zinc-300">
-              {(idea.author.display_name || idea.author.username).charAt(0).toUpperCase()}
+              {(author.display_name || author.username).charAt(0).toUpperCase()}
             </div>
           )}
           <span>by{" "}
@@ -204,15 +206,16 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                window.location.href = `/user/${idea.author!.username}`;
+                window.location.href = `/user/${author.username}`;
               }}
               className="text-zinc-400 hover:text-zinc-200 hover:underline cursor-pointer"
             >
-              @{idea.author.username}
+              @{author.username}
             </span>
           </span>
         </div>
-      )}
+        );
+      })()}
 
       {/* Description */}
       <p className="mb-3 text-sm leading-relaxed text-zinc-400 line-clamp-3">
