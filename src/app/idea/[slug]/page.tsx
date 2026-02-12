@@ -91,13 +91,13 @@ export default function IdeaDetailPage({
   if (!idea) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
-        <h1 className="mb-2 text-xl font-semibold text-zinc-100">Idea not found</h1>
-        <p className="mb-6 text-sm text-zinc-500">
+        <h1 className="mb-2 text-xl font-semibold text-stone-100">Idea not found</h1>
+        <p className="mb-6 text-sm text-stone-500">
           This idea may have been removed or doesn&apos;t exist yet.
         </p>
         <Link
           href="/"
-          className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700"
+          className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-stone-300 hover:bg-stone-700"
         >
           Back to Feed
         </Link>
@@ -113,7 +113,7 @@ export default function IdeaDetailPage({
       {/* Back nav */}
       <Link
         href="/"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-300"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-300"
       >
         <ArrowLeft size={16} />
         Back
@@ -122,13 +122,13 @@ export default function IdeaDetailPage({
       {/* Meta row */}
       <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
         {complexity && (
-          <span className="text-zinc-400">
+          <span className="text-stone-400">
             {complexity.icon} {complexity.label}
           </span>
         )}
         {category && (
           <>
-            <span className="text-zinc-600">·</span>
+            <span className="text-stone-600">·</span>
             <span className={cn("rounded-full border px-2 py-0.5", category.color)}>
               {category.label}
             </span>
@@ -137,18 +137,18 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Title */}
-      <h1 className="mb-2 text-2xl font-bold leading-tight text-zinc-100 sm:text-3xl">
+      <h1 className="mb-2 text-2xl font-bold leading-tight text-stone-100 sm:text-3xl">
         {idea.title}
       </h1>
 
       {/* Description */}
-      <p className="mb-4 text-base leading-relaxed text-zinc-400">{idea.description}</p>
+      <p className="mb-4 text-base leading-relaxed text-stone-400">{idea.description}</p>
 
       {/* Author + date */}
       {(() => {
         const author = idea.author ? resolveAuthor(idea.author) : null;
         return (
-      <div className="mb-6 flex items-center gap-3 text-sm text-zinc-500">
+      <div className="mb-6 flex items-center gap-3 text-sm text-stone-500">
         {author?.avatar_url ? (
           <img
             src={author.avatar_url}
@@ -156,17 +156,17 @@ export default function IdeaDetailPage({
             className="h-7 w-7 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-800">
-            <User size={14} className="text-zinc-400" />
+          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-stone-800">
+            <User size={14} className="text-stone-400" />
           </div>
         )}
         <div>
           {author?.username ? (
-            <Link href={`/user/${author.username}`} className="font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+            <Link href={`/user/${author.username}`} className="font-medium text-stone-300 hover:text-stone-100 hover:underline">
               {author.display_name ?? author.username}
             </Link>
           ) : (
-            <span className="font-medium text-zinc-300">Anonymous</span>
+            <span className="font-medium text-stone-300">Anonymous</span>
           )}
           {idea.published_at && (
             <>
@@ -180,9 +180,9 @@ export default function IdeaDetailPage({
       })()}
 
       {/* Stats row */}
-      <div className="mb-6 flex items-center gap-5 text-sm text-zinc-500">
+      <div className="mb-6 flex items-center gap-5 text-sm text-stone-500">
         {avgRating !== null && (
-          <span className="flex items-center gap-1 text-yellow-400">
+          <span className="flex items-center gap-1 text-amber-400">
             <Star size={14} fill="currentColor" /> {avgRating.toFixed(1)}
           </span>
         )}
@@ -198,16 +198,16 @@ export default function IdeaDetailPage({
       </div>
 
       {/* Prompt section */}
-      <div className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+      <div className="mb-6 rounded-xl border border-stone-800 bg-stone-900 p-4">
         <div className="mb-2 flex items-center justify-between">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-stone-500">
             Prompt
           </h2>
-          <span className="flex items-center gap-1 text-xs text-zinc-600">
+          <span className="flex items-center gap-1 text-xs text-stone-600">
             <Clock size={12} /> Ready to paste
           </span>
         </div>
-        <p className="mb-4 whitespace-pre-wrap text-sm leading-relaxed text-zinc-300">
+        <p className="mb-4 whitespace-pre-wrap text-sm leading-relaxed text-stone-300">
           {idea.prompt}
         </p>
         <button
@@ -216,7 +216,7 @@ export default function IdeaDetailPage({
             "flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold transition-colors",
             copied
               ? "bg-green-500/10 text-green-400 border border-green-500/20"
-              : "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 active:bg-zinc-300",
+              : "bg-gradient-to-r from-amber-500 to-orange-500 text-stone-950 font-semibold hover:brightness-110 active:brightness-90",
           )}
         >
           {copied ? (
@@ -234,14 +234,14 @@ export default function IdeaDetailPage({
       {/* Skills */}
       {idea.skills.length > 0 && (
         <div className="mb-6">
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-stone-500">
             Skills & Tools
           </h2>
           <div className="flex flex-wrap gap-2">
             {idea.skills.map((skill) => (
               <span
                 key={skill}
-                className="rounded-md bg-zinc-800 px-2.5 py-1 text-xs text-zinc-400"
+                className="rounded-md bg-stone-800 px-2.5 py-1 text-xs text-stone-400"
               >
                 {skill}
               </span>
@@ -253,35 +253,35 @@ export default function IdeaDetailPage({
       {/* Body (markdown rendered as plain text for now) */}
       {idea.body && (
         <div className="mb-6">
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-stone-500">
             Details
           </h2>
-          <div className="prose prose-invert prose-sm max-w-none text-zinc-400">
+          <div className="prose prose-invert prose-sm max-w-none text-stone-400">
             {idea.body.split("\n").map((line, i) => {
               if (line.startsWith("## ")) {
                 return (
-                  <h3 key={i} className="mb-2 mt-4 text-base font-semibold text-zinc-200">
+                  <h3 key={i} className="mb-2 mt-4 text-base font-semibold text-stone-200">
                     {line.replace("## ", "")}
                   </h3>
                 );
               }
               if (line.startsWith("- ") || line.startsWith("* ")) {
                 return (
-                  <p key={i} className="mb-1 pl-4 text-sm text-zinc-400">
+                  <p key={i} className="mb-1 pl-4 text-sm text-stone-400">
                     • {line.replace(/^[-*] /, "")}
                   </p>
                 );
               }
               if (line.match(/^\d+\. /)) {
                 return (
-                  <p key={i} className="mb-1 pl-4 text-sm text-zinc-400">
+                  <p key={i} className="mb-1 pl-4 text-sm text-stone-400">
                     {line}
                   </p>
                 );
               }
               if (line.trim() === "") return <br key={i} />;
               return (
-                <p key={i} className="mb-2 text-sm text-zinc-400">
+                <p key={i} className="mb-2 text-sm text-stone-400">
                   {line.replace(/\*\*(.*?)\*\*/g, "$1")}
                 </p>
               );
@@ -293,12 +293,12 @@ export default function IdeaDetailPage({
       {/* Tags — hidden for now, category badge is sufficient */}
 
       {/* Action bar */}
-      <div className="flex items-center gap-3 border-t border-zinc-800 pt-4">
+      <div className="flex items-center gap-3 border-t border-stone-800 pt-4">
         {/* Edit (owner only) */}
         {user && idea.author_id === user.id && (
           <button
             onClick={() => router.push(`/submit?edit=${idea.id}`)}
-            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+            className="flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-2 text-sm font-medium text-stone-300 transition-colors hover:bg-stone-700"
           >
             <Pencil size={16} /> Edit
           </button>
@@ -317,8 +317,8 @@ export default function IdeaDetailPage({
           className={cn(
             "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             saved
-              ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-              : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700",
+              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+              : "bg-stone-800 text-stone-300 hover:bg-stone-700",
           )}
         >
           <Bookmark size={16} fill={saved ? "currentColor" : "none"} />

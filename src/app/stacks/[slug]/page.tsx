@@ -91,15 +91,15 @@ export default function StackDetailPage({
   if (!detail) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
-        <h1 className="mb-2 text-xl font-semibold text-zinc-100">
+        <h1 className="mb-2 text-xl font-semibold text-stone-100">
           Stack not found
         </h1>
-        <p className="mb-6 text-sm text-zinc-500">
+        <p className="mb-6 text-sm text-stone-500">
           This stack may have been removed or doesn&apos;t exist yet.
         </p>
         <Link
           href="/stacks"
-          className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700"
+          className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-stone-300 hover:bg-stone-700"
         >
           Browse Stacks
         </Link>
@@ -114,33 +114,33 @@ export default function StackDetailPage({
       {/* Header */}
       <Link
         href="/stacks"
-        className="mb-4 flex items-center gap-2 text-zinc-400 hover:text-zinc-200"
+        className="mb-4 flex items-center gap-2 text-stone-400 hover:text-stone-200"
       >
         <ArrowLeft size={20} />
         <span className="text-sm">Stacks</span>
       </Link>
 
       <div className="mb-2 flex items-center gap-1.5">
-        <Layers size={14} className="text-emerald-400" />
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+        <Layers size={14} className="text-amber-400" />
+        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
           Stack
         </span>
         {stack.is_featured && (
-          <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-400">
+          <span className="ml-2 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-400">
             Featured
           </span>
         )}
       </div>
 
       <h1 className="mb-2 text-2xl font-bold">{stack.title}</h1>
-      <p className="mb-2 text-sm text-zinc-400">{stack.description}</p>
+      <p className="mb-2 text-sm text-stone-400">{stack.description}</p>
 
       {/* Author + meta */}
-      <div className="mb-4 flex items-center gap-3 text-xs text-zinc-500">
+      <div className="mb-4 flex items-center gap-3 text-xs text-stone-500">
         {stack.author && (
           <Link
             href={`/user/${stack.author.username}`}
-            className="hover:text-zinc-300 hover:underline"
+            className="hover:text-stone-300 hover:underline"
           >
             by @{stack.author.username}
           </Link>
@@ -150,9 +150,9 @@ export default function StackDetailPage({
       </div>
 
       {/* Stats row */}
-      <div className="mb-6 flex items-center gap-5 text-sm text-zinc-500">
+      <div className="mb-6 flex items-center gap-5 text-sm text-stone-500">
         {avgRating !== null && (
-          <span className="flex items-center gap-1 text-yellow-400">
+          <span className="flex items-center gap-1 text-amber-400">
             <Star size={14} fill="currentColor" /> {avgRating.toFixed(1)}
           </span>
         )}
@@ -174,7 +174,7 @@ export default function StackDetailPage({
           "mb-6 flex w-full items-center justify-center gap-2 rounded-xl border py-3 text-sm font-medium transition-colors",
           copied
             ? "border-green-500/20 bg-green-500/10 text-green-400"
-            : "border-emerald-500/20 bg-emerald-500/5 text-emerald-400 hover:bg-emerald-500/10"
+            : "border-amber-500/20 bg-amber-500/5 text-amber-400 hover:bg-amber-500/10"
         )}
       >
         {copied ? (
@@ -193,12 +193,12 @@ export default function StackDetailPage({
         {stack.items.map((item: any, i: number) => (
           <div key={item.idea?.id ?? i}>
             {item.context_note && (
-              <div className="mb-2 ml-4 border-l-2 border-emerald-500/30 pl-3 text-sm text-zinc-500 italic">
+              <div className="mb-2 ml-4 border-l-2 border-amber-500/30 pl-3 text-sm text-stone-500 italic">
                 {item.context_note}
               </div>
             )}
             <div className="flex items-start gap-3">
-              <span className="mt-4 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-400">
+              <span className="mt-4 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stone-800 text-xs font-medium text-stone-400">
                 {i + 1}
               </span>
               <div className="flex-1">
@@ -210,11 +210,11 @@ export default function StackDetailPage({
       </div>
 
       {/* Action bar */}
-      <div className="mt-6 flex items-center gap-3 border-t border-zinc-800 pt-4">
+      <div className="mt-6 flex items-center gap-3 border-t border-stone-800 pt-4">
         {user && stack.author_id === user.id && (
           <button
             onClick={() => {/* TODO: edit stack */}}
-            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700"
+            className="flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-2 text-sm font-medium text-stone-300 transition-colors hover:bg-stone-700"
           >
             <Pencil size={16} /> Edit
           </button>
@@ -233,8 +233,8 @@ export default function StackDetailPage({
           className={cn(
             "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
             saved
-              ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20"
-              : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
+              ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+              : "bg-stone-800 text-stone-300 hover:bg-stone-700"
           )}
         >
           <Bookmark size={16} fill={saved ? "currentColor" : "none"} />

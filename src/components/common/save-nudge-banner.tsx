@@ -23,11 +23,11 @@ export function SaveNudgeBanner() {
   if (!show) return null;
 
   return (
-    <div className="mx-4 mb-3 flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm">
-      <p className="flex-1 text-zinc-400">
+    <div className="mx-4 mb-3 flex items-center gap-3 rounded-lg border border-stone-800 bg-stone-900 px-4 py-3 text-sm">
+      <p className="flex-1 text-stone-400">
         You&apos;ve saved 5 ideas! Sign in to keep them synced across devices.
       </p>
-      <Link href="/auth/login" className="shrink-0 rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-medium text-zinc-900 hover:bg-zinc-200">
+      <Link href="/auth/login" className="shrink-0 rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-medium text-stone-900 hover:bg-stone-200">
         Sign In
       </Link>
       <button
@@ -35,7 +35,7 @@ export function SaveNudgeBanner() {
           setShow(false);
           try { localStorage.setItem(DISMISS_KEY, String(Date.now())); } catch {}
         }}
-        className="shrink-0 text-zinc-600 hover:text-zinc-400"
+        className="shrink-0 text-stone-600 hover:text-stone-400"
       >
         <X size={16} />
       </button>

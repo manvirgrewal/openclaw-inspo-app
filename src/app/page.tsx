@@ -80,8 +80,8 @@ export default function HomePage() {
       <div className="flex flex-col gap-3 px-4 pb-4">
         {activeTab === "following" && followingIdeas.length === 0 ? (
           <div className="py-16 text-center">
-            <p className="mb-2 text-sm text-zinc-400">Your feed is empty</p>
-            <p className="text-xs text-zinc-600">
+            <p className="mb-2 text-sm text-stone-400">Your feed is empty</p>
+            <p className="text-xs text-stone-600">
               Follow creators from their profiles to see their ideas here.
             </p>
           </div>
@@ -98,7 +98,7 @@ export default function HomePage() {
         )}
 
         {activeTab === "discover" && displayIdeas.length === 0 && (
-          <div className="py-12 text-center text-sm text-zinc-500">
+          <div className="py-12 text-center text-sm text-stone-500">
             No ideas in this category yet. Be the first to submit one!
           </div>
         )}

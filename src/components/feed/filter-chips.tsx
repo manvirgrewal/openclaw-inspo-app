@@ -14,10 +14,10 @@ export function FilterChips({ selected, onSelect }: FilterChipsProps) {
       <button
         onClick={() => onSelect(null)}
         className={cn(
-          "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+          "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-all",
           selected === null
-            ? "border-zinc-100 bg-zinc-100 text-zinc-900"
-            : "border-zinc-700 text-zinc-400 hover:border-zinc-500 active:bg-zinc-800",
+            ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
+            : "border-stone-700 text-stone-400 hover:border-stone-500 active:bg-stone-800",
         )}
       >
         All
@@ -27,10 +27,10 @@ export function FilterChips({ selected, onSelect }: FilterChipsProps) {
           key={cat.id}
           onClick={() => onSelect(cat.id === selected ? null : cat.id)}
           className={cn(
-            "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
+            "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-all",
             cat.id === selected
-              ? "border-zinc-100 bg-zinc-100 text-zinc-900"
-              : "border-zinc-700 text-zinc-400 hover:border-zinc-500 active:bg-zinc-800",
+              ? "border-amber-500/40 bg-amber-500/10 text-amber-300"
+              : "border-stone-700 text-stone-400 hover:border-stone-500 active:bg-stone-800",
           )}
         >
           {cat.label}

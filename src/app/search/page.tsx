@@ -91,19 +91,19 @@ export default function SearchPage() {
     <div className="px-4 py-4">
       {/* Search Input */}
       <div className="relative mb-4">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" />
         <input
           ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="Search ideas, prompts, skills..."
-          className="w-full rounded-xl border border-zinc-800 bg-zinc-900 py-3 pl-10 pr-10 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+          className="w-full rounded-xl border border-stone-800 bg-stone-900 py-3 pl-10 pr-10 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
         />
         {query && (
           <button
             onClick={() => { setQuery(""); setResults([]); setSearched(false); }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300"
           >
             <X size={16} />
           </button>
@@ -114,15 +114,15 @@ export default function SearchPage() {
       {!query && recent.length > 0 && (
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-500">Recent Searches</span>
-            <button onClick={clearRecent} className="text-xs text-zinc-600 hover:text-zinc-400">Clear</button>
+            <span className="text-xs font-medium text-stone-500">Recent Searches</span>
+            <button onClick={clearRecent} className="text-xs text-stone-600 hover:text-stone-400">Clear</button>
           </div>
           <div className="flex flex-wrap gap-2">
             {recent.map((q) => (
               <button
                 key={q}
                 onClick={() => handleRecentClick(q)}
-                className="flex items-center gap-1.5 rounded-lg border border-zinc-800 px-3 py-1.5 text-xs text-zinc-400 hover:border-zinc-700 hover:text-zinc-300"
+                className="flex items-center gap-1.5 rounded-lg border border-stone-800 px-3 py-1.5 text-xs text-stone-400 hover:border-stone-700 hover:text-stone-300"
               >
                 <Clock size={12} />
                 {q}
@@ -135,7 +135,7 @@ export default function SearchPage() {
       {/* Results */}
       {results.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs text-zinc-500">{results.length} result{results.length !== 1 ? "s" : ""}</p>
+          <p className="text-xs text-stone-500">{results.length} result{results.length !== 1 ? "s" : ""}</p>
           {results.map((idea) => (
             <IdeaCard key={idea.id} idea={idea} />
           ))}
@@ -145,17 +145,17 @@ export default function SearchPage() {
       {/* No results */}
       {searched && results.length === 0 && (
         <div className="py-16 text-center">
-          <Search size={32} className="mx-auto mb-3 text-zinc-700" />
-          <p className="text-sm text-zinc-500">No results found for &ldquo;{query}&rdquo;</p>
-          <p className="mt-1 text-xs text-zinc-600">Try different keywords or browse categories</p>
+          <Search size={32} className="mx-auto mb-3 text-stone-700" />
+          <p className="text-sm text-stone-500">No results found for &ldquo;{query}&rdquo;</p>
+          <p className="mt-1 text-xs text-stone-600">Try different keywords or browse categories</p>
         </div>
       )}
 
       {/* Empty state */}
       {!query && recent.length === 0 && (
         <div className="py-16 text-center">
-          <Search size={32} className="mx-auto mb-3 text-zinc-700" />
-          <p className="text-sm text-zinc-500">Search for ideas, prompts, and skills</p>
+          <Search size={32} className="mx-auto mb-3 text-stone-700" />
+          <p className="text-sm text-stone-500">Search for ideas, prompts, and skills</p>
         </div>
       )}
     </div>

@@ -37,19 +37,19 @@ const emptyForm: FormData = {
 };
 
 const OAUTH_PROVIDERS = [
-  { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-zinc-900 hover:bg-zinc-200" },
-  { id: "github", label: "Continue with GitHub", icon: "⚫", color: "bg-zinc-800 text-zinc-100 hover:bg-zinc-700" },
+  { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-stone-900 hover:bg-stone-200" },
+  { id: "github", label: "Continue with GitHub", icon: "⚫", color: "bg-stone-800 text-stone-100 hover:bg-stone-700" },
   { id: "discord", label: "Continue with Discord", icon: "🟣", color: "bg-indigo-600 text-white hover:bg-indigo-500" },
 ];
 
 function AuthGate() {
   return (
     <div className="flex min-h-[60dvh] flex-col items-center justify-center px-4 text-center">
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-800">
-        <Sparkles size={28} className="text-zinc-300" />
+      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-stone-800">
+        <Sparkles size={28} className="text-stone-300" />
       </div>
-      <h1 className="mb-2 text-xl font-bold text-zinc-100">Share your automation ideas with the community</h1>
-      <p className="mb-8 max-w-sm text-sm text-zinc-500">
+      <h1 className="mb-2 text-xl font-bold text-stone-100">Share your automation ideas with the community</h1>
+      <p className="mb-8 max-w-sm text-sm text-stone-500">
         Sign in to submit ideas, follow creators, and keep your saves synced across devices.
       </p>
       <div className="mb-6 w-full max-w-xs space-y-3">
@@ -63,10 +63,10 @@ function AuthGate() {
           </button>
         ))}
       </div>
-      <p className="text-xs text-zinc-600">
+      <p className="text-xs text-stone-600">
         Just browsing? No worries — you can save ideas and come back anytime.
       </p>
-      <Link href="/" className="mt-4 text-sm text-zinc-500 underline hover:text-zinc-300">
+      <Link href="/" className="mt-4 text-sm text-stone-500 underline hover:text-stone-300">
         Back to browsing
       </Link>
     </div>
@@ -263,13 +263,13 @@ function SubmitPageInner() {
     <div className="px-4 py-4">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
+        <Link href="/" className="flex items-center gap-2 text-stone-400 hover:text-stone-200">
           <ArrowLeft size={20} />
           <span className="text-sm">Back</span>
         </Link>
         <button
           onClick={() => setShowPreview(!showPreview)}
-          className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-700"
+          className="flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-1.5 text-xs text-stone-300 hover:bg-stone-700"
         >
           {showPreview ? <EyeOff size={14} /> : <Eye size={14} />}
           {showPreview ? "Edit" : "Preview"}
@@ -280,59 +280,59 @@ function SubmitPageInner() {
 
       {showPreview ? (
         <div className="space-y-4">
-          <p className="text-sm text-zinc-400">Card preview:</p>
+          <p className="text-sm text-stone-400">Card preview:</p>
           <IdeaCard idea={previewIdea} />
         </div>
       ) : (
         <div className="space-y-5">
           {/* Title */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Title *</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Title *</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => updateField("title", e.target.value)}
               maxLength={MAX_TITLE_LENGTH}
               placeholder="Morning Briefing Agent"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              className="w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
             />
             {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
-            <p className="mt-1 text-xs text-zinc-600">{form.title.length}/{MAX_TITLE_LENGTH}</p>
+            <p className="mt-1 text-xs text-stone-600">{form.title.length}/{MAX_TITLE_LENGTH}</p>
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Description *</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Description *</label>
             <textarea
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
               maxLength={MAX_DESCRIPTION_LENGTH}
               rows={2}
               placeholder="A short hook — what does this idea do?"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-none"
             />
             {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
-            <p className="mt-1 text-xs text-zinc-600">{form.description.length}/{MAX_DESCRIPTION_LENGTH}</p>
+            <p className="mt-1 text-xs text-stone-600">{form.description.length}/{MAX_DESCRIPTION_LENGTH}</p>
           </div>
 
           {/* Prompt */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Prompt *</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Prompt *</label>
             <textarea
               value={form.prompt}
               onChange={(e) => updateField("prompt", e.target.value)}
               maxLength={MAX_PROMPT_LENGTH}
               rows={6}
               placeholder="The copyable prompt users will paste into their agent..."
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm font-mono text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-y"
+              className="w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm font-mono text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-y"
             />
             {errors.prompt && <p className="mt-1 text-xs text-red-400">{errors.prompt}</p>}
-            <p className="mt-1 text-xs text-zinc-600">{form.prompt.length}/{MAX_PROMPT_LENGTH}</p>
+            <p className="mt-1 text-xs text-stone-600">{form.prompt.length}/{MAX_PROMPT_LENGTH}</p>
           </div>
 
           {/* Category */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-300">Category *</label>
+            <label className="mb-2 block text-sm font-medium text-stone-300">Category *</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -343,7 +343,7 @@ function SubmitPageInner() {
                     "rounded-full border px-3 py-1.5 text-xs transition-colors",
                     form.category === cat.id
                       ? cat.color
-                      : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
+                      : "border-stone-700 text-stone-500 hover:border-stone-600"
                   )}
                 >
                   {cat.label}
@@ -355,7 +355,7 @@ function SubmitPageInner() {
 
           {/* Complexity */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-300">Complexity *</label>
+            <label className="mb-2 block text-sm font-medium text-stone-300">Complexity *</label>
             <div className="flex gap-2">
               {COMPLEXITY_OPTIONS.map((opt) => (
                 <button
@@ -365,8 +365,8 @@ function SubmitPageInner() {
                   className={cn(
                     "flex-1 rounded-lg border px-3 py-2.5 text-center text-xs transition-colors",
                     form.complexity === opt.id
-                      ? "border-zinc-500 bg-zinc-800 text-zinc-100"
-                      : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                      ? "border-stone-500 bg-stone-800 text-stone-100"
+                      : "border-stone-800 text-stone-500 hover:border-stone-700"
                   )}
                 >
                   <span className="block text-base">{opt.icon}</span>
@@ -379,7 +379,7 @@ function SubmitPageInner() {
 
           {/* Skills */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Skills</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Skills</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -387,12 +387,12 @@ function SubmitPageInner() {
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
                 placeholder="Add a skill..."
-                className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                className="flex-1 rounded-lg border border-stone-800 bg-stone-900 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={addSkill}
-                className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700"
+                className="rounded-lg bg-stone-800 px-3 py-2 text-sm text-stone-300 hover:bg-stone-700"
               >
                 Add
               </button>
@@ -402,10 +402,10 @@ function SubmitPageInner() {
                 {form.skills.map((skill) => (
                   <span
                     key={skill}
-                    className="flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400"
+                    className="flex items-center gap-1 rounded-md bg-stone-800 px-2 py-0.5 text-xs text-stone-400"
                   >
                     {skill}
-                    <button onClick={() => removeSkill(skill)} className="text-zinc-600 hover:text-zinc-300">×</button>
+                    <button onClick={() => removeSkill(skill)} className="text-stone-600 hover:text-stone-300">×</button>
                   </span>
                 ))}
               </div>
@@ -414,7 +414,7 @@ function SubmitPageInner() {
 
           {/* Tags */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Tags (optional)</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Tags (optional)</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -422,12 +422,12 @@ function SubmitPageInner() {
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
                 placeholder="Add a tag..."
-                className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                className="flex-1 rounded-lg border border-stone-800 bg-stone-900 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
               />
               <button
                 type="button"
                 onClick={addTag}
-                className="rounded-lg bg-zinc-800 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-700"
+                className="rounded-lg bg-stone-800 px-3 py-2 text-sm text-stone-300 hover:bg-stone-700"
               >
                 Add
               </button>
@@ -437,10 +437,10 @@ function SubmitPageInner() {
                 {form.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="flex items-center gap-1 rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400"
+                    className="flex items-center gap-1 rounded-md bg-stone-800 px-2 py-0.5 text-xs text-stone-400"
                   >
                     #{tag}
-                    <button onClick={() => removeTag(tag)} className="text-zinc-600 hover:text-zinc-300">×</button>
+                    <button onClick={() => removeTag(tag)} className="text-stone-600 hover:text-stone-300">×</button>
                   </span>
                 ))}
               </div>
@@ -449,16 +449,16 @@ function SubmitPageInner() {
 
           {/* Body (optional) */}
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-300">Extended Body (optional, markdown)</label>
+            <label className="mb-1 block text-sm font-medium text-stone-300">Extended Body (optional, markdown)</label>
             <textarea
               value={form.body}
               onChange={(e) => updateField("body", e.target.value)}
               maxLength={MAX_BODY_LENGTH}
               rows={4}
               placeholder="Detailed explanation, setup steps, tips..."
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-y"
+              className="w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-y"
             />
-            <p className="mt-1 text-xs text-zinc-600">{form.body.length}/{MAX_BODY_LENGTH}</p>
+            <p className="mt-1 text-xs text-stone-600">{form.body.length}/{MAX_BODY_LENGTH}</p>
           </div>
 
           {/* Submit */}
@@ -468,7 +468,7 @@ function SubmitPageInner() {
           <button
             onClick={handleSubmit}
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-100 py-3 text-sm font-semibold text-zinc-950 transition-colors hover:bg-white disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 py-3 text-sm font-semibold text-stone-950 transition-all hover:brightness-110 disabled:opacity-50"
           >
             <Send size={16} />
             {submitting ? (isEditing ? "Saving..." : "Submitting...") : (isEditing ? "Save Changes" : "Submit Idea")}
@@ -481,7 +481,7 @@ function SubmitPageInner() {
 
 export default function SubmitPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" /></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-stone-300" /></div>}>
       <SubmitPageInner />
     </Suspense>
   );

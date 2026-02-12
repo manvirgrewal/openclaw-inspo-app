@@ -154,7 +154,7 @@ function CommentItem({
   const resolved = resolveAuthor(comment.author);
 
   return (
-    <div className={cn("mt-3", depth > 0 && "ml-6 border-l border-zinc-800 pl-4")}>
+    <div className={cn("mt-3", depth > 0 && "ml-6 border-l border-stone-800 pl-4")}>
       <div className="flex items-start gap-2.5">
         <UserAvatar
           avatarUrl={resolved.avatar_url}
@@ -165,16 +165,16 @@ function CommentItem({
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs">
-            <Link href={`/user/${resolved.username}`} className="font-medium text-zinc-300 hover:text-zinc-100">
+            <Link href={`/user/${resolved.username}`} className="font-medium text-stone-300 hover:text-stone-100">
               {resolved.display_name}
             </Link>
-            <span className="text-zinc-600">{timeAgo(comment.created_at)}</span>
+            <span className="text-stone-600">{timeAgo(comment.created_at)}</span>
           </div>
-          <p className="mt-0.5 text-sm text-zinc-400">{comment.body}</p>
+          <p className="mt-0.5 text-sm text-stone-400">{comment.body}</p>
           {isAuthenticated && (
             <button
               onClick={() => setShowReplyInput(!showReplyInput)}
-              className="mt-1 flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-400"
+              className="mt-1 flex items-center gap-1 text-xs text-stone-600 hover:text-stone-400"
             >
               <Reply size={12} /> Reply
             </button>
@@ -187,11 +187,11 @@ function CommentItem({
                 onChange={(e) => setReplyText(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSubmitReply()}
                 placeholder="Write a reply..."
-                className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                className="flex-1 rounded-lg border border-stone-800 bg-stone-900 px-3 py-1.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
               />
               <button
                 onClick={handleSubmitReply}
-                className="rounded-lg bg-zinc-800 px-2.5 py-1.5 text-zinc-300 hover:bg-zinc-700"
+                className="rounded-lg bg-stone-800 px-2.5 py-1.5 text-stone-300 hover:bg-stone-700"
               >
                 <Send size={14} />
               </button>
@@ -261,8 +261,8 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
   const topLevel = comments.filter((c) => !c.parent_id);
 
   return (
-    <div className="mt-6 border-t border-zinc-800 pt-4">
-      <h2 className="mb-3 text-sm font-semibold text-zinc-300">
+    <div className="mt-6 border-t border-stone-800 pt-4">
+      <h2 className="mb-3 text-sm font-semibold text-stone-300">
         Comments ({comments.length})
       </h2>
 
@@ -280,11 +280,11 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
             }}
             placeholder="Share your thoughts..."
             rows={2}
-            className="flex-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+            className="flex-1 rounded-lg border border-stone-800 bg-stone-900 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-none"
           />
           <button
             onClick={handleSubmitComment}
-            className="self-end rounded-lg bg-zinc-100 px-3 py-2 text-sm font-medium text-zinc-900 hover:bg-zinc-200"
+            className="self-end rounded-lg bg-amber-500/20 px-3 py-2 text-sm font-medium text-amber-400 hover:bg-amber-500/30"
           >
             <Send size={14} />
           </button>
@@ -304,16 +304,16 @@ export function CommentsSection({ ideaId, onCommentCountChange }: CommentsSectio
       </div>
 
       {comments.length === 0 && (
-        <p className="py-6 text-center text-sm text-zinc-600">
+        <p className="py-6 text-center text-sm text-stone-600">
           No comments yet. Be the first to share your thoughts!
         </p>
       )}
 
       {/* Gentle nudge for non-authenticated */}
       {!isAuthenticated && (
-        <p className="mt-4 text-center text-xs text-zinc-600">
+        <p className="mt-4 text-center text-xs text-stone-600">
           Want to join the conversation?{" "}
-          <Link href="/auth/login" className="text-zinc-400 underline hover:text-zinc-200">
+          <Link href="/auth/login" className="text-stone-400 underline hover:text-stone-200">
             Sign in to comment
           </Link>
         </p>

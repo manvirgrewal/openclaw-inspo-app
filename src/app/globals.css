@@ -1,7 +1,45 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   INSPO DESIGN SYSTEM — "Warm Night" Theme
+   
+   Philosophy: A warm, creative space that feels
+   alive — not another cold SaaS dashboard.
+   Amber accents like sparks of inspiration.
+   Warm surfaces, soft glows, inviting depth.
+   ═══════════════════════════════════════════ */
+
 :root {
   --font-inter: "Inter", sans-serif;
+  
+  /* Core palette — warm dark */
+  --bg-base: #0C0A09;
+  --bg-surface: #1C1917;
+  --bg-elevated: #292524;
+  --bg-hover: #44403C;
+  
+  --border-subtle: #292524;
+  --border-default: #44403C;
+  --border-active: #78716C;
+  
+  --text-primary: #FAFAF9;
+  --text-secondary: #A8A29E;
+  --text-muted: #78716C;
+  
+  /* Accent — Amber/warm gold */
+  --accent: #F59E0B;
+  --accent-light: #FCD34D;
+  --accent-dim: #92400E;
+  --accent-surface: rgba(245, 158, 11, 0.08);
+  --accent-glow: rgba(245, 158, 11, 0.15);
+  
+  /* Secondary — Warm coral for energy */
+  --coral: #F97316;
+  --coral-surface: rgba(249, 115, 22, 0.08);
+  
+  /* Spark gradient */
+  --gradient-spark: linear-gradient(135deg, #F59E0B, #F97316);
+  --gradient-spark-subtle: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.15));
 }
 
 /* Hide scrollbar on filter chips */
@@ -18,4 +56,50 @@
   body {
     padding-bottom: env(safe-area-inset-bottom);
   }
+}
+
+/* Warm glow on card hover */
+.card-glow {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.card-glow:hover {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.06), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Gradient text utility */
+.text-gradient-spark {
+  background: var(--gradient-spark);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle shimmer animation for featured/trending items */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.shimmer-border {
+  background: linear-gradient(90deg, transparent, rgba(245,158,11,0.3), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Smooth page transitions */
+main {
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Copy button success pulse */
+@keyframes pulse-success {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+.animate-pulse-success {
+  animation: pulse-success 0.3s ease-out;
 }

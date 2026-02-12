@@ -83,9 +83,9 @@ export default function UserProfilePage({
   if (!profile) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
-        <h1 className="mb-2 text-xl font-semibold text-zinc-100">User not found</h1>
-        <p className="mb-6 text-sm text-zinc-500">@{username} doesn&apos;t exist yet.</p>
-        <Link href="/" className="rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700">
+        <h1 className="mb-2 text-xl font-semibold text-stone-100">User not found</h1>
+        <p className="mb-6 text-sm text-stone-500">@{username} doesn&apos;t exist yet.</p>
+        <Link href="/" className="rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-stone-300 hover:bg-stone-700">
           Back to Feed
         </Link>
       </div>
@@ -98,7 +98,7 @@ export default function UserProfilePage({
   return (
     <div className="px-4 py-4">
       {/* Back */}
-      <Link href="/" className="mb-4 flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
+      <Link href="/" className="mb-4 flex items-center gap-2 text-stone-400 hover:text-stone-200">
         <ArrowLeft size={20} />
       </Link>
 
@@ -113,32 +113,32 @@ export default function UserProfilePage({
         />
 
         <h1 className="text-lg font-bold">{profile.display_name ?? profile.username}</h1>
-        <p className="text-sm text-zinc-500">@{profile.username}</p>
+        <p className="text-sm text-stone-500">@{profile.username}</p>
 
         {profile.bio && (
-          <p className="mx-auto mt-2 max-w-sm text-sm text-zinc-400">{profile.bio}</p>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-stone-400">{profile.bio}</p>
         )}
 
         {/* Stats */}
-        <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
+        <div className="mt-3 flex items-center justify-center gap-4 text-xs text-stone-500">
           <span>💡 {userIdeas.length} ideas</span>
           <button
             onClick={() => { setFollowListTab("followers"); setFollowListOpen(true); }}
-            className="hover:text-zinc-300 transition-colors"
+            className="hover:text-stone-300 transition-colors"
           >
-            <span className="font-semibold text-zinc-300">{getFollowerIds(profile.id).length}</span> followers
+            <span className="font-semibold text-stone-300">{getFollowerIds(profile.id).length}</span> followers
           </button>
           <button
             onClick={() => { setFollowListTab("following"); setFollowListOpen(true); }}
-            className="hover:text-zinc-300 transition-colors"
+            className="hover:text-stone-300 transition-colors"
           >
-            <span className="font-semibold text-zinc-300">{getFollowingIds(profile.id).length}</span> following
+            <span className="font-semibold text-stone-300">{getFollowingIds(profile.id).length}</span> following
           </button>
         </div>
 
         {/* Setup */}
         {profile.agent_platform && (
-          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-zinc-600">
+          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-stone-600">
             <span>🤖 {profile.agent_platform}</span>
             {profile.active_skills.length > 0 && (
               <span>· {profile.active_skills.slice(0, 3).join(", ")}</span>
@@ -159,8 +159,8 @@ export default function UserProfilePage({
             className={cn(
               "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-medium transition-colors",
               following
-                ? "bg-zinc-800 text-zinc-300"
-                : "bg-zinc-100 text-zinc-950 hover:bg-white"
+                ? "bg-stone-800 text-stone-300"
+                : "bg-stone-100 text-stone-950 hover:bg-white"
             )}
           >
             <UserPlus size={14} />
@@ -177,12 +177,12 @@ export default function UserProfilePage({
 
       {/* Tabs */}
       <Tabs.Root defaultValue="ideas">
-        <Tabs.List className="mb-4 flex border-b border-zinc-800">
+        <Tabs.List className="mb-4 flex border-b border-stone-800">
           {TAB_ITEMS.map((tab) => (
             <Tabs.Trigger
               key={tab.value}
               value={tab.value}
-              className="flex-1 border-b-2 border-transparent px-2 py-2.5 text-center text-sm text-zinc-500 transition-colors data-[state=active]:border-zinc-100 data-[state=active]:text-zinc-100"
+              className="flex-1 border-b-2 border-transparent px-2 py-2.5 text-center text-sm text-stone-500 transition-colors data-[state=active]:border-stone-100 data-[state=active]:text-stone-100"
             >
               {tab.label}
             </Tabs.Trigger>
@@ -197,7 +197,7 @@ export default function UserProfilePage({
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-zinc-600">
+            <div className="py-12 text-center text-sm text-stone-600">
               No ideas posted yet
             </div>
           )}
@@ -211,39 +211,39 @@ export default function UserProfilePage({
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-zinc-600">
+            <div className="py-12 text-center text-sm text-stone-600">
               No stacks created yet
             </div>
           )}
         </Tabs.Content>
 
         <Tabs.Content value="about">
-          <div className="space-y-4 text-sm text-zinc-400">
+          <div className="space-y-4 text-sm text-stone-400">
             {profile.bio && <p>{profile.bio}</p>}
             {profile.agent_platform && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Agent Platform</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Agent Platform</h4>
                 <p>{profile.agent_platform}</p>
               </div>
             )}
             {profile.active_skills.length > 0 && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Skills</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Skills</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.active_skills.map((skill: string) => (
-                    <span key={skill} className="rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{skill}</span>
+                    <span key={skill} className="rounded-md bg-stone-800 px-2 py-0.5 text-xs text-stone-400">{skill}</span>
                   ))}
                 </div>
               </div>
             )}
             {profile.onboarding_role && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Role</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Role</h4>
                 <p>{profile.onboarding_role}</p>
               </div>
             )}
             <div>
-              <h4 className="mb-1 font-medium text-zinc-300">Joined</h4>
+              <h4 className="mb-1 font-medium text-stone-300">Joined</h4>
               <p>{new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</p>
             </div>
           </div>

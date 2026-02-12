@@ -60,25 +60,25 @@ export function FollowListModal({
       onClick={handleBackdropClick}
       className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
     >
-      <div className="relative max-h-[80dvh] w-full max-w-md overflow-hidden rounded-t-2xl bg-zinc-900 sm:rounded-2xl">
+      <div className="relative max-h-[80dvh] w-full max-w-md overflow-hidden rounded-t-2xl bg-stone-900 sm:rounded-2xl">
         {/* Header */}
-        <div className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-900/95 backdrop-blur-sm">
+        <div className="sticky top-0 z-10 border-b border-stone-800 bg-stone-900/95 backdrop-blur-sm">
           <div className="flex items-center justify-between px-4 py-3">
-            <button onClick={onClose} className="text-zinc-400 hover:text-zinc-200">
+            <button onClick={onClose} className="text-stone-400 hover:text-stone-200">
               <X size={20} />
             </button>
             <div className="flex-1" />
           </div>
 
           {/* Tabs */}
-          <div className="flex border-b border-zinc-800">
+          <div className="flex border-b border-stone-800">
             {(["followers", "following"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => onTabChange(t)}
                 className={cn(
                   "relative flex-1 py-2.5 text-center text-sm font-medium transition-colors",
-                  tab === t ? "text-white" : "text-zinc-500 hover:text-zinc-300"
+                  tab === t ? "text-white" : "text-stone-500 hover:text-stone-300"
                 )}
               >
                 {t === "followers" ? `Followers (${followerIds.length})` : `Following (${followingIds.length})`}
@@ -93,11 +93,11 @@ export function FollowListModal({
         {/* List */}
         <div className="overflow-y-auto" style={{ maxHeight: "calc(80dvh - 100px)" }}>
           {profiles.length === 0 ? (
-            <div className="py-16 text-center text-sm text-zinc-600">
+            <div className="py-16 text-center text-sm text-stone-600">
               {tab === "followers" ? "No followers yet" : "Not following anyone yet"}
             </div>
           ) : (
-            <div className="divide-y divide-zinc-800/50">
+            <div className="divide-y divide-stone-800/50">
               {profiles.map((profile) => {
                 const isMe = profile.id === myUserId;
                 const amFollowing = myFollowedIds.includes(profile.id);
@@ -123,10 +123,10 @@ export function FollowListModal({
                       onClick={onClose}
                       className="min-w-0 flex-1"
                     >
-                      <p className="truncate text-sm font-medium text-zinc-200">
+                      <p className="truncate text-sm font-medium text-stone-200">
                         {profile.display_name ?? profile.username}
                       </p>
-                      <p className="truncate text-xs text-zinc-500">@{profile.username}</p>
+                      <p className="truncate text-xs text-stone-500">@{profile.username}</p>
                     </Link>
 
                     {/* Follow button (don't show for self) */}
@@ -136,8 +136,8 @@ export function FollowListModal({
                         className={cn(
                           "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
                           amFollowing
-                            ? "bg-zinc-800 text-zinc-400 hover:bg-red-950/30 hover:text-red-400"
-                            : "bg-zinc-100 text-zinc-900 hover:bg-white"
+                            ? "bg-stone-800 text-stone-400 hover:bg-red-950/30 hover:text-red-400"
+                            : "bg-stone-100 text-stone-900 hover:bg-white"
                         )}
                       >
                         {amFollowing ? (

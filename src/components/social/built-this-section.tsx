@@ -105,8 +105,8 @@ function StarRating({ rating, onChange }: { rating: number; onChange?: (r: numbe
           disabled={!onChange}
           className={cn(
             "transition-colors",
-            onChange ? "cursor-pointer hover:text-yellow-300" : "cursor-default",
-            i <= rating ? "text-yellow-400" : "text-zinc-700"
+            onChange ? "cursor-pointer hover:text-amber-300" : "cursor-default",
+            i <= rating ? "text-amber-400" : "text-stone-700"
           )}
         >
           <Star size={16} fill={i <= rating ? "currentColor" : "none"} />
@@ -131,7 +131,7 @@ function BuildEntry({ entry }: { entry: BuiltEntry }) {
   const resolved = resolveAuthor(entry.user);
 
   return (
-    <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-3">
+    <div className="rounded-lg border border-stone-800 bg-stone-900/50 p-3">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <UserAvatar
@@ -142,47 +142,47 @@ function BuildEntry({ entry }: { entry: BuiltEntry }) {
             className="!h-6 !w-6 !text-[10px]"
           />
           <div>
-            <Link href={`/user/${resolved.username}`} className="text-sm font-medium text-zinc-300 hover:text-zinc-100 hover:underline">
+            <Link href={`/user/${resolved.username}`} className="text-sm font-medium text-stone-300 hover:text-stone-100 hover:underline">
               {resolved.display_name}
             </Link>
-            <span className="ml-2 text-xs text-zinc-600">{timeAgo(entry.created_at)}</span>
+            <span className="ml-2 text-xs text-stone-600">{timeAgo(entry.created_at)}</span>
           </div>
         </div>
         {entry.impact_rating && <StarRating rating={entry.impact_rating} />}
       </div>
 
       {entry.story && (
-        <p className="mt-2 text-sm text-zinc-400">{entry.story}</p>
+        <p className="mt-2 text-sm text-stone-400">{entry.story}</p>
       )}
 
       {hasDetails && (
         <>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="mt-2 flex items-center gap-1 text-xs text-zinc-600 hover:text-zinc-400"
+            className="mt-2 flex items-center gap-1 text-xs text-stone-600 hover:text-stone-400"
           >
             {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             {expanded ? "Hide details" : "Show impact details"}
           </button>
 
           {expanded && (
-            <div className="mt-2 space-y-2 rounded-lg bg-zinc-800/50 p-3 text-xs">
+            <div className="mt-2 space-y-2 rounded-lg bg-stone-800/50 p-3 text-xs">
               {entry.time_saved_weekly && (
                 <div>
-                  <span className="font-medium text-zinc-400">⏱ Time saved weekly:</span>
-                  <span className="ml-1 text-zinc-300">{entry.time_saved_weekly}</span>
+                  <span className="font-medium text-stone-400">⏱ Time saved weekly:</span>
+                  <span className="ml-1 text-stone-300">{entry.time_saved_weekly}</span>
                 </div>
               )}
               {entry.before_workflow && (
                 <div>
                   <span className="font-medium text-red-400/70">Before:</span>
-                  <span className="ml-1 text-zinc-400">{entry.before_workflow}</span>
+                  <span className="ml-1 text-stone-400">{entry.before_workflow}</span>
                 </div>
               )}
               {entry.after_workflow && (
                 <div>
                   <span className="font-medium text-green-400/70">After:</span>
-                  <span className="ml-1 text-zinc-400">{entry.after_workflow}</span>
+                  <span className="ml-1 text-stone-400">{entry.after_workflow}</span>
                 </div>
               )}
             </div>
@@ -267,11 +267,11 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
   }, [ideaId, user, story, timeSaved, beforeWork, afterWork, rating, toast, onBuiltCountChange]);
 
   return (
-    <div className="mt-6 border-t border-zinc-800 pt-4">
+    <div className="mt-6 border-t border-stone-800 pt-4">
       <div className="mb-3 flex items-center justify-between">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center gap-1.5 text-sm font-semibold text-zinc-300 hover:text-zinc-100 transition-colors"
+          className="flex items-center gap-1.5 text-sm font-semibold text-stone-300 hover:text-stone-100 transition-colors"
         >
           {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           <Hammer size={14} /> Built This ({builds.length})
@@ -296,55 +296,55 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
       {!collapsed && <>
       {/* Submit form */}
       {showForm && (
-        <div className="mb-4 space-y-3 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-          <h3 className="text-sm font-medium text-zinc-200">Share your build</h3>
+        <div className="mb-4 space-y-3 rounded-xl border border-stone-800 bg-stone-900 p-4">
+          <h3 className="text-sm font-medium text-stone-200">Share your build</h3>
 
           <div>
-            <label className="mb-1 block text-xs text-zinc-500">Impact rating *</label>
+            <label className="mb-1 block text-xs text-stone-500">Impact rating *</label>
             <StarRating rating={rating} onChange={setRating} />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-zinc-500">How did it go? (optional)</label>
+            <label className="mb-1 block text-xs text-stone-500">How did it go? (optional)</label>
             <textarea
               value={story}
               onChange={(e) => setStory(e.target.value)}
               placeholder="I set this up in 5 minutes and now..."
               rows={2}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+              className="w-full rounded-lg border border-stone-800 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-none"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs text-zinc-500">Time saved weekly (optional)</label>
+            <label className="mb-1 block text-xs text-stone-500">Time saved weekly (optional)</label>
             <input
               type="text"
               value={timeSaved}
               onChange={(e) => setTimeSaved(e.target.value)}
               placeholder="e.g. 2 hours"
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              className="w-full rounded-lg border border-stone-800 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">Before (optional)</label>
+              <label className="mb-1 block text-xs text-stone-500">Before (optional)</label>
               <input
                 type="text"
                 value={beforeWork}
                 onChange={(e) => setBeforeWork(e.target.value)}
                 placeholder="Checked 5 apps manually"
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                className="w-full rounded-lg border border-stone-800 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-zinc-500">After (optional)</label>
+              <label className="mb-1 block text-xs text-stone-500">After (optional)</label>
               <input
                 type="text"
                 value={afterWork}
                 onChange={(e) => setAfterWork(e.target.value)}
                 placeholder="One notification at 7am"
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+                className="w-full rounded-lg border border-stone-800 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
               />
             </div>
           </div>
@@ -359,7 +359,7 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-700"
+              className="rounded-lg bg-stone-800 px-4 py-2 text-sm text-stone-400 hover:bg-stone-700"
             >
               Cancel
             </button>
@@ -375,7 +375,7 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
           ))}
         </div>
       ) : !showForm ? (
-        <p className="py-4 text-center text-sm text-zinc-600">
+        <p className="py-4 text-center text-sm text-stone-600">
           No one has built this yet. Be the first!
         </p>
       ) : null}

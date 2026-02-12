@@ -52,20 +52,20 @@ export function AvatarCropModal({ open, imageSrc, onClose, onSave }: AvatarCropM
       onClick={(e) => { if (e.target === backdropRef.current) onClose(); }}
       className="fixed inset-0 z-[70] flex items-center justify-center bg-black/80 backdrop-blur-sm"
     >
-      <div className="relative w-full max-w-md mx-4 overflow-hidden rounded-2xl bg-zinc-900">
+      <div className="relative w-full max-w-md mx-4 overflow-hidden rounded-2xl bg-stone-900">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-200">
+        <div className="flex items-center justify-between border-b border-stone-800 px-4 py-3">
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-200">
             <X size={20} />
           </button>
-          <h2 className="text-sm font-semibold text-zinc-200">Crop Photo</h2>
+          <h2 className="text-sm font-semibold text-stone-200">Crop Photo</h2>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-1 rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-900 transition-colors hover:bg-white disabled:opacity-50"
+            className="flex items-center gap-1 rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-semibold text-stone-900 transition-colors hover:bg-white disabled:opacity-50"
           >
             {saving ? (
-              <div className="h-3 w-3 animate-spin rounded-full border border-zinc-600 border-t-zinc-900" />
+              <div className="h-3 w-3 animate-spin rounded-full border border-stone-600 border-t-stone-900" />
             ) : (
               <Check size={14} />
             )}
@@ -90,10 +90,10 @@ export function AvatarCropModal({ open, imageSrc, onClose, onSave }: AvatarCropM
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-center gap-4 border-t border-zinc-800 px-4 py-3">
+        <div className="flex items-center justify-center gap-4 border-t border-stone-800 px-4 py-3">
           <button
             onClick={() => setZoom((z) => Math.max(1, z - 0.2))}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-800 text-stone-400 hover:text-stone-200"
           >
             <ZoomOut size={16} />
           </button>
@@ -105,19 +105,19 @@ export function AvatarCropModal({ open, imageSrc, onClose, onSave }: AvatarCropM
             step={0.05}
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
-            className="h-1 w-32 appearance-none rounded-full bg-zinc-700 accent-zinc-300"
+            className="h-1 w-32 appearance-none rounded-full bg-stone-700 accent-stone-300"
           />
 
           <button
             onClick={() => setZoom((z) => Math.min(3, z + 0.2))}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-800 text-stone-400 hover:text-stone-200"
           >
             <ZoomIn size={16} />
           </button>
 
           <button
             onClick={() => setRotation((r) => (r + 90) % 360)}
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-800 text-stone-400 hover:text-stone-200"
           >
             <RotateCw size={16} />
           </button>

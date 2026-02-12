@@ -62,8 +62,8 @@ export function ShareButton({ title, slug, shareUrl, description, className, ico
           }
         }}
         className={cn(
-          "flex items-center justify-center rounded-lg bg-zinc-800 text-zinc-300 transition-colors hover:bg-zinc-700",
-          iconOnly ? "h-9 w-9 text-zinc-400 hover:text-zinc-200" : "gap-1.5 px-3 py-2 text-sm font-medium"
+          "flex items-center justify-center rounded-lg bg-stone-800 text-stone-300 transition-colors hover:bg-stone-700",
+          iconOnly ? "h-9 w-9 text-stone-400 hover:text-stone-200" : "gap-1.5 px-3 py-2 text-sm font-medium"
         )}
       >
         <Share2 size={16} />
@@ -75,17 +75,17 @@ export function ShareButton({ title, slug, shareUrl, description, className, ico
           {/* Backdrop */}
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
           {/* Menu */}
-          <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-xl border border-zinc-800 bg-zinc-900 p-1 shadow-xl">
+          <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-xl border border-stone-800 bg-stone-900 p-1 shadow-xl">
             <button
               onClick={handleCopyLink}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-stone-300 hover:bg-stone-800"
             >
               {copied ? <Check size={14} className="text-green-400" /> : <Link2 size={14} />}
               {copied ? "Copied!" : "Copy link"}
             </button>
             <button
               onClick={handleShareX}
-              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-zinc-300 hover:bg-zinc-800"
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-stone-300 hover:bg-stone-800"
             >
               <XIcon size={14} />
               Share to X

@@ -31,12 +31,12 @@ export default function StacksPage() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Stacks</h1>
-          <p className="mt-1 text-sm text-zinc-500">Curated bundles of ideas that work together</p>
+          <p className="mt-1 text-sm text-stone-500">Curated bundles of ideas that work together</p>
         </div>
         {isAuthenticated && (
           <Link
             href="/stacks/create"
-            className="flex items-center gap-1.5 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+            className="flex items-center gap-1.5 rounded-lg bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/20"
           >
             <Plus size={14} />
             Create Stack
@@ -53,7 +53,7 @@ export default function StacksPage() {
           <StackCard key={stack.id} stack={stack} />
         ))}
         {filtered.length === 0 && (
-          <p className="py-12 text-center text-sm text-zinc-600">No stacks in this category yet</p>
+          <p className="py-12 text-center text-sm text-stone-600">No stacks in this category yet</p>
         )}
       </div>
     </div>

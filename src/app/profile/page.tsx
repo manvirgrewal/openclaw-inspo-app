@@ -66,7 +66,7 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-300" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-stone-300" />
       </div>
     );
   }
@@ -75,17 +75,17 @@ export default function ProfilePage() {
   if (!isAuthenticated) {
     return (
       <div className="px-4 py-4">
-        <Link href="/" className="mb-4 flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
+        <Link href="/" className="mb-4 flex items-center gap-2 text-stone-400 hover:text-stone-200">
           <ArrowLeft size={20} />
         </Link>
 
         {/* Guest header */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-zinc-800 text-xl">
+          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-stone-800 text-xl">
             👤
           </div>
-          <h1 className="text-lg font-bold text-zinc-200">Guest</h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <h1 className="text-lg font-bold text-stone-200">Guest</h1>
+          <p className="mt-1 text-sm text-stone-500">
             Your saves are stored locally on this device
           </p>
 
@@ -93,20 +93,20 @@ export default function ProfilePage() {
           <div className="mt-4">
             <button
               onClick={signIn}
-              className="inline-flex items-center gap-2 rounded-lg bg-zinc-100 px-5 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:bg-white"
+              className="inline-flex items-center gap-2 rounded-lg bg-stone-100 px-5 py-2.5 text-sm font-semibold text-stone-900 transition-colors hover:bg-white"
             >
               <LogIn size={16} />
               Sign in to sync & post
             </button>
-            <p className="mt-2 text-xs text-zinc-600">
+            <p className="mt-2 text-xs text-stone-600">
               Keep your saves across devices, submit ideas, and join the community
             </p>
           </div>
         </div>
 
         {/* Saved ideas */}
-        <div className="border-t border-zinc-800 pt-4">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-300">
+        <div className="border-t border-stone-800 pt-4">
+          <h2 className="mb-3 text-sm font-semibold text-stone-300">
             🔖 Saved ({savedIdeas.length})
           </h2>
           {savedIdeas.length > 0 ? (
@@ -116,7 +116,7 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-zinc-600">
+            <div className="py-12 text-center text-sm text-stone-600">
               No saved ideas yet. Browse the feed and bookmark ideas you like!
             </div>
           )}
@@ -128,7 +128,7 @@ export default function ProfilePage() {
   // Authenticated profile
   return (
     <div className="px-4 py-4">
-      <Link href="/" className="mb-4 flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
+      <Link href="/" className="mb-4 flex items-center gap-2 text-stone-400 hover:text-stone-200">
         <ArrowLeft size={20} />
       </Link>
 
@@ -142,40 +142,40 @@ export default function ProfilePage() {
         />
 
         <h1 className="text-lg font-bold">{profile.display_name || user!.display_name}</h1>
-        <p className="text-sm text-zinc-500">@{profile.username || user!.username}</p>
+        <p className="text-sm text-stone-500">@{profile.username || user!.username}</p>
 
         {profile.bio && (
-          <p className="mx-auto mt-2 max-w-xs text-sm text-zinc-400">{profile.bio}</p>
+          <p className="mx-auto mt-2 max-w-xs text-sm text-stone-400">{profile.bio}</p>
         )}
 
         {(profile.onboarding_role || profile.agent_platform) && (
-          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-zinc-500">
-            {profile.onboarding_role && <span className="rounded-full bg-zinc-800 px-2 py-0.5">{profile.onboarding_role}</span>}
-            {profile.agent_platform && <span className="rounded-full bg-zinc-800 px-2 py-0.5">{profile.agent_platform}</span>}
+          <div className="mt-2 flex items-center justify-center gap-2 text-xs text-stone-500">
+            {profile.onboarding_role && <span className="rounded-full bg-stone-800 px-2 py-0.5">{profile.onboarding_role}</span>}
+            {profile.agent_platform && <span className="rounded-full bg-stone-800 px-2 py-0.5">{profile.agent_platform}</span>}
           </div>
         )}
 
-        <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
+        <div className="mt-3 flex items-center justify-center gap-4 text-xs text-stone-500">
           <span>💡 {userIdeas.length} ideas</span>
           <span>🔖 {savedIdeas.length} saved</span>
           <button
             onClick={() => { setFollowListTab("followers"); setFollowListOpen(true); }}
-            className="hover:text-zinc-300 transition-colors"
+            className="hover:text-stone-300 transition-colors"
           >
-            <span className="font-semibold text-zinc-300">{getFollowerIds(user!.id).length}</span> followers
+            <span className="font-semibold text-stone-300">{getFollowerIds(user!.id).length}</span> followers
           </button>
           <button
             onClick={() => { setFollowListTab("following"); setFollowListOpen(true); }}
-            className="hover:text-zinc-300 transition-colors"
+            className="hover:text-stone-300 transition-colors"
           >
-            <span className="font-semibold text-zinc-300">{getFollowingIds(user!.id).length}</span> following
+            <span className="font-semibold text-stone-300">{getFollowingIds(user!.id).length}</span> following
           </button>
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-3">
           <button
             onClick={() => setEditOpen(true)}
-            className="flex items-center gap-1.5 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-300 hover:bg-zinc-700"
+            className="flex items-center gap-1.5 rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-stone-300 hover:bg-stone-700"
           >
             <Settings size={14} />
             Edit Profile
@@ -198,7 +198,7 @@ export default function ProfilePage() {
 
       {/* Tabs */}
       <Tabs.Root defaultValue="saved">
-        <Tabs.List className="mb-4 flex border-b border-zinc-800">
+        <Tabs.List className="mb-4 flex border-b border-stone-800">
           {[
             { value: "ideas", label: "My Ideas" },
             { value: "saved", label: "Saved" },
@@ -208,7 +208,7 @@ export default function ProfilePage() {
             <Tabs.Trigger
               key={tab.value}
               value={tab.value}
-              className="flex-1 border-b-2 border-transparent px-2 py-2.5 text-center text-sm text-zinc-500 transition-colors data-[state=active]:border-zinc-100 data-[state=active]:text-zinc-100"
+              className="flex-1 border-b-2 border-transparent px-2 py-2.5 text-center text-sm text-stone-500 transition-colors data-[state=active]:border-stone-100 data-[state=active]:text-stone-100"
             >
               {tab.label}
             </Tabs.Trigger>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-zinc-600">
+            <div className="py-12 text-center text-sm text-stone-600">
               You haven&apos;t posted any ideas yet. Start by submitting one!
             </div>
           )}
@@ -248,7 +248,7 @@ export default function ProfilePage() {
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center text-sm text-zinc-600">
+            <div className="py-12 text-center text-sm text-stone-600">
               No saved ideas yet. Browse the feed and bookmark ideas you like!
             </div>
           )}
@@ -263,10 +263,10 @@ export default function ProfilePage() {
             </div>
           ) : (
             <div className="py-12 text-center">
-              <p className="mb-2 text-sm text-zinc-600">No stacks yet</p>
+              <p className="mb-2 text-sm text-stone-600">No stacks yet</p>
               <Link
                 href="/stacks/create"
-                className="text-sm text-emerald-400 hover:underline"
+                className="text-sm text-amber-400 hover:underline"
               >
                 Create your first stack →
               </Link>
@@ -275,41 +275,41 @@ export default function ProfilePage() {
         </Tabs.Content>
 
         <Tabs.Content value="about">
-          <div className="space-y-4 text-sm text-zinc-400">
+          <div className="space-y-4 text-sm text-stone-400">
             <div>
-              <h4 className="mb-1 font-medium text-zinc-300">Username</h4>
+              <h4 className="mb-1 font-medium text-stone-300">Username</h4>
               <p>@{profile.username || user!.username}</p>
             </div>
             {profile.bio && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Bio</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Bio</h4>
                 <p>{profile.bio}</p>
               </div>
             )}
             {profile.agent_platform && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Agent Platform</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Agent Platform</h4>
                 <p>{profile.agent_platform}</p>
               </div>
             )}
             {profile.setup_description && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Agent Setup</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Agent Setup</h4>
                 <p>{profile.setup_description}</p>
               </div>
             )}
             {profile.interests && profile.interests.length > 0 && (
               <div>
-                <h4 className="mb-1 font-medium text-zinc-300">Interests</h4>
+                <h4 className="mb-1 font-medium text-stone-300">Interests</h4>
                 <div className="flex flex-wrap gap-1.5">
                   {profile.interests.map((i) => (
-                    <span key={i} className="rounded-full bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">{i}</span>
+                    <span key={i} className="rounded-full bg-stone-800 px-2 py-0.5 text-xs text-stone-400">{i}</span>
                   ))}
                 </div>
               </div>
             )}
             <div>
-              <h4 className="mb-1 font-medium text-zinc-300">Member since</h4>
+              <h4 className="mb-1 font-medium text-stone-300">Member since</h4>
               <p>February 2026</p>
             </div>
           </div>

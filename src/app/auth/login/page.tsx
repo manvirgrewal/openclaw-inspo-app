@@ -7,8 +7,8 @@ import { ArrowLeft, Mail, Zap } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 
 const OAUTH_PROVIDERS = [
-  { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-zinc-900 hover:bg-zinc-200" },
-  { id: "github", label: "Continue with GitHub", icon: "⚫", color: "bg-zinc-800 text-zinc-100 hover:bg-zinc-700" },
+  { id: "google", label: "Continue with Google", icon: "🔵", color: "bg-white text-stone-900 hover:bg-stone-200" },
+  { id: "github", label: "Continue with GitHub", icon: "⚫", color: "bg-stone-800 text-stone-100 hover:bg-stone-700" },
   { id: "discord", label: "Continue with Discord", icon: "🟣", color: "bg-indigo-600 text-white hover:bg-indigo-500" },
 ];
 
@@ -36,13 +36,13 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-[80dvh] flex-col items-center justify-center px-4">
-      <Link href="/" className="mb-8 self-start text-zinc-400 hover:text-zinc-200">
+      <Link href="/" className="mb-8 self-start text-stone-400 hover:text-stone-200">
         <ArrowLeft size={20} />
       </Link>
 
       <div className="w-full max-w-sm">
         <h1 className="mb-2 text-center text-2xl font-bold">Welcome to OpenClaw Inspo</h1>
-        <p className="mb-8 text-center text-sm text-zinc-500">
+        <p className="mb-8 text-center text-sm text-stone-500">
           Sign in to save ideas, submit your own, and join the community
         </p>
 
@@ -62,16 +62,16 @@ export default function LoginPage() {
 
         {/* Divider */}
         <div className="mb-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-zinc-800" />
-          <span className="text-xs text-zinc-600">or</span>
-          <div className="h-px flex-1 bg-zinc-800" />
+          <div className="h-px flex-1 bg-stone-800" />
+          <span className="text-xs text-stone-600">or</span>
+          <div className="h-px flex-1 bg-stone-800" />
         </div>
 
         {/* Magic link */}
         {magicLinkSent ? (
-          <div className="rounded-xl bg-emerald-500/10 p-4 text-center">
-            <p className="text-sm font-medium text-emerald-400">Check your email!</p>
-            <p className="mt-1 text-xs text-zinc-500">We sent a magic link to {email}</p>
+          <div className="rounded-xl bg-amber-500/10 p-4 text-center">
+            <p className="text-sm font-medium text-amber-400">Check your email!</p>
+            <p className="mt-1 text-xs text-stone-500">We sent a magic link to {email}</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -80,12 +80,12 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="w-full rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+              className="w-full rounded-xl border border-stone-800 bg-stone-900 px-4 py-3 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
             />
             <button
               onClick={handleMagicLink}
               disabled={loading || !email.trim()}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-800 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-700 disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-stone-800 py-3 text-sm font-medium text-stone-300 transition-colors hover:bg-stone-700 disabled:opacity-50"
             >
               <Mail size={16} />
               {loading ? "Sending..." : "Send Magic Link"}
@@ -95,21 +95,21 @@ export default function LoginPage() {
 
         {/* Demo mode */}
         <div className="mt-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-zinc-800" />
-          <span className="text-xs text-zinc-600">demo</span>
-          <div className="h-px flex-1 bg-zinc-800" />
+          <div className="h-px flex-1 bg-stone-800" />
+          <span className="text-xs text-stone-600">demo</span>
+          <div className="h-px flex-1 bg-stone-800" />
         </div>
         <button
           onClick={() => {
             signIn();
             router.push("/");
           }}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-700 py-3 text-sm font-medium text-zinc-300 transition-colors hover:bg-zinc-800"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-stone-700 py-3 text-sm font-medium text-stone-300 transition-colors hover:bg-stone-800"
         >
           <Zap size={16} />
           Try Demo Mode
         </button>
-        <p className="mt-2 text-center text-xs text-zinc-600">
+        <p className="mt-2 text-center text-xs text-stone-600">
           No account needed — explore all features instantly
         </p>
       </div>

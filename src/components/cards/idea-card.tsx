@@ -152,14 +152,14 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
     <Link
       href={`/idea/${idea.slug}`}
       className={cn(
-        "block w-full rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition-colors hover:border-zinc-700 hover:bg-zinc-900/80 active:bg-zinc-800/60",
-        isPinned && "border-yellow-500/20",
+        "card-glow block w-full rounded-xl border border-stone-800/60 bg-stone-900/80 p-4 transition-all hover:border-stone-700/80 active:bg-stone-800/60",
+        isPinned && "border-amber-500/20",
         className,
       )}
     >
       {/* Pinned badge */}
       {isPinned && (
-        <div className="mb-2 flex items-center gap-1 text-[10px] font-medium text-yellow-500/70">
+        <div className="mb-2 flex items-center gap-1 text-[10px] font-medium text-amber-500/70">
           <Pin size={10} /> Pinned
         </div>
       )}
@@ -167,13 +167,13 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       {/* Row 1: Complexity + Category */}
       <div className="mb-2 flex items-center gap-2 text-xs">
         {complexity && (
-          <span className="text-zinc-400">
+          <span className="text-stone-400">
             {complexity.icon} {complexity.label}
           </span>
         )}
         {category && (
           <>
-            <span className="text-zinc-600">·</span>
+            <span className="text-stone-600">·</span>
             <span className={cn("rounded-full border px-2 py-0.5", category.color)}>
               {category.label}
             </span>
@@ -182,7 +182,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       </div>
 
       {/* Title */}
-      <h3 className="mb-1 text-base font-semibold leading-snug text-zinc-100 line-clamp-2 sm:text-lg">
+      <h3 className="mb-1 text-base font-semibold leading-snug text-stone-100 line-clamp-2 sm:text-lg">
         {idea.title}
       </h3>
 
@@ -190,7 +190,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       {idea.author && (() => {
         const author = resolveAuthor(idea.author);
         return (
-        <div className="mb-2 flex items-center gap-1.5 text-xs text-zinc-500">
+        <div className="mb-2 flex items-center gap-1.5 text-xs text-stone-500">
           {author.avatar_url ? (
             <img
               src={author.avatar_url}
@@ -198,7 +198,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
               className="h-5 w-5 rounded-full object-cover"
             />
           ) : (
-            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-700 text-[10px] font-medium text-zinc-300">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-700 text-[10px] font-medium text-stone-300">
               {(author.display_name || author.username).charAt(0).toUpperCase()}
             </div>
           )}
@@ -209,7 +209,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
                 e.stopPropagation();
                 window.location.href = `/user/${author.username}`;
               }}
-              className="text-zinc-400 hover:text-zinc-200 hover:underline cursor-pointer"
+              className="text-stone-400 hover:text-stone-200 hover:underline cursor-pointer"
             >
               @{author.username}
             </span>
@@ -219,7 +219,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       })()}
 
       {/* Description */}
-      <p className="mb-3 text-sm leading-relaxed text-zinc-400 line-clamp-3">
+      <p className="mb-3 text-sm leading-relaxed text-stone-400 line-clamp-3">
         {idea.description}
       </p>
 
@@ -227,12 +227,12 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
       {idea.skills.length > 0 && (
         <div className="mb-3 flex gap-1.5 overflow-x-auto scrollbar-none">
           {idea.skills.slice(0, 4).map((skill) => (
-            <span key={skill} className="shrink-0 rounded-md bg-zinc-800 px-2 py-0.5 text-xs text-zinc-400">
+            <span key={skill} className="shrink-0 rounded-md bg-stone-800 px-2 py-0.5 text-xs text-stone-400">
               {skill}
             </span>
           ))}
           {idea.skills.length > 4 && (
-            <span className="shrink-0 text-xs text-zinc-500">+{idea.skills.length - 4}</span>
+            <span className="shrink-0 text-xs text-stone-500">+{idea.skills.length - 4}</span>
           )}
         </div>
       )}
@@ -242,10 +242,10 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
         <button
           onClick={handleCopy}
           className={cn(
-            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+            "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all",
             copied
-              ? "bg-green-500/10 text-green-400"
-              : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700 active:bg-zinc-600",
+              ? "bg-green-500/10 text-green-400 animate-pulse-success"
+              : "bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 active:bg-amber-500/25",
           )}
         >
           {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy</>}
@@ -255,14 +255,14 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
           onClick={handleSave}
           className={cn(
             "flex items-center gap-1 text-xs transition-colors",
-            saved ? "text-yellow-400" : "text-zinc-500 hover:text-zinc-300",
+            saved ? "text-amber-400" : "text-stone-500 hover:text-stone-300",
           )}
         >
           <Bookmark size={14} fill={saved ? "currentColor" : "none"} />
           <span>{idea.save_count + localCountDelta}</span>
         </button>
 
-        <span className="flex items-center gap-1 text-xs text-zinc-500">
+        <span className="flex items-center gap-1 text-xs text-stone-500">
           <MessageSquare size={14} />
           <span>{liveCommentCount}</span>
         </span>
@@ -275,7 +275,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
               e.stopPropagation();
               setShowMenu(!showMenu);
             }}
-            className="text-zinc-600 hover:text-zinc-400"
+            className="text-stone-600 hover:text-stone-400"
           >
             <MoreHorizontal size={16} />
           </button>
@@ -287,13 +287,13 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMenu(false); }}
               />
               <div
-                className="absolute right-0 bottom-full z-50 mb-1 w-44 rounded-xl border border-zinc-800 bg-zinc-900 p-1 shadow-xl"
+                className="absolute right-0 bottom-full z-50 mb-1 w-44 rounded-xl border border-stone-800 bg-stone-900 p-1 shadow-xl"
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
               >
                 {/* Share */}
                 <button
                   onClick={handleShare}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-300 hover:bg-stone-800"
                 >
                   <Share2 size={14} /> Share
                 </button>
@@ -308,14 +308,14 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
                         router.push(`/submit?edit=${idea.id}`);
                         setShowMenu(false);
                       }}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-300 hover:bg-stone-800"
                     >
                       <Pencil size={14} /> Edit
                     </button>
                     {onPin && (
                       <button
                         onClick={handlePin}
-                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+                        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-300 hover:bg-stone-800"
                       >
                         {isPinned ? <PinOff size={14} /> : <Pin size={14} />}
                         {isPinned ? "Unpin" : "Pin to Profile"}
@@ -323,7 +323,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
                     )}
                     <button
                       onClick={handleDelete}
-                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-zinc-800"
+                      className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-stone-800"
                     >
                       <Trash2 size={14} /> Delete
                     </button>
@@ -339,7 +339,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
                       setShowReport(true);
                       setShowMenu(false);
                     }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-zinc-500 hover:bg-zinc-800"
+                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-stone-500 hover:bg-stone-800"
                   >
                     <Flag size={14} /> Report
                   </button>
@@ -357,16 +357,16 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
           onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowReport(false); }}
         >
           <div
-            className="w-full max-w-sm rounded-xl border border-zinc-800 bg-zinc-900 p-5"
+            className="w-full max-w-sm rounded-xl border border-stone-800 bg-stone-900 p-5"
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
           >
-            <h3 className="mb-3 text-sm font-semibold text-zinc-200">Report this idea</h3>
+            <h3 className="mb-3 text-sm font-semibold text-stone-200">Report this idea</h3>
             <textarea
               value={reportReason}
               onChange={(e) => setReportReason(e.target.value)}
               placeholder="What's the issue? (spam, inappropriate, misleading, etc.)"
               rows={3}
-              className="mb-3 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none resize-none"
+              className="mb-3 w-full rounded-lg border border-stone-800 bg-stone-950 px-3 py-2 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none resize-none"
               autoFocus
             />
             <div className="flex gap-2">
@@ -379,7 +379,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
               </button>
               <button
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowReport(false); }}
-                className="rounded-lg bg-zinc-800 px-4 py-2 text-sm text-zinc-400 hover:bg-zinc-700"
+                className="rounded-lg bg-stone-800 px-4 py-2 text-sm text-stone-400 hover:bg-stone-700"
               >
                 Cancel
               </button>

@@ -36,7 +36,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={t.id}
             className={cn(
-              "animate-in fade-in slide-in-from-bottom-2 rounded-lg bg-zinc-800 px-4 py-2 text-sm font-medium text-zinc-100 shadow-lg border border-zinc-700",
+              "animate-in fade-in slide-in-from-bottom-2 rounded-lg bg-stone-800 px-4 py-2 text-sm font-medium text-stone-100 shadow-lg border border-stone-700",
             )}
           >
             {t.message}

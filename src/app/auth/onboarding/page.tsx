@@ -18,7 +18,7 @@ const STEPS = [
 
 export default function OnboardingPageWrapper() {
   return (
-    <Suspense fallback={<div className="flex min-h-[80dvh] items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-zinc-400" /></div>}>
+    <Suspense fallback={<div className="flex min-h-[80dvh] items-center justify-center"><div className="h-6 w-6 animate-spin rounded-full border-2 border-stone-700 border-t-stone-400" /></div>}>
       <OnboardingPage />
     </Suspense>
   );
@@ -92,21 +92,21 @@ function OnboardingPage() {
               key={i}
               className={cn(
                 "h-1 flex-1 rounded-full transition-colors",
-                i <= step ? "bg-zinc-100" : "bg-zinc-800"
+                i <= step ? "bg-stone-100" : "bg-stone-800"
               )}
             />
           ))}
         </div>
 
         {/* Step indicator */}
-        <p className="mb-1 text-xs text-zinc-600">Step {step + 1} of {STEPS.length}</p>
+        <p className="mb-1 text-xs text-stone-600">Step {step + 1} of {STEPS.length}</p>
         <h2 className="mb-6 text-xl font-bold">{STEPS[step].title}</h2>
 
         {/* Step 0: Username */}
         {step === 0 && (
           <div>
-            <div className="flex items-center rounded-xl border border-zinc-800 bg-zinc-900">
-              <span className="pl-4 text-sm text-zinc-600">@</span>
+            <div className="flex items-center rounded-xl border border-stone-800 bg-stone-900">
+              <span className="pl-4 text-sm text-stone-600">@</span>
               <input
                 type="text"
                 value={username}
@@ -116,11 +116,11 @@ function OnboardingPage() {
                 }}
                 placeholder="username"
                 autoFocus
-                className="flex-1 bg-transparent px-1 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:outline-none"
+                className="flex-1 bg-transparent px-1 py-3 text-sm text-stone-100 placeholder:text-stone-600 focus:outline-none"
               />
             </div>
             {usernameError && <p className="mt-1 text-xs text-red-400">{usernameError}</p>}
-            <p className="mt-1 text-xs text-zinc-600">Letters, numbers, and underscores only</p>
+            <p className="mt-1 text-xs text-stone-600">Letters, numbers, and underscores only</p>
           </div>
         )}
 
@@ -134,8 +134,8 @@ function OnboardingPage() {
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-colors",
                   role === r
-                    ? "border-zinc-400 bg-zinc-800 text-zinc-100"
-                    : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                    ? "border-stone-400 bg-stone-800 text-stone-100"
+                    : "border-stone-800 text-stone-500 hover:border-stone-700"
                 )}
               >
                 {r}
@@ -155,7 +155,7 @@ function OnboardingPage() {
                   "rounded-full border px-4 py-2 text-sm transition-colors",
                   interests.includes(cat.id)
                     ? cat.color
-                    : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                    : "border-stone-800 text-stone-500 hover:border-stone-700"
                 )}
               >
                 {cat.label}
@@ -174,8 +174,8 @@ function OnboardingPage() {
                 className={cn(
                   "rounded-full border px-4 py-2 text-sm transition-colors",
                   platform === p
-                    ? "border-zinc-400 bg-zinc-800 text-zinc-100"
-                    : "border-zinc-800 text-zinc-500 hover:border-zinc-700"
+                    ? "border-stone-400 bg-stone-800 text-stone-100"
+                    : "border-stone-800 text-stone-500 hover:border-stone-700"
                 )}
               >
                 {p}
@@ -189,7 +189,7 @@ function OnboardingPage() {
           {step > 0 ? (
             <button
               onClick={() => setStep(step - 1)}
-              className="flex items-center gap-1 text-sm text-zinc-500 hover:text-zinc-300"
+              className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-300"
             >
               <ArrowLeft size={14} /> Back
             </button>
@@ -201,7 +201,7 @@ function OnboardingPage() {
             {!STEPS[step].required && (
               <button
                 onClick={handleSkip}
-                className="text-sm text-zinc-600 hover:text-zinc-400"
+                className="text-sm text-stone-600 hover:text-stone-400"
               >
                 Skip
               </button>
@@ -209,7 +209,7 @@ function OnboardingPage() {
             <button
               onClick={handleNext}
               disabled={!canProceed || saving}
-              className="flex items-center gap-1.5 rounded-lg bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-950 transition-colors hover:bg-white disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-lg bg-stone-100 px-4 py-2 text-sm font-medium text-stone-950 transition-colors hover:bg-white disabled:opacity-50"
             >
               {step === STEPS.length - 1 ? (
                 <>{saving ? "Saving..." : "Finish"} <Check size={14} /></>

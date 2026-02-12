@@ -73,8 +73,8 @@ function SortableStackItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "rounded-lg border border-zinc-800 bg-zinc-900 p-3",
-        isDragging && "shadow-lg shadow-black/40 ring-1 ring-emerald-500/30"
+        "rounded-lg border border-stone-800 bg-stone-900 p-3",
+        isDragging && "shadow-lg shadow-black/40 ring-1 ring-amber-500/30"
       )}
     >
       <div className="flex items-start gap-2">
@@ -82,27 +82,27 @@ function SortableStackItem({
         <div
           {...attributes}
           {...listeners}
-          className="flex cursor-grab select-none flex-col items-center gap-1 rounded-lg px-1 py-1 touch-none active:cursor-grabbing active:bg-zinc-800"
+          className="flex cursor-grab select-none flex-col items-center gap-1 rounded-lg px-1 py-1 touch-none active:cursor-grabbing active:bg-stone-800"
           title="Hold to drag"
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-800 text-[10px] font-medium text-zinc-400">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-800 text-[10px] font-medium text-stone-400">
             {index + 1}
           </span>
-          <GripVertical size={18} className="text-zinc-500" />
+          <GripVertical size={18} className="text-stone-500" />
         </div>
 
         {/* Idea info */}
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="text-sm font-medium text-zinc-200">{item.idea.title}</p>
-              <p className="mt-0.5 text-xs text-zinc-500 line-clamp-1">
+              <p className="text-sm font-medium text-stone-200">{item.idea.title}</p>
+              <p className="mt-0.5 text-xs text-stone-500 line-clamp-1">
                 {item.idea.description}
               </p>
             </div>
             <button
               onClick={() => onRemove(item.idea.id)}
-              className="shrink-0 text-zinc-600 hover:text-red-400"
+              className="shrink-0 text-stone-600 hover:text-red-400"
             >
               <X size={16} />
             </button>
@@ -115,7 +115,7 @@ function SortableStackItem({
             onChange={(e) => onUpdateNote(item.idea.id, e.target.value)}
             maxLength={MAX_CONTEXT}
             placeholder="Why this prompt fits here..."
-            className="mt-2 w-full rounded border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-300 placeholder:text-zinc-700 focus:border-zinc-600 focus:outline-none"
+            className="mt-2 w-full rounded border border-stone-800 bg-stone-950 px-2 py-1.5 text-xs text-stone-300 placeholder:text-stone-700 focus:border-stone-600 focus:outline-none"
           />
         </div>
       </div>
@@ -267,10 +267,10 @@ export default function CreateStackPage() {
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
-        <Layers size={32} className="mb-3 text-zinc-600" />
-        <h1 className="mb-2 text-lg font-semibold text-zinc-200">Sign in to create stacks</h1>
-        <p className="mb-6 text-sm text-zinc-500">Chain prompts together into powerful workflows.</p>
-        <Link href="/" className="text-sm text-zinc-400 underline hover:text-zinc-200">Back to feed</Link>
+        <Layers size={32} className="mb-3 text-stone-600" />
+        <h1 className="mb-2 text-lg font-semibold text-stone-200">Sign in to create stacks</h1>
+        <p className="mb-6 text-sm text-stone-500">Chain prompts together into powerful workflows.</p>
+        <Link href="/" className="text-sm text-stone-400 underline hover:text-stone-200">Back to feed</Link>
       </div>
     );
   }
@@ -279,14 +279,14 @@ export default function CreateStackPage() {
     <div className="px-4 py-4">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/stacks" className="flex items-center gap-2 text-zinc-400 hover:text-zinc-200">
+        <Link href="/stacks" className="flex items-center gap-2 text-stone-400 hover:text-stone-200">
           <span className="text-sm">← Stacks</span>
         </Link>
       </div>
 
       <div className="mb-1 flex items-center gap-1.5">
-        <Layers size={14} className="text-emerald-400" />
-        <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">New Stack</span>
+        <Layers size={14} className="text-amber-400" />
+        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">New Stack</span>
       </div>
       <h1 className="mb-6 text-xl font-bold">Create a Stack</h1>
 
@@ -294,10 +294,10 @@ export default function CreateStackPage() {
         {/* Prompts — first */}
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label className="text-sm font-medium text-zinc-300">Prompts ({items.length}) *</label>
+            <label className="text-sm font-medium text-stone-300">Prompts ({items.length}) *</label>
             <button
               onClick={() => setShowSearch(true)}
-              className="flex items-center gap-1 rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+              className="flex items-center gap-1 rounded-lg bg-amber-500/10 px-3 py-1.5 text-xs font-medium text-amber-400 transition-colors hover:bg-amber-500/20"
             >
               <Plus size={14} />
               Add from Saved
@@ -306,10 +306,10 @@ export default function CreateStackPage() {
           {errors.items && <p className="mb-2 text-xs text-red-400">{errors.items}</p>}
 
           {items.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-zinc-700 py-10 text-center">
-              <Bookmark size={24} className="mx-auto mb-2 text-zinc-600" />
-              <p className="text-sm text-zinc-500">No prompts added yet</p>
-              <p className="text-xs text-zinc-600">
+            <div className="rounded-lg border border-dashed border-stone-700 py-10 text-center">
+              <Bookmark size={24} className="mx-auto mb-2 text-stone-600" />
+              <p className="text-sm text-stone-500">No prompts added yet</p>
+              <p className="text-xs text-stone-600">
                 {savedIdeas.length === 0
                   ? "Save some prompts from the feed first, then chain them into a stack"
                   : `You have ${savedIdeas.length} saved prompt${savedIdeas.length === 1 ? "" : "s"} to choose from`}
@@ -343,37 +343,37 @@ export default function CreateStackPage() {
 
         {/* Title */}
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-300">Title *</label>
+          <label className="mb-1 block text-sm font-medium text-stone-300">Title *</label>
           <input
             type="text"
             value={title}
             onChange={(e) => { setTitle(e.target.value); setErrors((p) => ({ ...p, title: "" })); }}
             maxLength={MAX_TITLE}
             placeholder="The Morning Autopilot"
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+            className="w-full rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
           />
           {errors.title && <p className="mt-1 text-xs text-red-400">{errors.title}</p>}
-          <p className="mt-1 text-xs text-zinc-600">{title.length}/{MAX_TITLE}</p>
+          <p className="mt-1 text-xs text-stone-600">{title.length}/{MAX_TITLE}</p>
         </div>
 
         {/* Description */}
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-300">Description *</label>
+          <label className="mb-1 block text-sm font-medium text-stone-300">Description *</label>
           <textarea
             value={description}
             onChange={(e) => { setDescription(e.target.value); setErrors((p) => ({ ...p, description: "" })); }}
             maxLength={MAX_DESC}
             rows={3}
             placeholder="What does this stack do? How do these prompts chain together?"
-            className="w-full resize-none rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-zinc-600 focus:outline-none"
+            className="w-full resize-none rounded-lg border border-stone-800 bg-stone-900 px-3 py-2.5 text-sm text-stone-100 placeholder:text-stone-600 focus:border-stone-600 focus:outline-none"
           />
           {errors.description && <p className="mt-1 text-xs text-red-400">{errors.description}</p>}
-          <p className="mt-1 text-xs text-zinc-600">{description.length}/{MAX_DESC}</p>
+          <p className="mt-1 text-xs text-stone-600">{description.length}/{MAX_DESC}</p>
         </div>
 
         {/* Category */}
         <div>
-          <label className="mb-2 block text-sm font-medium text-zinc-300">Category *</label>
+          <label className="mb-2 block text-sm font-medium text-stone-300">Category *</label>
           <div className="flex flex-wrap gap-2">
             {CATEGORIES.map((cat) => (
               <button
@@ -382,7 +382,7 @@ export default function CreateStackPage() {
                 onClick={() => { setCategory(cat.id); setErrors((p) => ({ ...p, category: "" })); }}
                 className={cn(
                   "rounded-full border px-3 py-1.5 text-xs transition-colors",
-                  category === cat.id ? cat.color : "border-zinc-700 text-zinc-500 hover:border-zinc-600"
+                  category === cat.id ? cat.color : "border-stone-700 text-stone-500 hover:border-stone-600"
                 )}
               >
                 {cat.label}
@@ -396,7 +396,7 @@ export default function CreateStackPage() {
         <button
           onClick={handleSubmit}
           disabled={submitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500/10 py-3 text-sm font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/20 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500/10 py-3 text-sm font-semibold text-amber-400 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
         >
           <Send size={16} />
           {submitting ? "Creating..." : "Create Stack"}
@@ -409,23 +409,23 @@ export default function CreateStackPage() {
           className="fixed inset-0 z-[60] flex items-start justify-center bg-black/60 backdrop-blur-sm pt-16 sm:items-center sm:pt-0"
           onClick={(e) => { if (e.target === e.currentTarget) setShowSearch(false); }}
         >
-          <div className="max-h-[70dvh] w-full max-w-lg overflow-hidden rounded-2xl bg-zinc-900 mx-4 sm:mx-0 sm:max-h-[80dvh]">
-            <div className="border-b border-zinc-800 p-4">
+          <div className="max-h-[70dvh] w-full max-w-lg overflow-hidden rounded-2xl bg-stone-900 mx-4 sm:mx-0 sm:max-h-[80dvh]">
+            <div className="border-b border-stone-800 p-4">
               <div className="flex items-center gap-2">
-                <Search size={16} className="text-zinc-500" />
+                <Search size={16} className="text-stone-500" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search your saved prompts..."
                   autoFocus={false}
-                  className="flex-1 bg-transparent text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
+                  className="flex-1 bg-transparent text-sm text-stone-100 outline-none placeholder:text-stone-600"
                 />
-                <button onClick={() => setShowSearch(false)} className="text-zinc-500 hover:text-zinc-300">
+                <button onClick={() => setShowSearch(false)} className="text-stone-500 hover:text-stone-300">
                   <X size={18} />
                 </button>
               </div>
-              <p className="mt-2 text-[10px] text-zinc-600">
+              <p className="mt-2 text-[10px] text-stone-600">
                 <Bookmark size={10} className="mr-1 inline" />
                 Only your saved prompts appear here. Save prompts from the feed to add them to stacks.
               </p>
@@ -433,7 +433,7 @@ export default function CreateStackPage() {
             <div className="overflow-y-auto p-2" style={{ maxHeight: "calc(80dvh - 80px)" }}>
               {searchResults.length === 0 ? (
                 <div className="py-8 text-center">
-                  <p className="text-sm text-zinc-600">
+                  <p className="text-sm text-stone-600">
                     {savedIdeas.length === 0
                       ? "No saved prompts yet"
                       : "No matching saved prompts"}
@@ -442,7 +442,7 @@ export default function CreateStackPage() {
                     <Link
                       href="/"
                       onClick={() => setShowSearch(false)}
-                      className="mt-2 inline-block text-xs text-emerald-400 hover:underline"
+                      className="mt-2 inline-block text-xs text-amber-400 hover:underline"
                     >
                       Browse prompts to save →
                     </Link>
@@ -453,13 +453,13 @@ export default function CreateStackPage() {
                   <button
                     key={idea.id}
                     onClick={() => addIdea(idea)}
-                    className="flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-zinc-800"
+                    className="flex w-full items-start gap-3 rounded-lg px-3 py-2.5 text-left transition-colors hover:bg-stone-800"
                   >
-                    <Plus size={16} className="mt-0.5 shrink-0 text-emerald-400" />
+                    <Plus size={16} className="mt-0.5 shrink-0 text-amber-400" />
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-zinc-200">{idea.title}</p>
-                      <p className="text-xs text-zinc-500 line-clamp-1">{idea.description}</p>
-                      <p className="mt-0.5 text-[10px] text-zinc-600">{idea.category} · {idea.complexity}</p>
+                      <p className="text-sm font-medium text-stone-200">{idea.title}</p>
+                      <p className="text-xs text-stone-500 line-clamp-1">{idea.description}</p>
+                      <p className="mt-0.5 text-[10px] text-stone-600">{idea.category} · {idea.complexity}</p>
                     </div>
                   </button>
                 ))

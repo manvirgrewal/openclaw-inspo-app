@@ -110,20 +110,20 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
       onClick={handleBackdropClick}
       className="fixed inset-0 z-[60] flex items-end justify-center bg-black/60 backdrop-blur-sm sm:items-center"
     >
-      <div className="relative max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-zinc-900 sm:rounded-2xl">
+      <div className="relative max-h-[90dvh] w-full max-w-lg overflow-y-auto rounded-t-2xl bg-stone-900 sm:rounded-2xl">
         {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800 bg-zinc-900/95 px-4 py-3 backdrop-blur-sm">
-          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-200">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-800 bg-stone-900/95 px-4 py-3 backdrop-blur-sm">
+          <button onClick={onClose} className="text-stone-400 hover:text-stone-200">
             <X size={20} />
           </button>
-          <h2 className="text-sm font-semibold text-zinc-200">Edit Profile</h2>
+          <h2 className="text-sm font-semibold text-stone-200">Edit Profile</h2>
           <button
             onClick={(e) => handleSubmit(e as unknown as FormEvent)}
             disabled={saving}
-            className="flex items-center gap-1 rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-900 transition-colors hover:bg-white disabled:opacity-50"
+            className="flex items-center gap-1 rounded-lg bg-stone-100 px-3 py-1.5 text-xs font-semibold text-stone-900 transition-colors hover:bg-white disabled:opacity-50"
           >
             {saving ? (
-              <div className="h-3 w-3 animate-spin rounded-full border border-zinc-600 border-t-zinc-900" />
+              <div className="h-3 w-3 animate-spin rounded-full border border-stone-600 border-t-stone-900" />
             ) : (
               <Check size={14} />
             )}
@@ -142,14 +142,14 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
                   className="h-20 w-20 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-zinc-800 text-2xl font-bold text-zinc-400">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-stone-800 text-2xl font-bold text-stone-400">
                   {displayName?.[0]?.toUpperCase() ?? username?.[0]?.toUpperCase() ?? "?"}
                 </div>
               )}
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-zinc-700 text-zinc-300 shadow-lg hover:bg-zinc-600"
+                className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-stone-700 text-stone-300 shadow-lg hover:bg-stone-600"
                 title="Change photo"
               >
                 <Camera size={14} />
@@ -166,28 +166,28 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
 
           {/* Display name */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-400">Display Name</label>
+            <label className="mb-1.5 block text-xs font-medium text-stone-400">Display Name</label>
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               maxLength={40}
-              className="w-full rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full rounded-lg border border-stone-700 bg-stone-800 px-3 py-2.5 text-sm text-stone-100 outline-none transition-colors placeholder:text-stone-600 focus:border-stone-500"
               placeholder="Your name"
             />
           </div>
 
           {/* Username */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-400">Username</label>
-            <div className="flex items-center rounded-lg border border-zinc-700 bg-zinc-800 transition-colors focus-within:border-zinc-500">
-              <span className="pl-3 text-sm text-zinc-600">@</span>
+            <label className="mb-1.5 block text-xs font-medium text-stone-400">Username</label>
+            <div className="flex items-center rounded-lg border border-stone-700 bg-stone-800 transition-colors focus-within:border-stone-500">
+              <span className="pl-3 text-sm text-stone-600">@</span>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""))}
                 maxLength={24}
-                className="w-full bg-transparent px-1 py-2.5 text-sm text-zinc-100 outline-none placeholder:text-zinc-600"
+                className="w-full bg-transparent px-1 py-2.5 text-sm text-stone-100 outline-none placeholder:text-stone-600"
                 placeholder="username"
               />
             </div>
@@ -195,21 +195,21 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
 
           {/* Bio */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-400">Bio</label>
+            <label className="mb-1.5 block text-xs font-medium text-stone-400">Bio</label>
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={160}
               rows={3}
-              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full resize-none rounded-lg border border-stone-700 bg-stone-800 px-3 py-2.5 text-sm text-stone-100 outline-none transition-colors placeholder:text-stone-600 focus:border-stone-500"
               placeholder="Tell people about yourself..."
             />
-            <p className="mt-1 text-right text-xs text-zinc-600">{bio.length}/160</p>
+            <p className="mt-1 text-right text-xs text-stone-600">{bio.length}/160</p>
           </div>
 
           {/* Role */}
           <div>
-            <label className="mb-2 block text-xs font-medium text-zinc-400">Role</label>
+            <label className="mb-2 block text-xs font-medium text-stone-400">Role</label>
             <div className="flex flex-wrap gap-2">
               {ROLES.map((r) => (
                 <button
@@ -219,8 +219,8 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
                   className={cn(
                     "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                     role === r
-                      ? "border-zinc-400 bg-zinc-700 text-zinc-100"
-                      : "border-zinc-700 bg-zinc-800 text-zinc-500 hover:text-zinc-300"
+                      ? "border-stone-400 bg-stone-700 text-stone-100"
+                      : "border-stone-700 bg-stone-800 text-stone-500 hover:text-stone-300"
                   )}
                 >
                   {r}
@@ -231,7 +231,7 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
 
           {/* Agent Platform */}
           <div>
-            <label className="mb-2 block text-xs font-medium text-zinc-400">Agent Platform</label>
+            <label className="mb-2 block text-xs font-medium text-stone-400">Agent Platform</label>
             <div className="flex flex-wrap gap-2">
               {PLATFORMS.map((p) => (
                 <button
@@ -241,8 +241,8 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
                   className={cn(
                     "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                     agentPlatform === p
-                      ? "border-zinc-400 bg-zinc-700 text-zinc-100"
-                      : "border-zinc-700 bg-zinc-800 text-zinc-500 hover:text-zinc-300"
+                      ? "border-stone-400 bg-stone-700 text-stone-100"
+                      : "border-stone-700 bg-stone-800 text-stone-500 hover:text-stone-300"
                   )}
                 >
                   {p}
@@ -253,7 +253,7 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
 
           {/* Interests */}
           <div>
-            <label className="mb-2 block text-xs font-medium text-zinc-400">Interests</label>
+            <label className="mb-2 block text-xs font-medium text-stone-400">Interests</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -264,7 +264,7 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
                     "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                     interests.includes(cat.id)
                       ? cat.color + " border-current"
-                      : "border-zinc-700 bg-zinc-800 text-zinc-500 hover:text-zinc-300"
+                      : "border-stone-700 bg-stone-800 text-stone-500 hover:text-stone-300"
                   )}
                 >
                   {cat.label}
@@ -275,16 +275,16 @@ export function EditProfileModal({ open, onClose, profile, onSave }: EditProfile
 
           {/* Setup Description */}
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-zinc-400">Agent Setup</label>
+            <label className="mb-1.5 block text-xs font-medium text-stone-400">Agent Setup</label>
             <textarea
               value={setupDescription}
               onChange={(e) => setSetupDescription(e.target.value)}
               maxLength={280}
               rows={3}
-              className="w-full resize-none rounded-lg border border-zinc-700 bg-zinc-800 px-3 py-2.5 text-sm text-zinc-100 outline-none transition-colors placeholder:text-zinc-600 focus:border-zinc-500"
+              className="w-full resize-none rounded-lg border border-stone-700 bg-stone-800 px-3 py-2.5 text-sm text-stone-100 outline-none transition-colors placeholder:text-stone-600 focus:border-stone-500"
               placeholder="Describe your agent setup (tools, workflows, what you've built)..."
             />
-            <p className="mt-1 text-right text-xs text-zinc-600">{setupDescription.length}/280</p>
+            <p className="mt-1 text-right text-xs text-stone-600">{setupDescription.length}/280</p>
           </div>
 
           {/* Bottom padding for mobile safe area */}
