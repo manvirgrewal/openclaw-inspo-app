@@ -62,9 +62,13 @@ Repo: https://github.com/manvirgrewal/openclaw-inspo-app
 
 **Next up (priority):**
 - [ ] Supabase local setup + run migration (OVERDUE — blocking real auth, real data)
+- [ ] **SSR conversion for SEO** — idea/stack/user pages must be server components (see `docs/SEO-AUDIT.md`)
+- [ ] `sitemap.ts` + `robots.ts` + `generateMetadata` on all public pages
+- [ ] Admin/moderation backend (see `docs/ADMIN-MODERATION-SPEC.md`) — tables in initial migration, UI iterative
 - [ ] Connect auth to real Supabase Auth
 - [ ] Realistic seed data overhaul (current seed profiles have arbitrary reputation_score values)
 - [ ] Compute seed spark from actual contributions instead of hardcoded numbers
+- [ ] JSON-LD structured data + dynamic OG images
 - [ ] Wire `recordEngagement()` into all remaining UI interactions
 - [ ] Challenges page
 - [ ] Share/embed functionality
