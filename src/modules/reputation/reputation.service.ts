@@ -518,28 +518,29 @@ export function recordEngagement(event: EngagementEvent): void {
     engagementLog[dedupeKey] = 1;
     writeMap(ENGAGEMENT_LOG_KEY, engagementLog);
   }
-  // If duplicate, skip spark but still allow quality adjustments
-  const sparkBlocked = noSpark || isDuplicate;
+  // If duplicate, block both spark AND quality for gameable actions.
+  // Only passive signals (views, scrolls) still adjust quality on repeat.
+  const blocked = noSpark || isDuplicate;
 
   switch (event.type) {
     case "save":
-      adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.save, {
-        authorId: event.authorId,
-      });
-      if (event.authorId && !sparkBlocked)
+      if (!isDuplicate)
+        adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.save, {
+          authorId: event.authorId,
+        });
+      if (event.authorId && !blocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_saved, event.ideaId);
       break;
 
     case "unsave": {
-      adjustIdeaQuality(event.ideaId, QUALITY_NEGATIVE.unsave, {
-        authorId: event.authorId,
-      });
-      // Unsave reverses a save — clear the save dedup so they can re-save later,
-      // and allow the spark reversal regardless of duplicate status
+      // Unsave reverses a save — clear the save dedup so they can re-save later
       const saveKey = event.actorId ? `${event.actorId}:${event.ideaId}:save` : null;
       if (saveKey && engagementLog[saveKey]) {
         delete engagementLog[saveKey];
         writeMap(ENGAGEMENT_LOG_KEY, engagementLog);
+        adjustIdeaQuality(event.ideaId, QUALITY_NEGATIVE.unsave, {
+          authorId: event.authorId,
+        });
         if (event.authorId && !noSpark)
           adjustSpark(event.authorId, -SPARK_RAW_WEIGHTS.idea_saved * 0.4, event.ideaId);
       }
@@ -547,26 +548,29 @@ export function recordEngagement(event: EngagementEvent): void {
     }
 
     case "copy":
-      adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.copy, {
-        authorId: event.authorId,
-      });
-      if (event.authorId && !sparkBlocked)
+      if (!isDuplicate)
+        adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.copy, {
+          authorId: event.authorId,
+        });
+      if (event.authorId && !blocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_copied, event.ideaId);
       break;
 
     case "built":
-      adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.built, {
-        authorId: event.authorId,
-      });
-      if (event.authorId && !sparkBlocked)
+      if (!isDuplicate)
+        adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.built, {
+          authorId: event.authorId,
+        });
+      if (event.authorId && !blocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_built, event.ideaId);
       break;
 
     case "comment":
-      adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.comment, {
-        authorId: event.authorId,
-      });
-      if (event.authorId && !sparkBlocked)
+      if (!isDuplicate)
+        adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.comment, {
+          authorId: event.authorId,
+        });
+      if (event.authorId && !blocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_commented, event.ideaId);
       break;
 
@@ -597,7 +601,7 @@ export function recordEngagement(event: EngagementEvent): void {
           event.feedback,
           event.feedbackReason,
         );
-        if (event.feedback === "didnt_work" && event.authorId && !sparkBlocked) {
+        if (event.feedback === "didnt_work" && event.authorId && !blocked) {
           adjustSpark(
             event.authorId,
             SPARK_RAW_WEIGHTS.prompt_didnt_work,
