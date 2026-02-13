@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback, useRef, use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -24,8 +24,13 @@ import { useToast } from "@/components/common/toast";
 import { CommentsSection } from "@/components/social/comments-section";
 import { BuiltThisSection } from "@/components/social/built-this-section";
 import { ShareButton } from "@/components/share/share-button";
+import { PromptFeedbackToast } from "@/components/feedback/prompt-feedback-toast";
+import { PromptFeedbackInline } from "@/components/feedback/prompt-feedback-inline";
+import { usePromptFeedback } from "@/hooks/use-prompt-feedback";
+import { recordEngagement } from "@/modules/reputation/reputation.service";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { resolveAuthor } from "@/lib/utils/resolve-author";
+import { SparkBadge } from "@/components/reputation/spark-badge";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 function formatDate(dateStr: string): string {
@@ -70,6 +75,11 @@ export default function IdeaDetailPage({
   // Live save count
   const liveSaveCount = idea ? idea.save_count + (saved ? 1 : 0) : 0;
 
+  // Prompt feedback ("Did it work?")
+  const promptFeedback = usePromptFeedback(user?.id);
+  const feedbackRef = useRef(promptFeedback);
+  feedbackRef.current = promptFeedback;
+
   const handleCopy = useCallback(async () => {
     if (!idea) return;
     try {
@@ -84,9 +94,17 @@ export default function IdeaDetailPage({
       document.body.removeChild(textarea);
     }
     setCopied(true);
-    toast("Copied to clipboard!");
     setTimeout(() => setCopied(false), 2500);
-  }, [idea, toast]);
+
+    // Track engagement + trigger delayed feedback prompt
+    recordEngagement({
+      type: "copy",
+      ideaId: idea.id,
+      authorId: idea.author_id || undefined,
+      actorId: user?.id,
+    });
+    feedbackRef.current.onCopy(idea.id, idea.author_id || undefined);
+  }, [idea, user?.id]);
 
   if (!idea) {
     return (
@@ -111,13 +129,13 @@ export default function IdeaDetailPage({
   return (
     <div className="px-4 py-4">
       {/* Back nav */}
-      <Link
-        href="/"
+      <button
+        onClick={() => router.back()}
         className="mb-4 inline-flex items-center gap-1.5 text-sm text-stone-500 hover:text-stone-300"
       >
         <ArrowLeft size={16} />
         Back
-      </Link>
+      </button>
 
       {/* Meta row */}
       <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
@@ -168,6 +186,7 @@ export default function IdeaDetailPage({
           ) : (
             <span className="font-medium text-stone-300">Anonymous</span>
           )}
+          {idea.author_id && <SparkBadge authorId={idea.author_id} />}
           {idea.published_at && (
             <>
               <span className="mx-1.5">·</span>
@@ -229,6 +248,13 @@ export default function IdeaDetailPage({
             </>
           )}
         </button>
+
+        {/* Persistent feedback bar (stays after copy until dismissed) */}
+        <PromptFeedbackInline
+          visible={promptFeedback.showInline}
+          onSubmit={promptFeedback.submitFeedback}
+          onDismiss={promptFeedback.dismissInline}
+        />
       </div>
 
       {/* Skills */}
@@ -309,9 +335,11 @@ export default function IdeaDetailPage({
             if (saved) {
               unsaveIdea(idea.id);
               toast("Idea unsaved");
+              recordEngagement({ type: "unsave", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
             } else {
               saveIdea(idea.id);
               toast("Idea saved!");
+              recordEngagement({ type: "save", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
             }
           }}
           className={cn(
@@ -337,6 +365,13 @@ export default function IdeaDetailPage({
 
       {/* Comments */}
       <CommentsSection ideaId={idea.id} onCommentCountChange={setLiveCommentCount} />
+
+      {/* Prompt feedback toast (floating, auto-fades) */}
+      <PromptFeedbackToast
+        visible={promptFeedback.showToast}
+        onSubmit={promptFeedback.submitFeedback}
+        onDismiss={promptFeedback.dismissToast}
+      />
     </div>
   );
 }

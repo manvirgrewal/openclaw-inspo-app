@@ -15,6 +15,7 @@ import { EditProfileModal } from "@/components/profile/edit-profile-modal";
 import { FollowListModal, type FollowListTab } from "@/components/profile/follow-list-modal";
 import { ShareButton } from "@/components/share/share-button";
 import { SEED_IDEAS } from "@/data/seed-ideas";
+import { SparkProgress } from "@/components/reputation/spark-badge";
 import type { Idea } from "@/modules/ideas/ideas.types";
 import type { Stack } from "@/modules/stacks/stacks.types";
 
@@ -171,6 +172,8 @@ export default function ProfilePage() {
             <span className="font-semibold text-stone-300">{getFollowingIds(user!.id).length}</span> following
           </button>
         </div>
+
+        {user && <SparkProgress authorId={user.id} className="mt-3" />}
 
         <div className="mt-4 flex items-center justify-center gap-3">
           <button

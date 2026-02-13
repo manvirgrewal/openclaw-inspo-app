@@ -103,3 +103,13 @@ main {
 .animate-pulse-success {
   animation: pulse-success 0.3s ease-out;
 }
+
+/* Toast auto-fade: visible for 4s, then fades out over 1s */
+@keyframes fadeOutDelayed {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+.animate-fade-out-delayed {
+  animation: fadeOutDelayed 5s ease-out forwards;
+}

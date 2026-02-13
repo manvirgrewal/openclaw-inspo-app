@@ -116,16 +116,22 @@ function SubmitPageInner() {
     } catch {}
   }, [editId]);
 
-  // Auto-save draft (skip if already submitted to prevent race condition)
+  // Auto-save draft (skip if editing an existing idea or already submitted)
   useEffect(() => {
-    if (submitted) return;
+    if (submitted || isEditing) return;
+    // Don't save empty forms (prevents overwriting cleared draft)
+    const hasContent = form.title || form.description || form.prompt;
+    if (!hasContent) {
+      localStorage.removeItem(DRAFT_KEY);
+      return;
+    }
     const timeout = setTimeout(() => {
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
       } catch {}
     }, 500);
     return () => clearTimeout(timeout);
-  }, [form, submitted]);
+  }, [form, submitted, isEditing]);
 
   const updateField = useCallback((field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -223,8 +229,9 @@ function SubmitPageInner() {
       }
 
       localStorage.setItem("inspo-user-ideas", JSON.stringify(existing));
-      localStorage.removeItem(DRAFT_KEY);
+      // Clear draft AFTER setting submitted flag to prevent auto-save race
       setSubmitted(true);
+      localStorage.removeItem(DRAFT_KEY);
       setForm(emptyForm);
       router.push(isEditing ? "/profile" : "/");
     } catch (err) {

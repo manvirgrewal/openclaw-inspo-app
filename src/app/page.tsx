@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth/auth-context";
 import { useFollows } from "@/hooks/use-follows";
 import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
+import { rankIdeas } from "@/modules/feed/feed-ranking.service";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 // Inject a stack promo card every N ideas
@@ -47,9 +48,10 @@ export default function HomePage() {
   }, []);
 
   const allIdeas = [...userIdeas, ...SEED_IDEAS];
+  const rankedIdeas = rankIdeas(allIdeas, { authenticated: isAuthenticated });
   const filteredIdeas = selectedCategory
-    ? allIdeas.filter((idea) => idea.category === selectedCategory)
-    : allIdeas;
+    ? rankedIdeas.filter((idea) => idea.category === selectedCategory)
+    : rankedIdeas;
 
   // Following tab: show ideas from users you follow
   const followingIdeas = allIdeas.filter((idea) => idea.author_id && followedIds.includes(idea.author_id));

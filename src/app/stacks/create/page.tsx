@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect, useMemo, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   DndContext,
@@ -124,8 +124,10 @@ function SortableStackItem({
 }
 
 // ─── Main Page ────────────────────────────────────────────────
-export default function CreateStackPage() {
+function CreateStackPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
   const { user, isAuthenticated } = useAuth();
   const { savedIds } = useGuestSaves();
   const { toast } = useToast();
@@ -138,6 +140,7 @@ export default function CreateStackPage() {
   const [showSearch, setShowSearch] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   // All available ideas (seed + user-created)
   const [allIdeas, setAllIdeas] = useState<Idea[]>(SEED_IDEAS);
@@ -147,6 +150,27 @@ export default function CreateStackPage() {
       setAllIdeas([...userIdeas, ...SEED_IDEAS]);
     } catch {}
   }, []);
+
+  // Load existing stack for editing
+  useEffect(() => {
+    if (!editId) return;
+    try {
+      const stored = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
+      const stack = stored.find((s: any) => s.id === editId);
+      if (stack) {
+        setTitle(stack.title || "");
+        setDescription(stack.description || "");
+        setCategory(stack.category || "");
+        // Reconstruct items from _items or resolve from ideas
+        const stackItems: StackItemDraft[] = (stack._items || []).map((item: any) => ({
+          idea: item.idea,
+          context_note: item.context_note || "",
+        }));
+        setItems(stackItems);
+        setIsEditing(true);
+      }
+    } catch {}
+  }, [editId]);
 
   // Only saved ideas are available for stacks
   const savedIdeas = useMemo(
@@ -252,11 +276,28 @@ export default function CreateStackPage() {
       newStack.items = newStack.items!.map((it) => ({ ...it, stack_id: newStack.id }));
 
       const existing = JSON.parse(localStorage.getItem("inspo-user-stacks") || "[]");
-      existing.unshift(newStack);
+
+      if (isEditing && editId) {
+        const idx = existing.findIndex((s: any) => s.id === editId);
+        if (idx !== -1) {
+          existing[idx] = {
+            ...existing[idx],
+            title: newStack.title,
+            description: newStack.description,
+            category: newStack.category,
+            slug: newStack.slug,
+            items: newStack.items,
+            _items: newStack._items,
+            updated_at: new Date().toISOString(),
+          };
+        }
+      } else {
+        existing.unshift(newStack);
+      }
       localStorage.setItem("inspo-user-stacks", JSON.stringify(existing));
 
-      toast("Stack created!");
-      router.push(`/stacks/${newStack.slug}`);
+      toast(isEditing ? "Stack updated!" : "Stack created!");
+      router.push(`/stacks/${isEditing && editId ? existing.find((s: any) => s.id === editId)?.slug || newStack.slug : newStack.slug}`);
     } catch {
       toast("Something went wrong");
     } finally {
@@ -279,16 +320,16 @@ export default function CreateStackPage() {
     <div className="px-4 py-4">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
-        <Link href="/stacks" className="flex items-center gap-2 text-stone-400 hover:text-stone-200">
-          <span className="text-sm">← Stacks</span>
-        </Link>
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-stone-400 hover:text-stone-200">
+          <span className="text-sm">← Back</span>
+        </button>
       </div>
 
       <div className="mb-1 flex items-center gap-1.5">
         <Layers size={14} className="text-amber-400" />
         <span className="text-xs font-bold uppercase tracking-wider text-amber-400">New Stack</span>
       </div>
-      <h1 className="mb-6 text-xl font-bold">Create a Stack</h1>
+      <h1 className="mb-6 text-xl font-bold">{isEditing ? "Edit Stack" : "Create a Stack"}</h1>
 
       <div className="space-y-5">
         {/* Prompts — first */}
@@ -399,7 +440,7 @@ export default function CreateStackPage() {
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500/10 py-3 text-sm font-semibold text-amber-400 transition-colors hover:bg-amber-500/20 disabled:opacity-50"
         >
           <Send size={16} />
-          {submitting ? "Creating..." : "Create Stack"}
+          {submitting ? (isEditing ? "Saving..." : "Creating...") : (isEditing ? "Save Changes" : "Create Stack")}
         </button>
       </div>
 
@@ -469,5 +510,13 @@ export default function CreateStackPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CreateStackPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-stone-700 border-t-stone-300" /></div>}>
+      <CreateStackPageInner />
+    </Suspense>
   );
 }

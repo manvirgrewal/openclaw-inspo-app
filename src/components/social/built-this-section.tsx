@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { Hammer, Star, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -214,25 +214,33 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
   const [afterWork, setAfterWork] = useState("");
   const [rating, setRating] = useState(0);
 
+  // Store callbacks in refs to avoid dependency churn
+  const onBuiltCountRef = useRef(onBuiltCountChange);
+  const onAvgRatingRef = useRef(onAvgRatingChange);
+  onBuiltCountRef.current = onBuiltCountChange;
+  onAvgRatingRef.current = onAvgRatingChange;
+
   useEffect(() => {
     const seeds = SEED_BUILDS[ideaId] || [];
     const userBuilds = readBuilds()[ideaId] || [];
     const all = [...seeds, ...userBuilds];
     setBuilds(all);
-    onBuiltCountChange?.(all.length);
-    // Compute average rating
-    const rated = all.filter((b) => b.impact_rating != null);
-    if (rated.length > 0) {
-      const avg = rated.reduce((sum, b) => sum + b.impact_rating!, 0) / rated.length;
-      onAvgRatingChange?.(Math.round(avg * 10) / 10);
-    } else {
-      onAvgRatingChange?.(null);
-    }
     // Check if current user already built
     if (user) {
       setHasBuilt(all.some((b) => b.user.username === user.username));
     }
-  }, [ideaId, user, onBuiltCountChange, onAvgRatingChange]);
+    // Defer parent state updates
+    queueMicrotask(() => {
+      onBuiltCountRef.current?.(all.length);
+      const rated = all.filter((b) => b.impact_rating != null);
+      if (rated.length > 0) {
+        const avg = rated.reduce((sum, b) => sum + b.impact_rating!, 0) / rated.length;
+        onAvgRatingRef.current?.(Math.round(avg * 10) / 10);
+      } else {
+        onAvgRatingRef.current?.(null);
+      }
+    });
+  }, [ideaId, user]);
 
   const handleSubmit = useCallback(() => {
     if (!user || !rating) return;
@@ -250,15 +258,16 @@ export function BuiltThisSection({ ideaId, onBuiltCountChange, onAvgRatingChange
     const all = readBuilds();
     all[ideaId] = [...(all[ideaId] || []), entry];
     writeBuilds(all);
-    setBuilds((prev) => {
-      const next = [...prev, entry];
-      onBuiltCountChange?.(next.length);
-      const rated = next.filter((b) => b.impact_rating != null);
+    setBuilds((prev) => [...prev, entry]);
+    // Defer parent state updates to avoid setState-during-render
+    const nextBuilds = [...builds, entry];
+    queueMicrotask(() => {
+      onBuiltCountChange?.(nextBuilds.length);
+      const rated = nextBuilds.filter((b) => b.impact_rating != null);
       if (rated.length > 0) {
         const avg = rated.reduce((sum, b) => sum + b.impact_rating!, 0) / rated.length;
         onAvgRatingChange?.(Math.round(avg * 10) / 10);
       }
-      return next;
     });
     setHasBuilt(true);
     setShowForm(false);

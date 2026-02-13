@@ -17,6 +17,7 @@ import { SEED_IDEAS } from "@/data/seed-ideas";
 import { SEED_STACKS_LIST } from "@/data/seed-stacks";
 import { getProfileByUsername } from "@/data/seed-profiles";
 import { UserAvatar } from "@/components/common/user-avatar";
+import { SparkBadge } from "@/components/reputation/spark-badge";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 const TAB_ITEMS = [
@@ -113,7 +114,10 @@ export default function UserProfilePage({
         />
 
         <h1 className="text-lg font-bold">{profile.display_name ?? profile.username}</h1>
-        <p className="text-sm text-stone-500">@{profile.username}</p>
+        <div className="flex items-center justify-center gap-1.5 text-sm text-stone-500">
+          <span>@{profile.username}</span>
+          <SparkBadge authorId={profile.id} showNumber />
+        </div>
 
         {profile.bio && (
           <p className="mx-auto mt-2 max-w-sm text-sm text-stone-400">{profile.bio}</p>

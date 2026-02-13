@@ -11,6 +11,8 @@ import { useGuestSaves } from "@/hooks/use-guest-saves";
 import { useAuth } from "@/lib/auth/auth-context";
 import { useToast } from "@/components/common/toast";
 import { resolveAuthor } from "@/lib/utils/resolve-author";
+import { recordEngagement } from "@/modules/reputation/reputation.service";
+import { SparkBadge } from "@/components/reputation/spark-badge";
 import type { Idea } from "@/modules/ideas/ideas.types";
 
 interface IdeaCardProps {
@@ -60,6 +62,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
         toast("Copied!");
         if (navigator.vibrate) navigator.vibrate(50);
         setTimeout(() => setCopied(false), 2000);
+        recordEngagement({ type: "copy", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
       } catch {
         const textarea = document.createElement("textarea");
         textarea.value = idea.prompt;
@@ -70,9 +73,10 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
         setCopied(true);
         toast("Copied!");
         setTimeout(() => setCopied(false), 2000);
+        recordEngagement({ type: "copy", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
       }
     },
-    [idea.prompt, toast],
+    [idea.prompt, idea.id, idea.author_id, user?.id, toast],
   );
 
   const handleSave = useCallback(
@@ -83,14 +87,16 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
         unsaveIdea(idea.id);
         setLocalCountDelta((d) => d - 1);
         toast("Idea unsaved");
+        recordEngagement({ type: "unsave", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
       } else {
         saveIdea(idea.id);
         setLocalCountDelta((d) => d + 1);
         toast("Idea saved!");
+        recordEngagement({ type: "save", ideaId: idea.id, authorId: idea.author_id || undefined, actorId: user?.id });
       }
       onSave?.(idea.id);
     },
-    [idea.id, onSave, saved, saveIdea, unsaveIdea, toast],
+    [idea.id, idea.author_id, user?.id, onSave, saved, saveIdea, unsaveIdea, toast],
   );
 
   const handleShare = useCallback((e: React.MouseEvent) => {
@@ -214,6 +220,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
               @{author.username}
             </span>
           </span>
+          {idea.author_id && <SparkBadge authorId={idea.author_id} />}
         </div>
         );
       })()}

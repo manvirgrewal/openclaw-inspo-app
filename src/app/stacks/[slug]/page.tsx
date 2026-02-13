@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, use } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Copy,
@@ -56,6 +57,7 @@ export default function StackDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = use(params);
+  const router = useRouter();
   const { user } = useAuth();
   const detail = useStackDetail(slug);
   const [copied, setCopied] = useState(false);
@@ -213,7 +215,7 @@ export default function StackDetailPage({
       <div className="mt-6 flex items-center gap-3 border-t border-stone-800 pt-4">
         {user && stack.author_id === user.id && (
           <button
-            onClick={() => {/* TODO: edit stack */}}
+            onClick={() => router.push(`/stacks/create?edit=${stack.id}`)}
             className="flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-2 text-sm font-medium text-stone-300 transition-colors hover:bg-stone-700"
           >
             <Pencil size={16} /> Edit
