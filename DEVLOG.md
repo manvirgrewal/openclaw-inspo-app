@@ -7,6 +7,70 @@ Repo: https://github.com/manvirgrewal/openclaw-inspo-app
 
 ---
 
+## 2026-02-13 — Reputation System, Feed Ranking & Anti-Gaming
+
+### Session 5: Non-Linear Reputation + Feed Ranking Algorithm
+
+**Commits:** `a3fb279` → `e24e31a` (7 commits)
+
+**Architecture Document:**
+- [x] `docs/REPUTATION-ARCHITECTURE.md` — full system documentation covering Spark, Quality, Trust, feed ranking, modularity, and Supabase migration path
+
+**Feed Ranking Module** (`src/modules/feed/`):
+- [x] `feed-ranking.config.ts` — all ranking weights in one tunable file
+- [x] `feed-ranking.service.ts` — `rankIdeas()` with freshness (1-week half-life), quality (reputation + community signals), exploration (new/underexposed boost)
+- [x] Authenticated formula: `(relevance × 0.4) + (freshness × 0.25) + (quality × 0.2) + (exploration × 0.15)`
+- [x] Anonymous formula: `(freshness × 0.3) + (quality × 0.5) + (exploration × 0.2)`
+- [x] Wired into home page — feed now sorted by ranking score
+
+**Non-Linear Spark System** (`src/modules/reputation/`):
+- [x] 5-stage pipeline: per-idea cap (120) → velocity dampening (0.88^n) → raw accumulation → log transform (`85 × ln(1 + raw/40)`) → display fuzz (±3%)
+- [x] Reddit-style karma model: only earn spark when others engage with YOUR content
+- [x] Non-round raw weights (3.2, 1.7, 6.4...) to prevent pattern recognition
+- [x] Diminishing returns at higher levels (log transform)
+- [x] Per-idea caps prevent one viral idea from carrying entire reputation
+
+**Non-Linear Quality Score:**
+- [x] Momentum amplification (trending ideas amplify signals up to 1.3x in 24h window)
+- [x] Age dampening (14-day half-life — signals on older ideas worth less)
+- [x] Signal saturation (diminishing returns after ~30 signals per idea)
+- [x] Trust multiplier (low-trust authors' negatives hit 1.5-2x harder)
+
+**Spark Badge UI** (`src/components/reputation/spark-badge.tsx`):
+- [x] Simple display: ✦ + number (no tiers publicly shown — like Reddit karma)
+- [x] SSR-safe (useEffect defers localStorage read, no hydration mismatch)
+- [x] Shown on: idea cards, idea detail, user profiles
+
+**Anti-Gaming & Authorization Fixes:**
+- [x] Self-interaction guard: can't boost own spark by engaging with own ideas
+- [x] Guest guard: unauthenticated users cannot affect spark at all
+- [x] Engagement deduplication: one user = one spark + one quality adjustment per action type per idea
+- [x] Save/unsave properly toggles (unsave reverses spark, clears dedup for re-save)
+- [x] Only passive signals (views, scrolls) repeat — all active actions (copy, save, built, comment) deduplicated
+
+**Design Decisions:**
+- Removed tier badges from public display (✦ + number is simpler, like Reddit karma)
+- Removed spark progress bar from own profile (keeps formula opaque)
+- Tiers kept in config for potential future use (hidden achievements, internal thresholds)
+- Quality score adjustments also deduplicated (prevents spam-copy visibility gaming)
+- Stacks page copy: "Curated bundles" → "Bundles" (any user can create, not admin-only)
+
+**Spec Addendum:**
+- [x] Added to SPEC.md documenting reputation system implementation
+
+**Build:** Clean ✅ | **Pushed:** All commits on `main`
+
+**Next up (priority):**
+- [ ] Supabase local setup + run migration (OVERDUE — blocking real auth, real data)
+- [ ] Connect auth to real Supabase Auth
+- [ ] Realistic seed data overhaul (current seed profiles have arbitrary reputation_score values)
+- [ ] Compute seed spark from actual contributions instead of hardcoded numbers
+- [ ] Wire `recordEngagement()` into all remaining UI interactions
+- [ ] Challenges page
+- [ ] Share/embed functionality
+
+---
+
 ## 2026-02-11 — Phase 3: Auth Gating, Guest Saves & Social Features
 
 ### Session 4: Auth Context, Guest Saves, Comments, Nudges

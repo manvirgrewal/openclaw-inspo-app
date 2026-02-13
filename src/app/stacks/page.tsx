@@ -31,7 +31,7 @@ export default function StacksPage() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Stacks</h1>
-          <p className="mt-1 text-sm text-stone-500">Curated bundles of ideas that work together</p>
+          <p className="mt-1 text-sm text-stone-500">Bundles of ideas that work together</p>
         </div>
         {isAuthenticated && (
           <Link
