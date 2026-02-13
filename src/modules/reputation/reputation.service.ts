@@ -492,14 +492,23 @@ export function submitPromptFeedback(
  * Spark: only the idea AUTHOR earns spark (Reddit model).
  * Quality: the idea's visibility score adjusts.
  * Trust: author trust adjusts on negative signals.
+ *
+ * Self-interaction guard: if the actor IS the author, no spark is awarded.
+ * You can't boost your own reputation. Quality score still adjusts
+ * (your own saves/copies still count as engagement signal for the idea's
+ * visibility, same as Reddit upvoting your own post).
  */
 export function recordEngagement(event: EngagementEvent): void {
+  // Self-interaction: don't award spark to yourself
+  const isSelfInteraction =
+    event.actorId && event.authorId && event.actorId === event.authorId;
+
   switch (event.type) {
     case "save":
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.save, {
         authorId: event.authorId,
       });
-      if (event.authorId)
+      if (event.authorId && !isSelfInteraction)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_saved, event.ideaId);
       break;
 
@@ -507,8 +516,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_NEGATIVE.unsave, {
         authorId: event.authorId,
       });
-      // Unsave reduces raw spark — but through the pipeline it's non-obvious
-      if (event.authorId)
+      if (event.authorId && !isSelfInteraction)
         adjustSpark(event.authorId, -SPARK_RAW_WEIGHTS.idea_saved * 0.4, event.ideaId);
       break;
 
@@ -516,7 +524,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.copy, {
         authorId: event.authorId,
       });
-      if (event.authorId)
+      if (event.authorId && !isSelfInteraction)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_copied, event.ideaId);
       break;
 
@@ -524,7 +532,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.built, {
         authorId: event.authorId,
       });
-      if (event.authorId)
+      if (event.authorId && !isSelfInteraction)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_built, event.ideaId);
       break;
 
@@ -532,7 +540,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.comment, {
         authorId: event.authorId,
       });
-      if (event.authorId)
+      if (event.authorId && !isSelfInteraction)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_commented, event.ideaId);
       break;
 
@@ -563,7 +571,7 @@ export function recordEngagement(event: EngagementEvent): void {
           event.feedback,
           event.feedbackReason,
         );
-        if (event.feedback === "didnt_work" && event.authorId) {
+        if (event.feedback === "didnt_work" && event.authorId && !isSelfInteraction) {
           adjustSpark(
             event.authorId,
             SPARK_RAW_WEIGHTS.prompt_didnt_work,
