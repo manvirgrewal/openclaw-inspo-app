@@ -64,6 +64,7 @@ const QUALITY_EVENTS_KEY = "inspo-quality-events"; // { [ideaId]: number[] } —
 const TRUST_KEY = "inspo-trust-scores"; // { [authorId]: number }
 const FEEDBACK_KEY = "inspo-prompt-feedback"; // PromptFeedbackRecord[]
 const IDEA_AUTHOR_MAP_KEY = "inspo-idea-author-map"; // { [ideaId]: authorId }
+const ENGAGEMENT_LOG_KEY = "inspo-engagement-log"; // { [`${actorId}:${ideaId}:${type}`]: true }
 
 // ============================================
 // Generic localStorage helpers
@@ -505,28 +506,51 @@ export function recordEngagement(event: EngagementEvent): void {
   const isGuest = !event.actorId;
   const noSpark = isSelfInteraction || isGuest;
 
+  // Deduplication: one user gets one spark-affecting interaction per type per idea.
+  // Quality score still adjusts (repeated copies = genuine engagement signal),
+  // but spark only counts the first time.
+  const dedupeKey = event.actorId
+    ? `${event.actorId}:${event.ideaId}:${event.type}`
+    : null;
+  const engagementLog = readMap(ENGAGEMENT_LOG_KEY);
+  const isDuplicate = dedupeKey ? engagementLog[dedupeKey] === 1 : false;
+  if (dedupeKey && !isDuplicate) {
+    engagementLog[dedupeKey] = 1;
+    writeMap(ENGAGEMENT_LOG_KEY, engagementLog);
+  }
+  // If duplicate, skip spark but still allow quality adjustments
+  const sparkBlocked = noSpark || isDuplicate;
+
   switch (event.type) {
     case "save":
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.save, {
         authorId: event.authorId,
       });
-      if (event.authorId && !noSpark)
+      if (event.authorId && !sparkBlocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_saved, event.ideaId);
       break;
 
-    case "unsave":
+    case "unsave": {
       adjustIdeaQuality(event.ideaId, QUALITY_NEGATIVE.unsave, {
         authorId: event.authorId,
       });
-      if (event.authorId && !noSpark)
-        adjustSpark(event.authorId, -SPARK_RAW_WEIGHTS.idea_saved * 0.4, event.ideaId);
+      // Unsave reverses a save — clear the save dedup so they can re-save later,
+      // and allow the spark reversal regardless of duplicate status
+      const saveKey = event.actorId ? `${event.actorId}:${event.ideaId}:save` : null;
+      if (saveKey && engagementLog[saveKey]) {
+        delete engagementLog[saveKey];
+        writeMap(ENGAGEMENT_LOG_KEY, engagementLog);
+        if (event.authorId && !noSpark)
+          adjustSpark(event.authorId, -SPARK_RAW_WEIGHTS.idea_saved * 0.4, event.ideaId);
+      }
       break;
+    }
 
     case "copy":
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.copy, {
         authorId: event.authorId,
       });
-      if (event.authorId && !noSpark)
+      if (event.authorId && !sparkBlocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_copied, event.ideaId);
       break;
 
@@ -534,7 +558,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.built, {
         authorId: event.authorId,
       });
-      if (event.authorId && !noSpark)
+      if (event.authorId && !sparkBlocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_built, event.ideaId);
       break;
 
@@ -542,7 +566,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.comment, {
         authorId: event.authorId,
       });
-      if (event.authorId && !noSpark)
+      if (event.authorId && !sparkBlocked)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_commented, event.ideaId);
       break;
 
@@ -573,7 +597,7 @@ export function recordEngagement(event: EngagementEvent): void {
           event.feedback,
           event.feedbackReason,
         );
-        if (event.feedback === "didnt_work" && event.authorId && !noSpark) {
+        if (event.feedback === "didnt_work" && event.authorId && !sparkBlocked) {
           adjustSpark(
             event.authorId,
             SPARK_RAW_WEIGHTS.prompt_didnt_work,
