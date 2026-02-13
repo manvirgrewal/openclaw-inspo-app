@@ -499,16 +499,18 @@ export function submitPromptFeedback(
  * visibility, same as Reddit upvoting your own post).
  */
 export function recordEngagement(event: EngagementEvent): void {
-  // Self-interaction: don't award spark to yourself
+  // Guard: no spark for self-interaction OR unauthenticated users
   const isSelfInteraction =
     event.actorId && event.authorId && event.actorId === event.authorId;
+  const isGuest = !event.actorId;
+  const noSpark = isSelfInteraction || isGuest;
 
   switch (event.type) {
     case "save":
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.save, {
         authorId: event.authorId,
       });
-      if (event.authorId && !isSelfInteraction)
+      if (event.authorId && !noSpark)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_saved, event.ideaId);
       break;
 
@@ -516,7 +518,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_NEGATIVE.unsave, {
         authorId: event.authorId,
       });
-      if (event.authorId && !isSelfInteraction)
+      if (event.authorId && !noSpark)
         adjustSpark(event.authorId, -SPARK_RAW_WEIGHTS.idea_saved * 0.4, event.ideaId);
       break;
 
@@ -524,7 +526,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.copy, {
         authorId: event.authorId,
       });
-      if (event.authorId && !isSelfInteraction)
+      if (event.authorId && !noSpark)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_copied, event.ideaId);
       break;
 
@@ -532,7 +534,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.built, {
         authorId: event.authorId,
       });
-      if (event.authorId && !isSelfInteraction)
+      if (event.authorId && !noSpark)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_built, event.ideaId);
       break;
 
@@ -540,7 +542,7 @@ export function recordEngagement(event: EngagementEvent): void {
       adjustIdeaQuality(event.ideaId, QUALITY_POSITIVE.comment, {
         authorId: event.authorId,
       });
-      if (event.authorId && !isSelfInteraction)
+      if (event.authorId && !noSpark)
         adjustSpark(event.authorId, SPARK_RAW_WEIGHTS.idea_commented, event.ideaId);
       break;
 
@@ -571,7 +573,7 @@ export function recordEngagement(event: EngagementEvent): void {
           event.feedback,
           event.feedbackReason,
         );
-        if (event.feedback === "didnt_work" && event.authorId && !isSelfInteraction) {
+        if (event.feedback === "didnt_work" && event.authorId && !noSpark) {
           adjustSpark(
             event.authorId,
             SPARK_RAW_WEIGHTS.prompt_didnt_work,

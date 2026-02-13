@@ -35,6 +35,7 @@ export function IdeaCard({ idea, onSave, onDelete, onPin, showManage, isPinned, 
   const { toast } = useToast();
   const router = useRouter();
   const saved = isSaved(idea.id);
+  const isOwnIdea = Boolean(user?.id && idea.author_id && user.id === idea.author_id);
   const [localCountDelta, setLocalCountDelta] = useState(() => isSaved(idea.id) ? 1 : 0);
 
   const isOwner = user && idea.author_id === user.id;
